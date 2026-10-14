@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 
 import typer
@@ -96,3 +97,94 @@ def start(
     card = find_card(project, number)
     started = request('POST', f'/cards/{card["id"]}/start').json()
     typer.echo(f'Card #{started["number"]} {started["title"]} em {column_label(started["column"])}.')
+
+
+def update_card(card_id, **changes):
+    """PUT com os campos editáveis do card (a API não tem PATCH), aplicando só as mudanças."""
+    card = request('GET', f'/cards/{card_id}').json()
+    body = {
+        'title': card['title'],
+        'description': card['description'],
+        'due_date': card['due_date'],
+        'assignee_id': card['assignee']['id'] if card['assignee'] else None,
+    } | changes
+    return request('PUT', f'/cards/{card_id}', json=body).json()
+
+
+def parse_names(value):
+    return [name.strip() for name in value.split(',') if name.strip()]
+
+
+@app.command()
+def comment(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    text: str = typer.Argument(..., help='Texto do comentário (use @email para mencionar).'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+):
+    """Comenta no card."""
+    card = find_card(project, number)
+    request('POST', f'/cards/{card["id"]}/comments', json={'text': text})
+    typer.echo(f'Comentário adicionado ao card #{card["number"]}.')
+
+
+@app.command()
+def label(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+    add: str = typer.Option('', help='Etiquetas a adicionar, separadas por vírgula.'),
+    remove: str = typer.Option('', help='Etiquetas a remover, separadas por vírgula.'),
+):
+    """Adiciona ou remove etiquetas do card (pelo nome)."""
+    owner = find_project(project)
+    by_name = {lb['name'].lower(): lb for lb in request('GET', f'/projects/{owner["id"]}/labels').json()}
+    unknown = [n for n in parse_names(add) + parse_names(remove) if n.lower() not in by_name]
+    if unknown:
+        fail(f'Etiqueta não existe: {", ".join(unknown)}. Etiquetas do projeto: {", ".join(sorted(by_name))}')
+    card = find_card(project, number)
+    current = {lb['id'] for lb in request('GET', f'/cards/{card["id"]}').json()['labels']}
+    current |= {by_name[n.lower()]['id'] for n in parse_names(add)}
+    current -= {by_name[n.lower()]['id'] for n in parse_names(remove)}
+    updated = request('PUT', f'/cards/{card["id"]}/labels', json={'label_ids': sorted(current)}).json()
+    names = ', '.join(lb['name'] for lb in updated['labels']) or 'nenhuma'
+    typer.echo(f'Etiquetas do card #{updated["number"]}: {names}')
+
+
+@app.command()
+def assign(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+    to: str = typer.Option('', help='E-mail do responsável.'),
+    clear: bool = typer.Option(False, '--clear', help='Deixa o card sem responsável.'),
+):
+    """Define o responsável pelo card."""
+    if not to and not clear:
+        raise typer.BadParameter('Informe --to EMAIL ou --clear.')
+    assignee = None
+    if to:
+        assignee = next((u for u in request('GET', '/users').json() if u['email'].lower() == to.lower()), None)
+        if assignee is None:
+            fail(f'Usuário "{to}" não encontrado. Veja os usuários com: hubflow users')
+    card = find_card(project, number)
+    updated = update_card(card['id'], assignee_id=assignee['id'] if assignee else None)
+    who = updated['assignee']['name'] or updated['assignee']['email'] if updated['assignee'] else 'ninguém'
+    typer.echo(f'Responsável pelo card #{updated["number"]}: {who}')
+
+
+@app.command()
+def due(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    date: str = typer.Argument(..., help='Prazo no formato AAAA-MM-DD, ou "nenhum" para limpar.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+):
+    """Define o prazo do card."""
+    if date.lower() in ('nenhum', 'none', '-'):
+        due_date = None
+    else:
+        try:
+            due_date = datetime.date.fromisoformat(date).isoformat()
+        except ValueError:
+            raise typer.BadParameter('Use o formato AAAA-MM-DD, por exemplo 2026-10-20.')
+    card = find_card(project, number)
+    updated = update_card(card['id'], due_date=due_date)
+    shown = datetime.date.fromisoformat(updated['due_date']).strftime('%d/%m/%Y') if updated['due_date'] else 'nenhum'
+    typer.echo(f'Prazo do card #{updated["number"]}: {shown}')
