@@ -9,6 +9,7 @@ from hubflow.clients.api import router as clients_router
 from hubflow.core.api import router as backups_router
 from hubflow.dashboard.api import router as dashboard_router
 from hubflow.integrations.api import router as integrations_router
+from hubflow.permissions.api import router as permissions_router
 from hubflow.projects.api import router as projects_router
 from hubflow.realtime.api import router as realtime_router
 from hubflow.search.api import router as search_router
@@ -28,6 +29,7 @@ api.add_router('/payments', payments_router)
 api.add_router('/dashboard', dashboard_router)
 api.add_router('', integrations_router)
 api.add_router('', realtime_router)
+api.add_router('', permissions_router)
 api.add_router('/search', search_router)
 api.add_router('/backups', backups_router)
 

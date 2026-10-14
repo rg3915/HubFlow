@@ -39,3 +39,16 @@ class ResetPasswordIn(Schema):
 class ChangePasswordIn(Schema):
     current_password: str
     new_password: str
+
+
+class MeOut(Schema):
+    """Montado a partir de um dicionário (sem os resolvers do UserOut)."""
+
+    id: int
+    email: str
+    name: str
+    first_name: str
+    avatar_url: str | None
+    is_superuser: bool
+    roles: list[str]
+    permissions: list[str]

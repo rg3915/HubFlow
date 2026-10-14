@@ -27,7 +27,13 @@ def upload(api, name='foto.png', content=None, content_type='image/png'):
 def test_me_sem_avatar_traz_url_nula_e_primeiro_nome(api, user):
     data = api.get('/api/auth/me').json()
 
-    assert data == {'id': user.id, 'email': 'ana@example.com', 'name': 'Ana', 'avatar_url': None, 'first_name': 'Ana'}
+    assert (data['id'], data['email'], data['name'], data['avatar_url'], data['first_name']) == (
+        user.id,
+        'ana@example.com',
+        'Ana',
+        None,
+        'Ana',
+    )
 
 
 def test_primeiro_nome_vem_do_email_quando_nao_ha_nome(api, user):

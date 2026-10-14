@@ -6,7 +6,7 @@ from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
 from .models import Token, User
-from .schemas import ChangePasswordIn, DetailOut, ForgotPasswordIn, LoginIn, ResetPasswordIn, TokenOut, UserOut
+from .schemas import ChangePasswordIn, DetailOut, ForgotPasswordIn, LoginIn, MeOut, ResetPasswordIn, TokenOut, UserOut
 from .services import get_user_from_reset_link, send_password_reset_email
 
 router = Router(tags=['auth'])
@@ -21,9 +21,21 @@ def login(request, data: LoginIn):
     return {'token': token.key}
 
 
-@router.get('/me', response=UserOut)
+@router.get('/me', response=MeOut)
 def me(request):
-    return request.user
+    from hubflow.permissions.services import effective_permissions
+
+    user = request.user
+    return {
+        'id': user.id,
+        'email': user.email,
+        'name': user.name,
+        'first_name': user.first_name,
+        'avatar_url': user.avatar.url if user.avatar else None,
+        'is_superuser': user.is_superuser,
+        'roles': sorted(user.groups.values_list('name', flat=True)),
+        'permissions': sorted(effective_permissions(user)),
+    }
 
 
 AVATAR_MAX_BYTES = 2 * 1024 * 1024

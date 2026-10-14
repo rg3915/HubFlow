@@ -25,13 +25,15 @@ def test_me_devolve_o_usuario_do_token(user):
     response = get_me(token.key)
 
     assert response.status_code == 200
-    assert response.json() == {
-        'id': user.id,
-        'email': 'ana@example.com',
-        'name': 'Ana',
-        'first_name': 'Ana',
-        'avatar_url': None,
-    }
+    data = response.json()
+    assert (data['id'], data['email'], data['name'], data['first_name'], data['avatar_url']) == (
+        user.id,
+        'ana@example.com',
+        'Ana',
+        'Ana',
+        None,
+    )
+    assert (data['roles'], data['permissions'], data['is_superuser']) == ([], [], False)
 
 
 def test_sem_token_retorna_401(user):
