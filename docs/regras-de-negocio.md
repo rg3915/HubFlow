@@ -93,6 +93,11 @@ Numeradas para serem citadas em issues, testes e commits (ex.: `RN-07`).
 - **RN-111** SLA por coluna = horas máximas que o card pode ficar nela, contadas a partir de quando entrou na coluna. O estouro é verificado a cada 15 minutos (`check_sla`), dispara as automações de SLA uma vez por card e coluna e volta a contar se o card sair e voltar.
 - **RN-112** Card com prazo vencido, fora de Concluído e Arquivadas, avisa o responsável no sino uma vez por prazo (de novo se o prazo mudar).
 
+## Relatórios e métricas (entregável 10)
+
+- **RN-120** O relatório cobre um cliente ou projeto num período: semana (seg–dom), quinzena (1–15 e 16–fim), mês ou datas livres. Traz horas registradas (por pessoa e por card), cards criados e concluídos, média de dias até concluir, SLAs estourados e, só para quem vê pagamentos, o faturamento pelo dia de emissão. Mostra apenas o que a pessoa pode ver.
+- **RN-121** Relatório agendado (semanal, quinzenal ou mensal) é enviado em PDF quando o período termina, uma vez por período, com as permissões de quem o criou; sem e-mails, vai para os do projeto ou do cliente. Ao criar, o primeiro envio é o do período atual.
+
 ## Versionamento
 
 - **RN-50** O CHANGELOG segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento semântico. Começa em 0.1.0 e cada entregável concluído gera uma versão.

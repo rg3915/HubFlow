@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-10-14
+
+Relatórios por período (semana, quinzena, mês ou datas) com PDF, envio por e-mail e envios agendados, na API, na CLI e na tela.
+
 ### Adicionado
 
 * Dados do relatório por período (app reports): semana, quinzena ou mês; horas por pessoa e por card, cards criados e concluídos, tempo médio até concluir, SLAs estourados e faturamento, por cliente ou projeto, com consultas agregadas. #157
@@ -16,6 +20,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: hubflow report show/pdf/send e report schedule list/add/remove (--client/--project, --period + --date ou --start/--end); `task lint` formata antes de checar. #162
 * Tela de relatórios (menu Relatórios): cliente, projeto, semana/quinzena/mês ou datas; números, horas por pessoa, cards com mais horas, faturamento, baixar PDF e enviar por e-mail; CORS expõe o nome do arquivo baixado. #163
 * Tela de relatórios agendados (Relatórios › Agendar envios): lista com ligar/desligar e cancelar, período já coberto e criação por cliente ou projeto, frequência e e-mails; páginas novas abrem no topo. #164
+* CHANGELOG 0.14.0; README e regras RN-120 e RN-121. #165
 
 ## [0.13.0] - 2026-10-14
 
@@ -322,7 +327,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/rg3915/HubFlow/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/rg3915/HubFlow/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/rg3915/HubFlow/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/rg3915/HubFlow/compare/v0.10.0...v0.11.0
