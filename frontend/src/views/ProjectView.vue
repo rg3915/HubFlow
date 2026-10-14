@@ -20,11 +20,9 @@ const visibleColumns = computed(() =>
 <template>
   <div v-if="board.project && board.projectId === projectId" class="-m-6 flex h-[calc(100vh-3rem)] flex-col">
     <div class="flex items-center gap-3 border-b border-border bg-surface px-6 py-2">
-      <p class="text-muted">{{ board.project.client_name }}</p>
-      <h2 class="font-semibold">{{ board.project.name }}</h2>
-      <RouterLink :to="`/projects/${projectId}/labels`" class="ml-auto text-muted hover:text-text">Etiquetas</RouterLink>
+      <RouterLink :to="`/projects/${projectId}/labels`" class="text-muted hover:text-text">Etiquetas</RouterLink>
       <RouterLink :to="`/projects/${projectId}/edit`" class="text-muted hover:text-text">Configurar</RouterLink>
-      <label class="flex items-center gap-2 text-muted">
+      <label class="ml-auto flex items-center gap-2 text-muted">
         <input v-model="showArchived" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
         Mostrar arquivadas
       </label>
