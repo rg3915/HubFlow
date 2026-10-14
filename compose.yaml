@@ -27,6 +27,7 @@ services:
     command: uv run python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
+      - /app/.venv
     ports:
       - "8000:8000"
     depends_on:

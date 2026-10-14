@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 
@@ -49,3 +51,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         # RN-01: e-mail guardado em minúsculas, o que torna o unique case-insensitive.
         self.email = self.email.lower()
         super().save(*args, **kwargs)
+
+
+def generate_key():
+    return secrets.token_hex(20)
+
+
+class Token(models.Model):
+    # RN-05: um token por dispositivo/CLI; o logout revoga só o token usado.
+    key = models.CharField(max_length=40, unique=True, default=generate_key)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tokens')
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user} ({self.key[:6]}…)'

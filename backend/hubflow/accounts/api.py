@@ -1,0 +1,17 @@
+from django.contrib.auth import authenticate
+from ninja import Router
+from ninja.errors import HttpError
+
+from .models import Token
+from .schemas import LoginIn, TokenOut
+
+router = Router(tags=['auth'])
+
+
+@router.post('/login', response=TokenOut, auth=None)
+def login(request, data: LoginIn):
+    user = authenticate(request, email=data.email, password=data.password)
+    if user is None:
+        raise HttpError(401, 'E-mail ou senha inválidos.')
+    token = Token.objects.create(user=user)
+    return {'token': token.key}
