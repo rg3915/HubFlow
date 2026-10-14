@@ -36,7 +36,7 @@ services:
       EMAIL_HOST: mailpit
       REDIS_URL: redis://redis:6379/0
     # ASGI (uvicorn) para as conexões longas do tempo real (SSE); --reload recarrega como o runserver.
-    command: uv run uvicorn hubflow.asgi:application --host 0.0.0.0 --port 8000 --reload
+    command: uv run uvicorn hubflow.asgi:application --host 0.0.0.0 --port 8000 --reload --timeout-graceful-shutdown 3
     volumes:
       - ./backend:/app
       - /app/.venv

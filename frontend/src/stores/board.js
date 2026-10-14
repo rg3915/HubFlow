@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { api } from '../api'
+import { BASE_URL, api } from '../api'
 import { useAuthStore } from './auth'
 
 export const useBoardStore = defineStore('board', {
@@ -18,6 +18,7 @@ export const useBoardStore = defineStore('board', {
     sprints: [],
     sprintId: null,
     time: { entries: [], total_hours: 0, running: null },
+    live: false, // conexão SSE ativa
   }),
   actions: {
     async load(projectId, { archived = false, sprintId = null } = {}) {
@@ -41,6 +42,54 @@ export const useBoardStore = defineStore('board', {
     },
     column(key) {
       return this.columns.find((c) => c.key === key)
+    },
+    findCard(cardId) {
+      for (const column of this.columns) {
+        const card = column.cards.find((c) => c.id === cardId)
+        if (card) return { column, card }
+      }
+      return null
+    },
+    // Assina os eventos do projeto (SSE). Quem mudou foi outra pessoa ou a CLI: aplica no quadro sem recarregar.
+    connect(projectId) {
+      this.disconnect()
+      const token = useAuthStore().token
+      const source = new EventSource(`${BASE_URL}/api/projects/${projectId}/events?token=${token}`)
+      source.onopen = () => (this.live = true)
+      source.onerror = () => (this.live = false) // o EventSource reconecta sozinho
+      source.addEventListener('card_created', (e) => this.onCardCreated(JSON.parse(e.data).data))
+      source.addEventListener('card_updated', (e) => this.onCardUpdated(JSON.parse(e.data).data))
+      source.addEventListener('card_moved', (e) => this.onCardMoved(JSON.parse(e.data).data))
+      source.addEventListener('card_deleted', (e) => this.onCardDeleted(JSON.parse(e.data).data))
+      this._source = source
+    },
+    disconnect() {
+      this._source?.close()
+      this._source = null
+      this.live = false
+    },
+    onCardCreated({ card }) {
+      if (card.project_id !== this.projectId || this.findCard(card.id)) return
+      if (this.sprintId && card.sprint?.id !== this.sprintId) return
+      this.column(card.column)?.cards.push(card)
+    },
+    onCardUpdated({ card }) {
+      const found = this.findCard(card.id)
+      if (found) Object.assign(found.card, card)
+      if (this.selected?.id === card.id) Object.assign(this.selected, card)
+    },
+    onCardMoved({ card_id, to_column, position }) {
+      const found = this.findCard(card_id)
+      if (!found) return
+      const [card] = found.column.cards.splice(found.column.cards.indexOf(found.card), 1)
+      card.column = to_column
+      const target = this.column(to_column)
+      if (target && (to_column !== 'archived' || target.cards.length)) target.cards.splice(position, 0, card)
+    },
+    onCardDeleted({ card_id }) {
+      const found = this.findCard(card_id)
+      if (found) found.column.cards.splice(found.column.cards.indexOf(found.card), 1)
+      if (this.selected?.id === card_id) this.selected = null
     },
     async createCard(title) {
       const token = useAuthStore().token

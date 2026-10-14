@@ -10,6 +10,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Backend ASGI (uvicorn) com Redis no compose e eventos do projeto via pub/sub. #40
 * Eventos card_created, card_moved, card_updated e card_deleted publicados a cada mudança (API, CLI e webhooks). #41
+* Quadro ao vivo: endpoint SSE por projeto (token na query) e o quadro aplica os eventos sem recarregar, com indicador ao vivo/offline e reconexão automática. #42
+* Banco de teste com nome único por checkout (suítes em paralelo).
 
 ## [0.8.0] - 2026-10-14
 

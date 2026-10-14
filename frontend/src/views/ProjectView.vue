@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BoardColumn from '../components/BoardColumn.vue'
 import CardPanel from '../components/CardPanel.vue'
@@ -17,6 +17,8 @@ watch(
   () => board.load(projectId.value, { archived: showArchived.value, sprintId: sprintId.value }),
   { immediate: true },
 )
+watch(projectId, (id) => board.connect(id), { immediate: true })
+onBeforeUnmount(() => board.disconnect())
 
 function filterSprint(event) {
   const value = event.target.value
@@ -42,7 +44,11 @@ const visibleColumns = computed(() =>
       <RouterLink :to="`/projects/${projectId}/labels`" class="text-muted hover:text-text">Etiquetas</RouterLink>
       <RouterLink :to="`/projects/${projectId}/integration`" class="text-muted hover:text-text">Integração</RouterLink>
       <RouterLink :to="`/projects/${projectId}/edit`" class="text-muted hover:text-text">Configurar</RouterLink>
-      <label class="ml-auto flex items-center gap-2 text-muted">
+      <span class="ml-auto flex items-center gap-1 text-[13px] text-muted" :title="board.live ? 'Atualiza sozinho quando alguém mexer no quadro' : 'Reconectando…'">
+        <span class="inline-block h-2 w-2 rounded-full" :class="board.live ? 'bg-[#2e6b4f]' : 'bg-stone-400'"></span>
+        {{ board.live ? 'ao vivo' : 'offline' }}
+      </span>
+      <label class="flex items-center gap-2 text-muted">
         <input v-model="showArchived" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
         Mostrar arquivadas
       </label>
