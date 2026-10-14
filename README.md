@@ -12,6 +12,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
 - **Sprints** numeradas por projeto (todo card pertence a uma; sem sprint informada usa a última aberta ou cria a primeira) e milestone opcional.
 - **Controle de tempo**: cronômetro por card (um aberto por card; vários em cards diferentes), regra dos 15 minutos, lançamento manual de horas (só o dono apaga), estimativa com progresso gasto × estimado e exportação xlsx por período.
+- **Sincronização com GitHub/GitLab**: token por projeto, issue criada ao criar o card, edição e conclusão refletidas na issue, importação de issues existentes, milestone do repositório pareado com a sprint e webhooks (commit/PR com `close #N` conclui o card).
 - **Dashboard** na página inicial: totais, cards por etapa, em desenvolvimento agora, cronômetros abertos, prazos, atividade recente, heatmap de horas (26 semanas), horas da semana por projeto e faturamento do mês.
 - **Faturamento**: pagamentos por sprint ou por mês (valor/hora × horas registradas ou valor fechado), NF, emissão, pagamento, pendente/pago, resumo por cliente e por mês com gráficos.
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
@@ -134,6 +135,8 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `POST /api/cards/{id}/time-entries`, `PUT/DELETE /api/time-entries/{id}` | Horas manuais (só o dono edita/apaga) |
 | `GET /api/projects/{id}/timesheet.xlsx?from=&to=` | Exportação xlsx do timesheet |
 | `GET/POST /api/payments`, `GET/PUT/DELETE /api/payments/{id}`, `POST .../pay`, `.../copy`, `GET /api/payments/summary` | Faturamento |
+| `GET/PUT /api/projects/{id}/repo`, `POST .../repo/check`, `POST .../import-issues` | Integração com o repositório |
+| `POST /api/webhooks/github/{id}`, `/api/webhooks/gitlab/{id}` | Webhooks (sem token; assinatura/segredo) |
 | `GET /api/dashboard`, `/activity`, `/deadlines`, `/heatmap`, `/week`, `/billing` | Dashboard |
 | `GET /api/users` | Usuários ativos (responsáveis e menções) |
 
@@ -186,6 +189,10 @@ hubflow payment create --project Loja --month 2026-10 --rate 150     # ou --spri
 hubflow payment list [--client ACME] [--status pending|paid] [--year 2026]
 hubflow payment pay 1 / hubflow payment copy 1
 hubflow payment summary [--client ACME] [--year 2026]
+
+hubflow project repo Loja --token ghp_xxx --create-issues --webhook-secret abc   # integração com o repositório
+hubflow project repo-check Loja
+hubflow project import-issues Loja [--include-closed]
 ```
 
 Variáveis de ambiente: `HUBFLOW_URL` (padrão `http://localhost:8000`) e `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração).

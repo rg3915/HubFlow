@@ -6,7 +6,13 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-14
+
+Sincronização com GitHub e GitLab: token por projeto, issues criadas e atualizadas a partir dos cards, importação de issues, milestones pareados com sprints e webhooks que concluem cards.
+
 ### Adicionado
+
+#### Sincronização GitHub/GitLab
 
 * Token e identificação do repositório por projeto (token nunca exposto), opção de criar issues e teste de conexão com GitHub/GitLab. #94
 * Criar card abre a issue no GitHub/GitLab (quando o projeto pedir); número e URL da issue no card. #95
@@ -16,6 +22,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Webhooks do GitHub (assinatura HMAC) e do GitLab (token): commit ou PR/MR mesclado com close/fixes/resolves #N conclui o card. #99
 * CLI: project repo, repo-check e import-issues; card create mostra a issue aberta. #100
 * Tela de integração do projeto: token, opção de criar issues, segredo e URL do webhook, teste de conexão e importação; link da issue no card. #101
+* CHANGELOG 0.8.0. #102
 
 ## [0.7.0] - 2026-10-14
 
@@ -185,7 +192,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/rg3915/HubFlow/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/rg3915/HubFlow/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/rg3915/HubFlow/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rg3915/HubFlow/compare/v0.4.0...v0.5.0
