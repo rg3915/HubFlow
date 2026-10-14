@@ -70,7 +70,7 @@ O `.env.example` já aponta para os serviços do compose. As variáveis que impo
 
 ### Agendador
 
-O serviço `scheduler` do compose roda `python manage.py check_sla` a cada 15 minutos: dispara as automações de SLA estourado e avisa no sino os prazos vencidos. Fora do Docker, agende o mesmo comando (cron, por exemplo).
+O serviço `scheduler` do compose roda, a cada 15 minutos, `python manage.py check_sla` (automações de SLA estourado e aviso de prazos vencidos) e `python manage.py send_reports` (relatórios agendados dos períodos encerrados). Fora do Docker, agende o mesmo comando (cron, por exemplo).
 
 ### Anexos no S3 ou no Cloudinary (opcional)
 

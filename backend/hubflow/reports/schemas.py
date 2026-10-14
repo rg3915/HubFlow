@@ -2,7 +2,9 @@ import datetime as dt
 from datetime import date
 from decimal import Decimal
 
-from ninja import Schema
+from ninja import ModelSchema, Schema
+
+from .models import ReportSchedule
 
 
 class PeriodOut(Schema):
@@ -67,3 +69,26 @@ class ReportSendIn(Schema):
 
 class SentOut(Schema):
     sent_to: list[str]
+
+
+class ScheduleIn(Schema):
+    client: int | None = None
+    project: int | None = None
+    frequency: str
+    emails: list[str] = []
+    is_active: bool = True
+
+
+class ScheduleOut(ModelSchema):
+    client_id: int | None
+    project_id: int | None
+    scope: str
+    emails: list[str]
+
+    class Meta:
+        model = ReportSchedule
+        fields = ['id', 'uuid', 'frequency', 'emails', 'is_active', 'last_period_end']
+
+    @staticmethod
+    def resolve_scope(schedule):
+        return schedule.scope_name

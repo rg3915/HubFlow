@@ -15,6 +15,7 @@ from hubflow.permissions.api import router as permissions_router
 from hubflow.projects.api import router as projects_router
 from hubflow.realtime.api import router as realtime_router
 from hubflow.reports.api import router as reports_router
+from hubflow.reports.api import schedules_router
 from hubflow.search.api import router as search_router
 from hubflow.sprints.api import router as sprints_router
 from hubflow.timetracking.api import router as time_router
@@ -37,6 +38,7 @@ api.add_router('', realtime_router)
 api.add_router('', permissions_router)
 api.add_router('/search', search_router)
 api.add_router('/reports', reports_router)
+api.add_router('/report-schedules', schedules_router)
 api.add_router('/backups', backups_router)
 
 
