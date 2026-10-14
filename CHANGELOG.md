@@ -6,13 +6,20 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-14
+
+Dashboard: visão geral de todos os projetos, cronômetros, prazos, atividade recente, heatmap de horas e faturamento do mês.
+
 ### Adicionado
+
+#### Dashboard
 
 * API do dashboard: cards por coluna, em desenvolvimento agora, cronômetros abertos e totais. #88
 * API do dashboard: atividade recente e prazos (vencidos e próximos 7 dias). #89
 * API do dashboard: heatmap de 26 semanas (níveis 0–4) e horas da semana por projeto. #90
 * API do dashboard: faturamento do mês corrente e do anterior. #91
 * Tela do dashboard como página inicial: totais, cards por etapa, faturamento, em desenvolvimento, cronômetros, prazos, atividade, heatmap e horas da semana. #92
+* CHANGELOG 0.7.0. #93
 
 ## [0.6.0] - 2026-10-14
 
@@ -167,7 +174,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/rg3915/HubFlow/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/rg3915/HubFlow/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rg3915/HubFlow/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rg3915/HubFlow/compare/v0.3.0...v0.4.0

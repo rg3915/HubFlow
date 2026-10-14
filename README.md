@@ -12,6 +12,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
 - **Sprints** numeradas por projeto (todo card pertence a uma; sem sprint informada usa a última aberta ou cria a primeira) e milestone opcional.
 - **Controle de tempo**: cronômetro por card (um aberto por card; vários em cards diferentes), regra dos 15 minutos, lançamento manual de horas (só o dono apaga), estimativa com progresso gasto × estimado e exportação xlsx por período.
+- **Dashboard** na página inicial: totais, cards por etapa, em desenvolvimento agora, cronômetros abertos, prazos, atividade recente, heatmap de horas (26 semanas), horas da semana por projeto e faturamento do mês.
 - **Faturamento**: pagamentos por sprint ou por mês (valor/hora × horas registradas ou valor fechado), NF, emissão, pagamento, pendente/pago, resumo por cliente e por mês com gráficos.
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
@@ -133,6 +134,7 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `POST /api/cards/{id}/time-entries`, `PUT/DELETE /api/time-entries/{id}` | Horas manuais (só o dono edita/apaga) |
 | `GET /api/projects/{id}/timesheet.xlsx?from=&to=` | Exportação xlsx do timesheet |
 | `GET/POST /api/payments`, `GET/PUT/DELETE /api/payments/{id}`, `POST .../pay`, `.../copy`, `GET /api/payments/summary` | Faturamento |
+| `GET /api/dashboard`, `/activity`, `/deadlines`, `/heatmap`, `/week`, `/billing` | Dashboard |
 | `GET /api/users` | Usuários ativos (responsáveis e menções) |
 
 A documentação interativa fica em http://localhost:8000/api/docs.
