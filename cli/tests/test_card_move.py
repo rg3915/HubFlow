@@ -57,6 +57,7 @@ def test_card_move_numero_inexistente_falha(run):
 @respx.mock
 def test_card_start_move_para_em_desenvolvimento(run):
     route = respx.post('http://api.test/api/cards/9/start').mock(return_value=moved_to('doing'))
+    respx.post('http://api.test/api/cards/9/timer/start').mock(return_value=Response(201, json={'hours': 0}))
 
     result = run('card', 'start', '3', '--project', 'Loja')
 
