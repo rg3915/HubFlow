@@ -18,14 +18,18 @@ class Column(str, Enum):
     archived = 'archived'
 
 
+def board_cards(project):
+    """Todos os cards do quadro do projeto, inclusive os Arquivados."""
+    board = request('GET', f'/projects/{project["id"]}/board', params={'archived': True}).json()
+    return [card for col in board['columns'] for card in col['cards']]
+
+
 def find_card(project_name, number):
     """Localiza o card pelo número dentro do projeto, olhando o quadro inteiro (inclusive Arquivadas)."""
     project = find_project(project_name)
-    board = request('GET', f'/projects/{project["id"]}/board', params={'archived': True}).json()
-    for col in board['columns']:
-        for card in col['cards']:
-            if card['number'] == number:
-                return card
+    for card in board_cards(project):
+        if card['number'] == number:
+            return card
     hint = f'hubflow card list --project {project["name"]}'
     fail(f'Card #{number} não existe em {project["name"]}. Veja os cards com: {hint}')
 
