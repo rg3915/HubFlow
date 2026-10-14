@@ -9,7 +9,8 @@ def fail(message):
     raise typer.Exit(code=1)
 
 
-def request(method, path, *, auth=True, **kwargs):
+def request(method, path, *, auth=True, allow=(), **kwargs):
+    """Chama a API. Erros 4xx encerram com a mensagem, exceto os códigos em `allow` (devolvidos ao chamador)."""
     url = config.api_url()
     headers = {}
     if auth:
@@ -23,7 +24,7 @@ def request(method, path, *, auth=True, **kwargs):
         fail(f'Não foi possível conectar à API em {url}.')
     if response.status_code >= 500:
         fail(f'Erro interno da API ({response.status_code}).')
-    if response.status_code >= 400:
+    if response.status_code >= 400 and response.status_code not in allow:
         try:
             detail = response.json().get('detail', response.text)
         except ValueError:
@@ -50,3 +51,9 @@ def parse_iso_date(value):
         return datetime.date.fromisoformat(value).isoformat()
     except ValueError:
         raise typer.BadParameter(f'Use o formato AAAA-MM-DD, por exemplo {datetime.date.today().isoformat()}.')
+
+
+def format_hours(hours):
+    """Horas decimais → "0h 45min", "1h 30min", "2h"."""
+    whole, minutes = divmod(round(hours * 60), 60)
+    return f'{whole}h {minutes}min' if minutes else f'{whole}h'

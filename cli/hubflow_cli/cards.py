@@ -3,7 +3,7 @@ from enum import Enum
 
 import typer
 
-from .client import fail, parse_iso_date, request
+from .client import fail, format_hours, parse_iso_date, request
 from .projects import find_project
 
 app = typer.Typer(help='Cards do quadro.', no_args_is_help=True)
@@ -18,14 +18,18 @@ class Column(str, Enum):
     archived = 'archived'
 
 
+def board_cards(project):
+    """Todos os cards do quadro do projeto, inclusive os Arquivados."""
+    board = request('GET', f'/projects/{project["id"]}/board', params={'archived': True}).json()
+    return [card for col in board['columns'] for card in col['cards']]
+
+
 def find_card(project_name, number):
     """Localiza o card pelo número dentro do projeto, olhando o quadro inteiro (inclusive Arquivadas)."""
     project = find_project(project_name)
-    board = request('GET', f'/projects/{project["id"]}/board', params={'archived': True}).json()
-    for col in board['columns']:
-        for card in col['cards']:
-            if card['number'] == number:
-                return card
+    for card in board_cards(project):
+        if card['number'] == number:
+            return card
     hint = f'hubflow card list --project {project["name"]}'
     fail(f'Card #{number} não existe em {project["name"]}. Veja os cards com: {hint}')
 
@@ -126,10 +130,82 @@ def start(
     number: int = typer.Argument(..., help='Número do card no projeto.'),
     project: str = typer.Option(..., help='Nome do projeto.'),
 ):
-    """Inicia o card: move para Em desenvolvimento."""
+    """Inicia o card: move para Em desenvolvimento e abre o cronômetro."""
     card = find_card(project, number)
     started = request('POST', f'/cards/{card["id"]}/start').json()
-    typer.echo(f'Card #{started["number"]} {started["title"]} em {column_label(started["column"])}.')
+    if request('POST', f'/cards/{card["id"]}/timer/start', allow=(400,)).status_code == 400:
+        typer.echo('Aviso: o cronômetro já estava aberto.')
+    where = column_label(started['column'])
+    typer.echo(f'Card #{started["number"]} {started["title"]} em {where}, cronômetro rodando.')
+
+
+@app.command()
+def stop(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+):
+    """Para o cronômetro do card e mostra a duração da sessão e o total."""
+    card = find_card(project, number)
+    response = request('POST', f'/cards/{card["id"]}/timer/stop', allow=(400,))
+    if response.status_code == 400:
+        fail(f'Não há cronômetro aberto no card #{card["number"]}. Abra um com: hubflow card start {number}')
+    total = request('GET', f'/cards/{card["id"]}/time').json()['total_hours']
+    session = format_hours(response.json()['hours'])
+    typer.echo(f'Cronômetro parado no card #{card["number"]}: sessão de {session}, total {format_hours(total)}.')
+
+
+@app.command()
+def log(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+    hours: float = typer.Option(..., help='Horas trabalhadas, por exemplo 1.5.'),
+    date: str = typer.Option('', help='Dia do trabalho no formato AAAA-MM-DD (padrão: hoje).'),
+    note: str = typer.Option('', help='Observação.'),
+):
+    """Lança horas manualmente no card."""
+    if hours <= 0:
+        raise typer.BadParameter('As horas precisam ser maiores que zero.')
+    day = parse_iso_date(date) or datetime.date.today().isoformat()
+    card = find_card(project, number)
+    body = {'hours': hours, 'date': day, 'note': note}
+    entry = request('POST', f'/cards/{card["id"]}/time-entries', json=body).json()
+    shown = datetime.date.fromisoformat(day).strftime('%d/%m/%Y')
+    typer.echo(f'{format_hours(entry["hours"])} lançadas no card #{card["number"]} em {shown}.')
+
+
+def local_time(value):
+    return datetime.datetime.fromisoformat(value).astimezone()
+
+
+def describe_entry(entry):
+    """Linha de uma entrada: data, início–fim, duração, "manual", nota e usuário; "(rodando)" quando aberta."""
+    start = local_time(entry['started_at'])
+    end = local_time(entry['ended_at']).strftime('%H:%M') if entry['ended_at'] else '...'
+    parts = [start.strftime('%d/%m/%Y'), f'{start.strftime("%H:%M")}–{end}', format_hours(entry['hours'])]
+    if entry['is_running']:
+        parts.append('(rodando)')
+    if entry['is_manual']:
+        parts.append('manual')
+    if entry['note']:
+        parts.append(entry['note'])
+    parts.append(entry['user']['email'])
+    return '  '.join(parts)
+
+
+@app.command()
+def time(
+    number: int = typer.Argument(..., help='Número do card no projeto.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+):
+    """Lista o tempo registrado no card."""
+    card = find_card(project, number)
+    data = request('GET', f'/cards/{card["id"]}/time').json()
+    if not data['entries']:
+        typer.echo(f'Nenhum tempo registrado no card #{card["number"]}.')
+        return
+    for entry in data['entries']:
+        typer.echo(describe_entry(entry))
+    typer.echo(f'Total: {format_hours(data["total_hours"])}')
 
 
 def update_card(card_id, **changes):
