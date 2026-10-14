@@ -52,7 +52,7 @@ function period(sprint) {
 
 <template>
   <div class="max-w-3xl">
-    <table class="panel w-full border-separate border-spacing-0 overflow-hidden">
+    <table v-stack class="stack-table panel w-full border-separate border-spacing-0 overflow-hidden">
       <thead>
         <tr class="text-left text-muted">
           <th class="border-b border-border px-4 py-2 font-medium">Sprint</th>

@@ -203,7 +203,7 @@ function date(value) {
       </form>
     </section>
 
-    <table class="panel w-full border-separate border-spacing-0 overflow-hidden text-sm">
+    <table v-stack class="stack-table panel w-full border-separate border-spacing-0 overflow-hidden text-sm">
       <thead>
         <tr class="text-left text-muted">
           <th class="border-b border-border px-3 py-2 font-medium">#</th>

@@ -21,7 +21,7 @@ onMounted(() => store.load())
       <p class="mt-2 text-muted">O cliente é o dono dos projetos. Cadastre o primeiro para começar.</p>
     </section>
 
-    <table v-else-if="store.clients.length" class="panel w-full border-separate border-spacing-0 overflow-hidden">
+    <table v-else-if="store.clients.length" v-stack class="stack-table panel w-full border-separate border-spacing-0 overflow-hidden">
       <thead>
         <tr class="text-left text-muted">
           <th class="border-b border-border px-4 py-2 font-medium">Cliente</th>

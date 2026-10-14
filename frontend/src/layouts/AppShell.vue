@@ -91,7 +91,7 @@ function toggleSidebar() {
     <div v-if="sidebarOpen" class="fixed inset-0 z-10 bg-black/40 md:hidden" @click="sidebarOpen = false" />
 
     <div class="flex min-w-0 flex-1 flex-col">
-      <header class="flex h-12 items-center gap-3 border-b border-border bg-surface px-4">
+      <header class="flex h-12 items-center gap-2 border-b border-border bg-surface px-2 md:gap-3 md:px-4">
         <button
           type="button"
           class="btn btn-ghost h-8 w-8 justify-center px-0"
@@ -102,7 +102,7 @@ function toggleSidebar() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
         </button>
         <Breadcrumb />
-        <div class="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2">
+        <div class="ml-auto flex shrink-0 items-center justify-end gap-1 md:min-w-0 md:flex-1 md:gap-2">
           <GlobalSearch class="hidden md:block" />
           <HeaderInbox />
           <ThemeToggle />

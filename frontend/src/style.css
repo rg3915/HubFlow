@@ -91,3 +91,24 @@
     @apply rounded-[var(--radius-panel)] border border-border bg-surface;
   }
 }
+
+/* Tabelas com v-stack: abaixo de 768px cada linha vira um cartão com "rótulo: valor". */
+@media (max-width: 767px) {
+  .stack-table thead { display: none; }
+  .stack-table,
+  .stack-table tbody,
+  .stack-table tr { display: block; width: 100%; }
+  .stack-table tr { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+  .stack-table tr:last-child { border-bottom: 0; }
+  .stack-table td {
+    display: flex !important;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 0 !important;
+    padding: 0.25rem 1rem !important;
+    text-align: right !important;
+  }
+  .stack-table td::before { content: attr(data-label); color: var(--muted); text-align: left; }
+  .stack-table td[data-label='']::before { content: none; }
+  .stack-table td[data-label=''] { justify-content: flex-end; }
+}

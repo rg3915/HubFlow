@@ -45,10 +45,11 @@ const crumbs = computed(() => {
 <template>
   <nav aria-label="Caminho" class="min-w-0">
     <ol class="flex items-center gap-1 truncate">
-      <li v-for="(crumb, index) in crumbs" :key="index" class="flex items-center gap-1 truncate">
-        <span v-if="index" class="text-muted" aria-hidden="true">›</span>
+      <!-- No celular só a página atual (os níveis de cima somem). -->
+      <li v-for="(crumb, index) in crumbs" :key="index" class="items-center gap-1 truncate" :class="index < crumbs.length - 1 ? 'hidden md:flex' : 'flex'">
+        <span v-if="index" class="hidden text-muted md:inline" aria-hidden="true">›</span>
         <RouterLink v-if="crumb.to && index < crumbs.length - 1" :to="crumb.to" class="truncate text-muted hover:text-text">{{ crumb.label }}</RouterLink>
-        <h1 v-else class="truncate text-xl font-semibold" aria-current="page">{{ crumb.label }}</h1>
+        <h1 v-else class="truncate text-lg font-semibold md:text-xl" aria-current="page">{{ crumb.label }}</h1>
       </li>
     </ol>
   </nav>

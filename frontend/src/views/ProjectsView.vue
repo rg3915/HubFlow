@@ -41,7 +41,7 @@ function filter(event) {
       <p class="mt-2 text-muted">Um projeto corresponde a um repositório no GitHub ou no GitLab.</p>
     </section>
 
-    <table v-else-if="projects.length" class="panel w-full border-separate border-spacing-0 overflow-hidden">
+    <table v-else-if="projects.length" v-stack class="stack-table panel w-full border-separate border-spacing-0 overflow-hidden">
       <thead>
         <tr class="text-left text-muted">
           <th class="border-b border-border px-4 py-2 font-medium">Projeto</th>

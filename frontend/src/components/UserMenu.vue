@@ -30,7 +30,8 @@ async function logout() {
       :aria-expanded="open"
       @click="open = !open"
     >
-      <span class="truncate">{{ auth.user?.name || auth.user?.email || '…' }}</span>
+      <span class="hidden truncate sm:inline">{{ auth.user?.name || auth.user?.email || '…' }}</span>
+      <span class="flex h-7 w-7 items-center justify-center rounded-full bg-surface-2 text-[12px] font-medium uppercase sm:hidden" :aria-label="auth.user?.email">{{ (auth.user?.first_name || '?').slice(0, 2) }}</span>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-muted"><path d="m6 9 6 6 6-6" /></svg>
     </button>
 
