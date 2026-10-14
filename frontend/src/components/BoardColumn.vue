@@ -52,6 +52,7 @@ onBeforeUnmount(() => sortable?.destroy())
     <header class="flex items-center gap-2 px-3 pb-2 pt-3">
       <span class="h-2 w-2 rounded-full" :class="dots[column.key]" aria-hidden="true"></span>
       <h2 class="font-medium">{{ column.label }}</h2>
+      <span v-if="board.sla[column.key]" class="text-[13px] text-muted" :title="`Tempo máximo nesta coluna: ${board.sla[column.key]}h`">SLA {{ board.sla[column.key] }}h</span>
       <span class="ml-auto text-muted tabular-nums">{{ column.cards.length }}</span>
     </header>
     <div ref="list" :data-column="column.key" class="flex min-h-16 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">

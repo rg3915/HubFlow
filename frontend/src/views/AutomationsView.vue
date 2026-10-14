@@ -16,6 +16,8 @@ const projectId = computed(() => Number(route.params.id))
 const project = computed(() => clients.projects.find((p) => p.id === projectId.value))
 
 const rules = ref([])
+const sla = ref({})
+const slaSaved = ref(false)
 const users = ref([])
 const labels = ref([])
 const error = ref('')
@@ -36,10 +38,11 @@ const body = (rule) => ({
 
 async function load() {
   if (!clients.loaded) await clients.load()
-  ;[rules.value, users.value, labels.value] = await Promise.all([
+  ;[rules.value, users.value, labels.value, sla.value] = await Promise.all([
     call(`/projects/${projectId.value}/automations`),
     call('/users'),
     call(`/projects/${projectId.value}/labels`),
+    call(`/projects/${projectId.value}/sla`),
   ])
 }
 onMounted(load)
@@ -62,6 +65,13 @@ const create = () =>
 const toggle = (rule) =>
   attempt(async () => {
     Object.assign(rule, await call(`/automations/${rule.id}`, { method: 'PUT', body: { ...body(rule), is_active: !rule.is_active } }))
+  })
+
+const saveSla = () =>
+  attempt(async () => {
+    const body = Object.fromEntries(Object.entries(sla.value).map(([column, hours]) => [column, hours === '' || hours === null ? null : Number(hours)]))
+    sla.value = await call(`/projects/${projectId.value}/sla`, { method: 'PUT', body })
+    slaSaved.value = true
   })
 
 async function remove(rule) {
@@ -123,5 +133,17 @@ async function remove(rule) {
       <button type="submit" class="btn btn-primary h-9">Criar automação</button>
     </form>
     <p v-if="error" class="mt-2 text-danger" role="alert">{{ error }}</p>
+
+    <form class="panel mt-6 p-4" @submit.prevent="saveSla">
+      <h2 class="font-medium">SLA por coluna</h2>
+      <p class="mb-3 text-[13px] text-muted">Tempo máximo, em horas, que um card pode ficar em cada coluna. Vazio = sem SLA. Ao estourar, o card fica marcado no quadro e as automações de "SLA estourar" rodam (verificação a cada 15 minutos).</p>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div v-for="(text, key) in COLUMNS" :key="key">
+          <label class="label" :for="`sla-${key}`">{{ text }}</label>
+          <input :id="`sla-${key}`" v-model="sla[key]" class="field h-9" type="number" min="1" step="1" placeholder="—" @input="slaSaved = false" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3 h-9">{{ slaSaved ? 'Salvo' : 'Salvar SLA' }}</button>
+    </form>
   </div>
 </template>

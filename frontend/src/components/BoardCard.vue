@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { mediaUrl } from '../api'
 import { useAuthStore } from '../stores/auth'
-import { fieldText, useBoardStore } from '../stores/board'
+import { fieldText, slaText, useBoardStore } from '../stores/board'
 
 const props = defineProps({ card: { type: Object, required: true } })
 const auth = useAuthStore()
@@ -61,6 +61,11 @@ const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
     </div>
     <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted tabular-nums">
       <span>#{{ card.number }}</span>
+      <span
+        v-if="card.sla"
+        :class="card.sla.breached ? 'rounded px-1 font-medium text-danger' : ''"
+        :title="`SLA da coluna: ${card.sla.hours}h; vence ${new Date(card.sla.due_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}`"
+      >{{ slaText(card.sla) }}</span>
       <a v-if="card.issue_number" :href="card.issue_url" target="_blank" rel="noopener" class="hover:underline" :title="`Issue #${card.issue_number} no repositório`" @click.stop>⎇ {{ card.issue_number }}</a>
       <span v-if="due" :class="card.is_overdue ? 'rounded px-1 font-medium text-danger' : ''" :title="card.is_overdue ? 'Atrasado' : 'Prazo'">
         {{ card.is_overdue ? '! ' : '' }}{{ due }}

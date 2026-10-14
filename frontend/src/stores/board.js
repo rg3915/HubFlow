@@ -1,6 +1,14 @@
 import { defineStore } from 'pinia'
 import { BASE_URL, api } from '../api'
 
+// Tempo restante do SLA do card: "SLA 5h", "SLA 2d" ou estourado.
+export function slaText(sla, now = Date.now()) {
+  if (!sla) return null
+  if (sla.breached) return 'SLA estourado'
+  const hours = Math.max(0, (new Date(sla.due_at) - now) / 3_600_000)
+  return hours >= 48 ? `SLA ${Math.floor(hours / 24)}d` : `SLA ${Math.ceil(hours)}h`
+}
+
 // Valor de campo personalizado para exibir (card, histórico).
 export function fieldText(value) {
   if (value === null || value === undefined || value === '') return '—'
@@ -19,6 +27,7 @@ export const useBoardStore = defineStore('board', {
     selected: null,
     labels: [],
     fields: [], // campos personalizados do projeto, na ordem
+    sla: {}, // horas máximas por coluna (null = sem SLA)
     users: [],
     comments: [],
     checklist: [],
@@ -41,11 +50,12 @@ export const useBoardStore = defineStore('board', {
         this.projectId = projectId
         this.project = board.project
         this.columns = board.columns
-        ;[this.labels, this.users, this.sprints, this.fields] = await Promise.all([
+        ;[this.labels, this.users, this.sprints, this.fields, this.sla] = await Promise.all([
           api(`/projects/${projectId}/labels`, { token }),
           api('/users', { token }),
           api(`/projects/${projectId}/sprints`, { token }),
           api(`/projects/${projectId}/fields`, { token }),
+          api(`/projects/${projectId}/sla`, { token }),
         ])
       } finally {
         this.loading = false
