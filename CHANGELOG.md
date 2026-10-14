@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Model de automação por projeto (app automations): gatilho (card criado, entrou na coluna, SLA estourado) → ação (mover, definir responsável, adicionar etiqueta, avisar), com validação e descrição em linguagem simples. #148
+
 ### Alterado
 
 * Refactor: schemas de saída da API com ModelSchema (campos vindos do model; *_id, propriedades e calculados continuam declarados) e um só schema resumido de sprint; respostas iguais. #147

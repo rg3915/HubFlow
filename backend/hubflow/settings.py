@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'hubflow.sprints',
     'hubflow.timetracking',
     'hubflow.billing',
+    'hubflow.automations',
     'hubflow.dashboard',
     'hubflow.integrations',
     'hubflow.realtime',
