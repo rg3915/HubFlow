@@ -1,4 +1,5 @@
 import pytest
+import respx
 from typer.testing import CliRunner
 
 from hubflow_cli.main import app
@@ -16,3 +17,10 @@ def config_dir(tmp_path, monkeypatch):
 def run():
     runner = CliRunner()
     return lambda *args, **kwargs: runner.invoke(app, list(args), **kwargs)
+
+
+@pytest.fixture(autouse=True)
+def clear_mocked_routes():
+    """As rotas do respx ficam no roteador global; sem isto, vazam de um módulo de teste para outro."""
+    yield
+    respx.clear()

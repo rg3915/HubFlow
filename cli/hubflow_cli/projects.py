@@ -2,7 +2,7 @@ from enum import Enum
 
 import typer
 
-from .client import fail, request
+from .client import find_by_name, request
 from .clients import parse_emails
 
 app = typer.Typer(help='Projetos (um por repositório).', no_args_is_help=True)
@@ -14,10 +14,11 @@ class Provider(str, Enum):
 
 
 def find_client(name):
-    for client in request('GET', '/clients').json():
-        if client['name'].lower() == name.lower():
-            return client
-    fail(f'Cliente "{name}" não encontrado. Veja os nomes com: hubflow client list')
+    return find_by_name('/clients', name, 'Cliente', 'hubflow client list')
+
+
+def find_project(name):
+    return find_by_name('/projects', name, 'Projeto', 'hubflow project list')
 
 
 def split_repo(value):

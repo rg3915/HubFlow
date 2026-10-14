@@ -30,3 +30,11 @@ def request(method, path, *, auth=True, **kwargs):
             detail = response.text
         fail(f'Erro {response.status_code}: {detail}')
     return response
+
+
+def find_by_name(path, name, label, hint):
+    """Devolve o registro de `path` cujo nome bate (sem diferenciar maiúsculas) ou encerra com dica."""
+    for item in request('GET', path).json():
+        if item['name'].lower() == name.lower():
+            return item
+    fail(f'{label} "{name}" não encontrado. Veja os nomes com: {hint}')
