@@ -78,3 +78,20 @@ class Automation(UuidModel, TimeStampedModel, CreatedByModel, ActiveModel):
             'notify': lambda: self.ACTIONS['notify'],
         }[self.action]()
         return f'{when} → {then}'
+
+
+class ColumnSla(UuidModel, TimeStampedModel):
+    """Tempo máximo, em horas, que um card pode ficar numa coluna do projeto (RN-111)."""
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='column_slas')
+    column = models.CharField('coluna', max_length=10, choices=Column.choices)
+    hours = models.PositiveIntegerField('horas')
+
+    class Meta:
+        ordering = ('project', 'column')
+        constraints = [models.UniqueConstraint(fields=['project', 'column'], name='unique_sla_per_column')]
+        verbose_name = 'SLA da coluna'
+        verbose_name_plural = 'SLAs das colunas'
+
+    def __str__(self):
+        return f'{self.project} / {self.get_column_display()}: {self.hours}h'

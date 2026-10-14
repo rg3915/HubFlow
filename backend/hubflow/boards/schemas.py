@@ -1,7 +1,8 @@
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any, Literal
 
+from django.utils import timezone
 from ninja import Field, ModelSchema, Schema
 from pydantic import field_validator
 
@@ -121,6 +122,23 @@ class ProgressOut(Schema):
     source: str | None
 
 
+class SlaOut(Schema):
+    hours: int
+    due_at: datetime
+    breached: bool
+
+
+def card_sla_hours(card):
+    """Fora do quadro (card sem a anotação), uma consulta só para o card."""
+    from hubflow.automations.models import ColumnSla
+
+    return (
+        ColumnSla.objects.filter(project_id=card.project_id, column=card.column)
+        .values_list('hours', flat=True)
+        .first()
+    )
+
+
 class CardOut(ModelSchema):
     project_id: int
     labels: list[LabelOut]
@@ -133,13 +151,22 @@ class CardOut(ModelSchema):
     custom_values: dict[str, Any]
     time: TimeSummary
     progress: ProgressOut
+    sla: SlaOut | None
 
     class Meta:
         model = Card
         fields = [
             'id', 'uuid', 'number', 'title', 'description', 'column', 'position', 'due_date', 'estimate_hours',
-            'issue_number', 'issue_url',
+            'issue_number', 'issue_url', 'column_entered_at',
         ]  # fmt: skip
+
+    @staticmethod
+    def resolve_sla(card):
+        hours = getattr(card, 'sla_hours', None) if hasattr(card, 'sla_hours') else card_sla_hours(card)
+        if not hours:
+            return None
+        due_at = card.column_entered_at + timedelta(hours=hours)
+        return {'hours': hours, 'due_at': due_at, 'breached': timezone.now() > due_at}
 
     @staticmethod
     def spent_hours(card):

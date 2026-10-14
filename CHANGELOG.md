@@ -11,10 +11,15 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Model de automação por projeto (app automations): gatilho (card criado, entrou na coluna, SLA estourado) → ação (mover, definir responsável, adicionar etiqueta, avisar), com validação e descrição em linguagem simples. #148
 * Motor das automações: roda as regras ligadas ao criar e ao mover card (API, CLI, webhooks), sem laço (ação de automação não dispara outra), registra no histórico e avisa no sino. #149
 * API de automações: listar, criar, editar (inclusive ligar/desligar) e excluir, com a descrição da regra (projects.change_project para alterar). #150
+* SLA por coluna: horas máximas por coluna do projeto (GET/PUT /api/projects/{id}/sla); o card guarda quando entrou na coluna e informa o SLA (prazo e se estourou) no quadro e na API. #151
 
 ### Alterado
 
 * Refactor: schemas de saída da API com ModelSchema (campos vindos do model; *_id, propriedades e calculados continuam declarados) e um só schema resumido de sprint; respostas iguais. #147
+
+### Corrigido
+
+* Quadro sem N+1: horas gastas, cronômetro aberto, contagem de anexos e sprint vêm na mesma consulta dos cards. #151
 
 ## [0.12.0] - 2026-10-14
 

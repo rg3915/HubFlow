@@ -2,12 +2,15 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, DurationField, Exists, F, OuterRef, Q, Subquery, Sum
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from hubflow.automations import engine as automations
+from hubflow.automations.models import ColumnSla
 from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
+from hubflow.timetracking.models import TimeEntry
 
 from .activity import record
 from .models import Card, CardMove, Column
@@ -89,9 +92,22 @@ def renumber(items):
 def card_queryset():
     """Cards com tudo o que a API devolve, sem consultas extras por card."""
     return (
-        Card.objects.select_related('assignee', 'created_by')
+        Card.objects.select_related('assignee', 'created_by', 'sprint')
         .prefetch_related('labels')
         .annotate(
+            sla_hours=Subquery(  # SLA da coluna atual do card, sem consulta extra por card
+                ColumnSla.objects.filter(project=OuterRef('project_id'), column=OuterRef('column')).values('hours')[:1]
+            ),
+            # Horas gastas e cronômetro aberto por subquery (sem consulta por card nem soma multiplicada pelo JOIN).
+            time_spent=Subquery(
+                TimeEntry.objects.filter(card=OuterRef('pk'), ended_at__isnull=False)
+                .values('card')
+                .annotate(total=Sum(F('ended_at') - F('started_at')))
+                .values('total')[:1],
+                output_field=DurationField(),
+            ),
+            time_running=Exists(TimeEntry.objects.filter(card=OuterRef('pk'), ended_at__isnull=True)),
+            attachments_count=Count('attachments', distinct=True),
             checklist_total=Count('checklist_items', distinct=True),
             checklist_done=Count('checklist_items', filter=Q(checklist_items__done=True), distinct=True),
         )
@@ -113,11 +129,13 @@ def move_card(card, column, position=None, user=None, sync=True):
     from_column = card.column
     if column != from_column:
         CardMove.objects.create(card=card, from_column=from_column, to_column=column, user=user)
+    if column != from_column:
+        card.column_entered_at = timezone.now()
     card.column = column
     renumber(target)
     if source is not target:
         renumber(source)
-    card.save(update_fields=['column', 'modified'])
+    card.save(update_fields=['column', 'column_entered_at', 'modified'])
     if sync:
         sync_issue_state(card, from_column, column)
     broadcast.card_moved(card, from_column, column, user)

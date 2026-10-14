@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Max
 from django.db.models.functions import Lower
+from django.utils import timezone
 
 from hubflow.core.models import CreatedByModel, TimeStampedModel, UuidModel
 from hubflow.projects.models import Project
@@ -48,6 +49,7 @@ class Card(UuidModel, TimeStampedModel, CreatedByModel):
     due_date = models.DateField('prazo', null=True, blank=True)
     estimate_hours = models.FloatField('estimativa (horas)', null=True, blank=True)
     custom_values = models.JSONField('campos personalizados', default=dict, blank=True)  # {id do campo: valor}
+    column_entered_at = models.DateTimeField('entrou na coluna em', default=timezone.now)  # base do SLA
     # Issue espelhada no repositório (GitHub: number; GitLab: iid).
     issue_number = models.PositiveIntegerField('número da issue', null=True, blank=True)
     issue_url = models.URLField('URL da issue', blank=True)
