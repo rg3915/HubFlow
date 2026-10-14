@@ -48,7 +48,7 @@ def valued_payments():
     return Payment.objects.annotate(value=Coalesce(F('fixed_value'), hours_value, output_field=MONEY))
 
 
-def _split(queryset):
+def split_totals(queryset):
     """Soma de `value` separada em recebido (pago) e pendente."""
     return {
         'received': Coalesce(
@@ -70,17 +70,17 @@ def payments_summary(client_id=None, year=None):
         payments = payments.filter(project__client_id=client_id)
     scoped = payments.filter(issue_date__year=year) if year else payments
 
-    totals = scoped.aggregate(**_split(scoped))
+    totals = scoped.aggregate(**split_totals(scoped))
     by_client = (
         scoped.values(client_id=F('project__client_id'), client_name=F('project__client__name'))
-        .annotate(**_split(scoped))
+        .annotate(**split_totals(scoped))
         .order_by('-received', 'client_name')
     )
     by_month = (
         scoped.filter(issue_date__isnull=False)
         .annotate(month=TruncMonth('issue_date'))
         .values('month')
-        .annotate(**_split(scoped))
+        .annotate(**split_totals(scoped))
         .order_by('month')
     )
     years = payments.filter(issue_date__isnull=False).dates('issue_date', 'year', order='DESC')

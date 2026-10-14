@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from decimal import Decimal
 
 from ninja import Schema
 
@@ -108,3 +109,15 @@ class WeekOut(Schema):
     end: date
     total_hours: float
     by_project: list[ProjectHoursOut]
+
+
+class MonthBillingOut(Schema):
+    month: str
+    received: Decimal
+    pending: Decimal
+
+
+class BillingOut(Schema):
+    current: MonthBillingOut
+    previous: MonthBillingOut
+    pending_total: Decimal

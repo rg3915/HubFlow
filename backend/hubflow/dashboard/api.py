@@ -5,6 +5,7 @@ from django.db.models.functions import Extract, TruncDate
 from django.utils import timezone
 from ninja import Router
 
+from hubflow.billing.summary import money, split_totals, valued_payments
 from hubflow.boards.models import Card, CardEvent, CardMove, Column, Comment
 from hubflow.boards.services import card_queryset
 from hubflow.clients.models import Client
@@ -12,7 +13,7 @@ from hubflow.projects.models import Project
 from hubflow.timetracking.models import TimeEntry
 from hubflow.timetracking.services import project_median_estimate
 
-from .schemas import ActivityItemOut, DeadlinesOut, HeatmapOut, OverviewOut, WeekOut
+from .schemas import ActivityItemOut, BillingOut, DeadlinesOut, HeatmapOut, OverviewOut, WeekOut
 
 router = Router(tags=['dashboard'])
 
@@ -166,3 +167,28 @@ def week(request):
     )
     rows.sort(key=lambda row: (-row['hours'], row['project_name']))
     return {'start': start, 'end': end, 'total_hours': round(sum(r['hours'] for r in rows), 2), 'by_project': rows}
+
+
+def month_totals(payments, first_day):
+    scoped = payments.filter(issue_date__year=first_day.year, issue_date__month=first_day.month)
+    totals = scoped.aggregate(**split_totals(scoped))
+    return {
+        'month': first_day.strftime('%Y-%m'),
+        'received': money(totals['received']),
+        'pending': money(totals['pending']),
+    }
+
+
+@router.get('/billing', response=BillingOut)
+def billing(request):
+    """Recebido e pendente do mês corrente e do anterior, e o pendente total."""
+    today = timezone.localdate()
+    current = today.replace(day=1)
+    previous = (current - timedelta(days=1)).replace(day=1)
+    payments = valued_payments()
+    pending = payments.filter(status='pending').aggregate(total=Sum('value'))['total']
+    return {
+        'current': month_totals(payments, current),
+        'previous': month_totals(payments, previous),
+        'pending_total': money(pending),
+    }
