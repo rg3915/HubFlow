@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db.models import Case, F, Value, When
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -23,7 +24,7 @@ from hubflow.timetracking.services import project_median_estimate
 
 from .activity import card_activity, record_card_changes, record_labels
 from .mentions import notify_mentions
-from .models import Attachment, Card, ChecklistItem, Column, Comment, Label, Notification
+from .models import Attachment, Card, ChecklistItem, Column, Comment, CustomField, Label, Notification
 from .schemas import (
     ActivityOut,
     AttachmentOut,
@@ -37,10 +38,13 @@ from .schemas import (
     ChecklistOrderIn,
     CommentIn,
     CommentOut,
+    CustomFieldIn,
+    CustomFieldOut,
     LabelIn,
     LabelOut,
     MoveIn,
     NotificationsOut,
+    OrderIn,
 )
 from .services import (
     card_queryset,
@@ -368,3 +372,64 @@ def my_cards(request):
         .select_related('project__client', 'sprint')
         .order_by(overdue, F('due_date').asc(nulls_last=True), 'project__name', 'number')
     )
+
+
+def project_fields(project_id):
+    return CustomField.objects.filter(project_id=project_id)
+
+
+def save_field(field, data):
+    """Aplica os dados, valida tipo/opções e nome único no projeto; devolve 400 quando algo não serve."""
+    field.name, field.kind, field.required = data.name.strip(), data.kind, data.required
+    field.options = [o.strip() for o in data.options if o.strip()]
+    if project_fields(field.project_id).filter(name__iexact=field.name).exclude(id=field.id).exists():
+        return Status(400, {'detail': 'Já existe um campo com este nome no projeto.'})
+    try:
+        field.full_clean(exclude=['project', 'uuid'])
+    except ValidationError as error:
+        return Status(400, {'detail': ' '.join(error.messages)})
+    field.save()
+    return None
+
+
+@router.get('/projects/{project_id}/fields', response=list[CustomFieldOut])
+def list_fields(request, project_id: int):
+    return visible_project_or_404(request.user, project_id).custom_fields.all()
+
+
+@router.post('/projects/{project_id}/fields', response={201: CustomFieldOut, 400: DetailOut})
+def add_field(request, project_id: int, data: CustomFieldIn):
+    project = visible_project_or_404(request.user, project_id)
+    require(request.user, 'projects.change_project')
+    field = CustomField(project=project)
+    return save_field(field, data) or Status(201, field)
+
+
+@router.put('/projects/{project_id}/fields/order', response=list[CustomFieldOut])
+def order_fields(request, project_id: int, data: OrderIn):
+    project = visible_project_or_404(request.user, project_id)
+    require(request.user, 'projects.change_project')
+    fields = {f.id: f for f in project.custom_fields.all()}
+    ordered = [fields[i] for i in data.ids if i in fields] + [f for i, f in fields.items() if i not in data.ids]
+    for position, field in enumerate(ordered):
+        field.position = position
+    CustomField.objects.bulk_update(ordered, ['position'])
+    return ordered
+
+
+def editable_field(request, field_id):
+    field = visible_in_project_or_404(request.user, CustomField.objects, id=field_id)
+    require(request.user, 'projects.change_project')
+    return field
+
+
+@router.put('/fields/{field_id}', response={200: CustomFieldOut, 400: DetailOut})
+def update_field(request, field_id: int, data: CustomFieldIn):
+    field = editable_field(request, field_id)
+    return save_field(field, data) or field
+
+
+@router.delete('/fields/{field_id}', response={204: None})
+def delete_field(request, field_id: int):
+    editable_field(request, field_id).delete()
+    return Status(204, None)

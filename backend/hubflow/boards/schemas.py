@@ -3,7 +3,7 @@ from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
-from ninja import Schema
+from ninja import Field, Schema
 from pydantic import field_validator
 
 from hubflow.accounts.schemas import UserOut
@@ -287,3 +287,25 @@ class NotificationOut(Schema):
 class NotificationsOut(Schema):
     unread: int
     items: list[NotificationOut]
+
+
+class CustomFieldIn(Schema):
+    name: str = Field(min_length=1, max_length=80)
+    kind: str
+    options: list[str] = []
+    required: bool = False
+
+
+class CustomFieldOut(Schema):
+    id: int
+    uuid: UUID
+    project_id: int
+    name: str
+    kind: str
+    options: list[str]
+    required: bool
+    position: int
+
+
+class OrderIn(Schema):
+    ids: list[int]
