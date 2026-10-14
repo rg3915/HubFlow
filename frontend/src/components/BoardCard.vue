@@ -8,7 +8,7 @@ const board = useBoardStore()
 const due = computed(() => {
   if (!props.card.due_date) return null
   const date = new Date(props.card.due_date + 'T00:00')
-  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 })
 
 const progress = computed(() => props.card.progress)
@@ -58,7 +58,7 @@ const initials = computed(() => {
     >
       <div class="h-full rounded-full" :class="progress.percent > 100 ? 'bg-danger' : 'bg-accent'" :style="{ width: barWidth }"></div>
     </div>
-    <div class="mt-1.5 flex items-center gap-2 text-[13px] text-muted tabular-nums">
+    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted tabular-nums">
       <span>#{{ card.number }}</span>
       <span v-if="due" :class="card.is_overdue ? 'rounded px-1 font-medium text-danger' : ''" :title="card.is_overdue ? 'Atrasado' : 'Prazo'">
         {{ card.is_overdue ? '! ' : '' }}{{ due }}
