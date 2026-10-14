@@ -14,3 +14,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Projeto Vue + Vite + Tailwind 4 no Docker Compose. #4
 * Model User com login por e-mail. #5
 * API: login por e-mail e senha retorna token. #6
+* API: autenticação Bearer e GET /api/auth/me. #7

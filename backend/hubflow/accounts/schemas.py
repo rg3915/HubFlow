@@ -8,3 +8,9 @@ class LoginIn(Schema):
 
 class TokenOut(Schema):
     token: str
+
+
+class UserOut(Schema):
+    id: int
+    email: str
+    name: str

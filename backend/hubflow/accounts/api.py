@@ -3,7 +3,7 @@ from ninja import Router
 from ninja.errors import HttpError
 
 from .models import Token
-from .schemas import LoginIn, TokenOut
+from .schemas import LoginIn, TokenOut, UserOut
 
 router = Router(tags=['auth'])
 
@@ -15,3 +15,8 @@ def login(request, data: LoginIn):
         raise HttpError(401, 'E-mail ou senha inválidos.')
     token = Token.objects.create(user=user)
     return {'token': token.key}
+
+
+@router.get('/me', response=UserOut)
+def me(request):
+    return request.user
