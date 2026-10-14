@@ -1,42 +1,60 @@
-"""Catálogo de permissões do HubFlow e papéis (grupos) padrão.
+"""Permissões do HubFlow: as padrão do Django (add/change/delete/view por model) + 2 específicas.
 
-Combináveis por grupo e por pessoa; "seus" = clientes de que a pessoa é membro (Membership).
+Regras que não cabem numa permissão ficam no código: sem `boards.change_card`/`delete_card` a pessoa só
+edita/exclui os próprios cards; sem `clients.view_client` só vê os clientes de que é membro (Membership).
 """
 
-PERMISSIONS = {
-    'view_all_clients': 'Ver todos os clientes e projetos (sem isso, só os clientes de que é membro)',
-    'manage_projects': 'Criar, editar e excluir clientes e projetos',
-    'create_cards': 'Criar cards',
-    'edit_any_card': 'Editar e mover qualquer card (sem isso, só os próprios)',
-    'delete_any_card': 'Excluir qualquer card (sem isso, só os próprios)',
-    'delete_any_comment': 'Excluir comentários de outras pessoas',
-    'manage_sprints': 'Criar, editar e fechar sprints e milestones',
-    'manage_labels': 'Criar, editar e excluir etiquetas',
-    'view_all_payments': 'Ver todos os pagamentos',
-    'view_own_payments': 'Ver os pagamentos dos seus clientes',
-    'manage_payments': 'Criar, editar, pagar, copiar e excluir pagamentos',
+# Específicas (registradas no model Access): não têm equivalente padrão.
+CUSTOM_PERMISSIONS = {
     'use_cli': 'Usar a CLI',
-    'manage_users': 'Gerenciar usuários, papéis e permissões',
+    'view_own_payments': 'Ver os pagamentos dos seus clientes',
 }
 
-ALL = list(PERMISSIONS)
+# Rótulos em português para a tela de permissões (as padrão vêm do Django).
+LABELS = {
+    'clients.view_client': 'Ver todos os clientes',
+    'clients.add_client': 'Criar clientes',
+    'clients.change_client': 'Editar clientes',
+    'clients.delete_client': 'Excluir clientes',
+    'projects.add_project': 'Criar projetos',
+    'projects.change_project': 'Editar projetos',
+    'projects.delete_project': 'Excluir projetos',
+    'boards.add_card': 'Criar cards',
+    'boards.change_card': 'Editar e mover qualquer card',
+    'boards.delete_card': 'Excluir qualquer card',
+    'boards.delete_comment': 'Excluir comentários de outros',
+    'boards.add_label': 'Criar etiquetas',
+    'boards.change_label': 'Editar etiquetas',
+    'boards.delete_label': 'Excluir etiquetas',
+    'sprints.add_sprint': 'Criar sprints',
+    'sprints.change_sprint': 'Editar e fechar sprints',
+    'sprints.delete_sprint': 'Excluir sprints',
+    'sprints.add_milestone': 'Criar milestones',
+    'sprints.change_milestone': 'Editar milestones',
+    'billing.view_payment': 'Ver todos os pagamentos',
+    'billing.add_payment': 'Criar pagamentos',
+    'billing.change_payment': 'Editar, pagar e copiar pagamentos',
+    'billing.delete_payment': 'Excluir pagamentos',
+    'accounts.view_user': 'Ver usuários',
+    'accounts.add_user': 'Convidar usuários',
+    'accounts.change_user': 'Gerenciar papéis e permissões',
+    'permissions.use_cli': 'Usar a CLI',
+    'permissions.view_own_payments': 'Ver os pagamentos dos seus clientes',
+}
+
+ALL = list(LABELS)
+
+CLIENTS_AND_PROJECTS = [p for p in ALL if p.startswith(('clients.', 'projects.'))]
+CARDS = ['boards.add_card', 'boards.change_card', 'boards.delete_card', 'boards.delete_comment']
+LABELS_PERMS = ['boards.add_label', 'boards.change_label', 'boards.delete_label']
+SPRINTS = [p for p in ALL if p.startswith('sprints.')]
+PAYMENTS_ALL = ['billing.view_payment', 'billing.add_payment', 'billing.change_payment', 'billing.delete_payment']
 
 ROLES = {
     'Administrador': ALL,
-    'Gerente': [
-        'view_all_clients',
-        'manage_projects',
-        'create_cards',
-        'edit_any_card',
-        'delete_any_card',
-        'delete_any_comment',
-        'manage_sprints',
-        'manage_labels',
-        'view_all_payments',
-        'use_cli',
-    ],
-    'Desenvolvedor': ['create_cards', 'manage_labels', 'use_cli'],
-    'Financeiro': ['view_all_clients', 'view_all_payments', 'manage_payments'],
-    'Cliente': ['view_own_payments'],
+    'Gerente': CLIENTS_AND_PROJECTS + CARDS + LABELS_PERMS + SPRINTS + ['billing.view_payment', 'permissions.use_cli'],
+    'Desenvolvedor': ['boards.add_card'] + LABELS_PERMS + ['permissions.use_cli'],
+    'Financeiro': ['clients.view_client'] + PAYMENTS_ALL,
+    'Cliente': ['permissions.view_own_payments'],
     'Leitura': [],
 }

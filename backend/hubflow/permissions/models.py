@@ -4,16 +4,16 @@ from django.db import models
 from hubflow.clients.models import Client
 from hubflow.core.models import TimeStampedModel
 
-from .catalog import PERMISSIONS
+from .catalog import CUSTOM_PERMISSIONS
 
 
 class Access(models.Model):
-    """Modelo sem tabela: só existe para registrar as permissões do catálogo no auth do Django."""
+    """Modelo sem tabela: só existe para registrar as permissões específicas (sem equivalente padrão)."""
 
     class Meta:
         managed = False
         default_permissions = ()
-        permissions = [(codename, label) for codename, label in PERMISSIONS.items()]
+        permissions = [(codename, label) for codename, label in CUSTOM_PERMISSIONS.items()]
 
 
 class Membership(TimeStampedModel):

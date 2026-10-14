@@ -1,13 +1,13 @@
-from .catalog import PERMISSIONS
+from .catalog import ALL
 
 
 def effective_permissions(user):
-    """Codinomes do catálogo que a pessoa tem, somando papéis (grupos) e permissões por pessoa."""
+    """Permissões 'app.codename' do catálogo que a pessoa tem (papéis + por pessoa); superusuário tem todas."""
     if user.is_superuser:
-        return set(PERMISSIONS)
-    granted = {perm.split('.', 1)[1] for perm in user.get_all_permissions() if perm.startswith('permissions.')}
-    return granted & set(PERMISSIONS)
+        return set(ALL)
+    return user.get_all_permissions() & set(ALL)
 
 
-def has_perm(user, codename):
-    return codename in effective_permissions(user)
+def has_perm(user, perm):
+    """`perm` no formato 'app.codename' (ex.: 'boards.change_card')."""
+    return perm in effective_permissions(user)
