@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import F
+from django.db.models import Case, F, Value, When
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from ninja import File, Router, Status
@@ -7,6 +7,7 @@ from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
 from hubflow.accounts.schemas import DetailOut
+from hubflow.dashboard.schemas import DashboardCardOut
 from hubflow.permissions.services import (
     has_perm,
     require,
@@ -353,3 +354,17 @@ def read_notification(request, notification_id: int):
         note.read_at = timezone.now()
         note.save(update_fields=['read_at', 'modified'])
     return notifications_payload(request.user)
+
+
+@router.get('/me/cards', response=list[DashboardCardOut])
+def my_cards(request):
+    """Cards em aberto sob a responsabilidade de quem está logado: vencidos primeiro, depois por prazo."""
+    today = timezone.localdate()
+    overdue = Case(When(due_date__lt=today, then=Value(0)), default=Value(1))
+    return (
+        card_queryset()
+        .filter(assignee=request.user, project__in=visible_projects(request.user))
+        .exclude(column__in=[Column.DONE, Column.ARCHIVED])
+        .select_related('project__client', 'sprint')
+        .order_by(overdue, F('due_date').asc(nulls_last=True), 'project__name', 'number')
+    )
