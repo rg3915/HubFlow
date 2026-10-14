@@ -6,14 +6,14 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
-### Alterado
+## [0.4.0] - 2026-10-14
 
-* Refactor: abstract models (TimeStamped, Created, CreatedBy, Active) em core/models.py e managers.py por app. #117
+Sprints numeradas por projeto, milestone opcional, projeto completo em uma chamada e polimento (menu recolhível, breadcrumb, refactor dos models).
 
 ### Adicionado
 
-* Menu lateral recolhível. #108
-* Breadcrumb no cabeçalho. #109
+#### Sprints e milestones
+
 * Model Sprint numerada por projeto (e Milestone opcional). #62
 * Milestone opcional: regras e API. #63
 * Card pertence a uma sprint (escolhida ou criada automaticamente). #64
@@ -22,6 +22,17 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: escolha da sprint ao criar card (--sprint, pergunta, --no-input). #67
 * Projeto completo em uma chamada: POST /api/projects/full e project create --full. #68
 * Tela de sprints e filtro do quadro por sprint. #69
+* CHANGELOG 0.4.0. #70
+
+#### Polimento
+
+* Menu lateral recolhível. #108
+* Breadcrumb no cabeçalho. #109
+
+### Alterado
+
+* Refactor: abstract models (TimeStamped, Created, CreatedBy, Active) em core/models.py e managers.py por app. #117
+* Exemplos de e-mail passam a usar @hubflow.com.
 
 ## [0.3.0] - 2026-10-13
 
@@ -112,7 +123,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/rg3915/HubFlow/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rg3915/HubFlow/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rg3915/HubFlow/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rg3915/HubFlow/releases/tag/v0.1.0

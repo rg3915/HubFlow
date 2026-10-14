@@ -10,6 +10,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Clientes** com lista de e-mails de notificação.
 - **Projetos** ligados a um repositório (`github` ou `gitlab`, `owner/repo`), com e-mails próprios; sem e-mails, valem os do cliente.
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
+- **Sprints** numeradas por projeto (todo card pertence a uma; sem sprint informada usa a última aberta ou cria a primeira) e milestone opcional.
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
@@ -114,7 +115,10 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `POST /api/auth/password/forgot`, `/reset`, `/change` | Senha |
 | `GET/POST /api/clients`, `GET/PUT/DELETE /api/clients/{id}` | Clientes |
 | `GET/POST /api/projects`, `GET/PUT/DELETE /api/projects/{id}` | Projetos (`?client=` filtra) |
-| `GET /api/projects/{id}/board` | Quadro (`?archived=true` inclui Arquivadas) |
+| `POST /api/projects/full` | Cliente + projeto + sprint 1 (+ milestone) numa chamada |
+| `GET/POST /api/projects/{id}/sprints`, `.../sprints/current`, `PUT /api/sprints/{id}`, `POST .../close` | Sprints |
+| `GET/POST /api/projects/{id}/milestones`, `POST /api/milestones/{id}/close` | Milestones |
+| `GET /api/projects/{id}/board` | Quadro (`?archived=true` inclui Arquivadas, `?sprint=` filtra) |
 | `POST /api/projects/{id}/cards` | Cria card no Backlog |
 | `GET/PUT/DELETE /api/cards/{id}` | Card |
 | `POST /api/cards/{id}/move`, `/start`, `/archive` | Move, inicia (Em desenvolvimento), arquiva |
@@ -145,11 +149,17 @@ hubflow client create "ACME" --emails ti@hubflow.com
 hubflow client list
 
 hubflow project create "Loja" --client ACME --provider github --repo acme/loja
+hubflow project create "Loja" --client ACME --provider github --repo acme/loja --full --milestone v1.0   # cria cliente + sprint 1
 hubflow project list [--client ACME]
 hubflow project notify Loja --off moved         # liga/desliga os avisos: created, moved, done
 hubflow project emails Loja --set dev@hubflow.com  # quem recebe; vazio = e-mails do cliente
 
-hubflow card create "Corrigir login" --project Loja --description "Erro 500"
+hubflow sprint create --project Loja --name "Checkout" --start 2026-10-13
+hubflow sprint list --project Loja
+hubflow sprint close 1 --project Loja
+
+hubflow card create "Corrigir login" --project Loja --description "Erro 500"   # pergunta se quer criar uma sprint nova
+hubflow card create "Corrigir login" --project Loja --sprint 2                  # ou --no-input para usar a última aberta
 hubflow card list --project Loja [--column doing]
 hubflow card move 3 --project Loja --to qa [--position 0]
 hubflow card start 3 --project Loja              # move para Em desenvolvimento
