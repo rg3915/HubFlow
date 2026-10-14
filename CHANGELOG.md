@@ -16,6 +16,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: card start abre o cronômetro; card stop, card log e card time. #76
 * CLI: timesheets. #77
 * Exportação xlsx do timesheet por projeto e período (entradas, por dia, por mês, por sprint). #78
+* Painel do card: cronômetro, lançamento manual de horas e lista de entradas. #79
 
 ## [0.4.0] - 2026-10-14
 
