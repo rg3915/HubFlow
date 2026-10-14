@@ -15,6 +15,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Card pertence a uma sprint (escolhida ou criada automaticamente). #64
 * API de sprints. #65
 * CLI: sprint create, list e close. #66
+* CLI: escolha da sprint ao criar card (--sprint, pergunta, --no-input). #67
 
 ## [0.3.0] - 2026-10-13
 

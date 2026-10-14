@@ -48,6 +48,7 @@ BOARD = {
 def logged_in():
     save_config({'url': 'http://api.test', 'token': 'abc123'})
     respx.get('http://api.test/api/projects').mock(return_value=Response(200, json=PROJECTS))
+    respx.get('http://api.test/api/projects/5/sprints').mock(return_value=Response(200, json=[]))
 
 
 @respx.mock

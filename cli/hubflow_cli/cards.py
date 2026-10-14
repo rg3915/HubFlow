@@ -44,17 +44,50 @@ COLUMN_LABELS = (
 )
 
 
+def choose_sprint(owner, sprint_number, no_input):
+    """RN-61 na CLI: --sprint N usa essa; sem sprint, pergunta se quer criar uma nova; sem nenhuma, a API cria."""
+    sprints = request('GET', f'/projects/{owner["id"]}/sprints').json()
+    if sprint_number is not None:
+        chosen = next((s for s in sprints if s['number'] == sprint_number), None)
+        if chosen is None:
+            hint = f'hubflow sprint list --project {owner["name"]}'
+            fail(f'Sprint {sprint_number} não existe em {owner["name"]}. Veja com: {hint}')
+        return chosen['id']
+    open_sprints = [s for s in sprints if s['is_open']]
+    if not open_sprints:
+        return None  # a API cria a próxima sprint sozinha
+    latest = open_sprints[0]
+    answer = (
+        'n'
+        if no_input
+        else typer.prompt(
+            f'Criar uma nova sprint? (não = usa a Sprint {latest["number"]}) [s/N]', default='n', show_default=False
+        )
+    )
+    if answer.strip().lower() in ('s', 'sim', 'y', 'yes'):
+        created = request('POST', f'/projects/{owner["id"]}/sprints', json={}).json()
+        typer.echo(f'Sprint {created["number"]} criada.')
+        return created['id']
+    return latest['id']
+
+
 @app.command()
 def create(
     title: str = typer.Argument(..., help='Título do card.'),
     project: str = typer.Option(..., help='Nome do projeto.'),
     description: str = typer.Option('', help='Descrição.'),
+    sprint: int | None = typer.Option(None, help='Número da sprint. Sem ele, pergunta se quer criar uma nova.'),
+    no_input: bool = typer.Option(False, '--no-input', help='Não pergunta nada: usa a última sprint aberta.'),
 ):
     """Cria um card no Backlog do projeto."""
     owner = find_project(project)
     body = {'title': title, 'description': description}
+    sprint_id = choose_sprint(owner, sprint, no_input)
+    if sprint_id is not None:
+        body['sprint_id'] = sprint_id
     card = request('POST', f'/projects/{owner["id"]}/cards', json=body).json()
-    typer.echo(f'Card #{card["number"]} {card["title"]} criado no Backlog de {owner["name"]}.')
+    where = f'Sprint {card["sprint"]["number"]}' if card.get('sprint') else 'Backlog'
+    typer.echo(f'Card #{card["number"]} {card["title"]} criado em {owner["name"]} ({where}).')
 
 
 @app.command('list')
