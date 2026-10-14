@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate
-from ninja import Router
+from ninja import Router, Status
 from ninja.errors import HttpError
 
 from .models import Token
@@ -26,4 +26,4 @@ def me(request):
 def logout(request):
     # RN-05: revoga só o token usado nesta requisição.
     request.token.delete()
-    return 204, None
+    return Status(204, None)
