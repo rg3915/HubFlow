@@ -12,6 +12,8 @@ dependencies = [
     "dj-database-url",
     "openpyxl>=3.1.5",
     "httpx>=0.28.1",
+    "redis>=8.1.0",
+    "uvicorn>=0.54.0",
 ]
 
 [dependency-groups]

@@ -12,6 +12,16 @@ services:
       timeout: 3s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   mailpit:
     image: axllent/mailpit
     ports:
@@ -24,7 +34,9 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       EMAIL_HOST: mailpit
-    command: uv run python manage.py runserver 0.0.0.0:8000
+      REDIS_URL: redis://redis:6379/0
+    # ASGI (uvicorn) para as conexões longas do tempo real (SSE); --reload recarrega como o runserver.
+    command: uv run uvicorn hubflow.asgi:application --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./backend:/app
       - /app/.venv
@@ -36,6 +48,8 @@ services:
         condition: service_healthy
       mailpit:
         condition: service_started
+      redis:
+        condition: service_healthy
 
   frontend:
     build: ./frontend

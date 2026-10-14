@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Backend ASGI (uvicorn) com Redis no compose e eventos do projeto via pub/sub. #40
+
 ## [0.8.0] - 2026-10-14
 
 Sincronização com GitHub e GitLab: token por projeto, issues criadas e atualizadas a partir dos cards, importação de issues, milestones pareados com sprints e webhooks que concluem cards.
