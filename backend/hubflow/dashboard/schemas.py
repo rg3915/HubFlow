@@ -65,3 +65,20 @@ class OverviewOut(Schema):
     in_progress: list[DashboardCardOut]
     running_timers: list[RunningTimerOut]
     totals: TotalsOut
+
+
+class ActivityItemOut(Schema):
+    kind: str  # created, moved, comment, time
+    card_id: int
+    card_number: int
+    card_title: str
+    project_id: int
+    project_name: str
+    user: UserOut | None
+    data: dict
+    created: datetime
+
+
+class DeadlinesOut(Schema):
+    overdue: list[DashboardCardOut]
+    upcoming: list[DashboardCardOut]

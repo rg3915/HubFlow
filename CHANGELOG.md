@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * API do dashboard: cards por coluna, em desenvolvimento agora, cronômetros abertos e totais. #88
+* API do dashboard: atividade recente e prazos (vencidos e próximos 7 dias). #89
 
 ## [0.6.0] - 2026-10-14
 
