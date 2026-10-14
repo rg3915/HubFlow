@@ -1,0 +1,39 @@
+[project]
+name = "hubflow"
+version = "0.1.0"
+description = "CLI do HubFlow: clientes, projetos e cards por linha de comando."
+requires-python = ">=3.14"
+dependencies = [
+    "typer",
+    "httpx",
+]
+
+[project.scripts]
+hubflow = "hubflow_cli.main:app"
+
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "hubflow_cli"
+module-root = ""
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "respx",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 119
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.format]
+quote-style = "single"
