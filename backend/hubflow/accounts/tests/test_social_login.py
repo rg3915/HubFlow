@@ -150,3 +150,9 @@ def test_cancelado_no_provedor():
     back = urlparse(Client().get('/api/auth/social/google/callback', {'error': 'access_denied'})['Location'])
 
     assert parse_qs(back.query)['error'] == ['access_denied']
+
+
+def test_lista_publica_dos_provedores_configurados(settings):
+    settings.SOCIAL_PROVIDERS['github'] = {'client_id': '', 'secret': ''}
+
+    assert Client().get('/api/auth/social/providers').json() == [{'id': 'google', 'name': 'Google'}]

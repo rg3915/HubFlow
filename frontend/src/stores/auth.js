@@ -21,7 +21,16 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(email, password) {
       const { token } = await api('/auth/login', { method: 'POST', body: { email, password } })
+      this.setToken(token)
+    },
+    // Login social: o backend devolve um código de uso único que vira token aqui.
+    async loginWithCode(code) {
+      const { token } = await api('/auth/social/exchange', { method: 'POST', body: { code } })
+      this.setToken(token)
+    },
+    setToken(token) {
       this.token = token
+      this.user = null
       localStorage.setItem('token', token)
     },
     async fetchUser() {

@@ -132,6 +132,17 @@ def back_to_frontend(**query):
     return HttpResponseRedirect(f'{settings.FRONTEND_URL}/login/social?{urlencode(query)}')
 
 
+class ProviderOut(Schema):
+    id: str
+    name: str
+
+
+@router.get('/social/providers', response=list[ProviderOut], auth=None)
+def social_providers(request):
+    """Provedores com credenciais no .env (a tela de login mostra só estes botões)."""
+    return [{'id': name, 'name': social.PROVIDERS[name]['name']} for name in social.configured()]
+
+
 @router.get('/social/{provider}/start', auth=None)
 def social_start(request, provider: str):
     if not social.credentials(provider):

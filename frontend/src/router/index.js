@@ -19,6 +19,7 @@ import UsersView from '../views/UsersView.vue'
 import ProjectFormView from '../views/ProjectFormView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import ProjectsView from '../views/ProjectsView.vue'
+import SocialCallbackView from '../views/SocialCallbackView.vue'
 import ResetPasswordView from '../views/ResetPasswordView.vue'
 import SprintsView from '../views/SprintsView.vue'
 
@@ -45,6 +46,7 @@ const routes = [
   { path: '/settings/profile', name: 'profile', component: ProfileView, meta: { title: 'Perfil' } },
   { path: '/settings/password', name: 'change-password', component: ChangePasswordView, meta: { title: 'Trocar senha' } },
   { path: '/form/:token', name: 'public-form', component: PublicFormView, meta: { ...auth, title: 'Formulário' } },
+  { path: '/login/social', name: 'login-social', component: SocialCallbackView, meta: { ...auth, title: 'Entrando' } },
   { path: '/login', name: 'login', component: LoginView, meta: { ...auth, title: 'Entrar' } },
   {
     path: '/forgot-password',
