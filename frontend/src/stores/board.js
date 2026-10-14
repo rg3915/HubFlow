@@ -3,7 +3,16 @@ import { api } from '../api'
 import { useAuthStore } from './auth'
 
 export const useBoardStore = defineStore('board', {
-  state: () => ({ projectId: null, project: null, columns: [], loading: false, selected: null }),
+  state: () => ({
+    projectId: null,
+    project: null,
+    columns: [],
+    loading: false,
+    selected: null,
+    labels: [],
+    users: [],
+    comments: [],
+  }),
   actions: {
     async load(projectId, { archived = false } = {}) {
       const token = useAuthStore().token
@@ -13,6 +22,10 @@ export const useBoardStore = defineStore('board', {
         this.projectId = projectId
         this.project = board.project
         this.columns = board.columns
+        ;[this.labels, this.users] = await Promise.all([
+          api(`/projects/${projectId}/labels`, { token }),
+          api('/users', { token }),
+        ])
       } finally {
         this.loading = false
       }
@@ -26,11 +39,45 @@ export const useBoardStore = defineStore('board', {
       this.column('backlog').cards.push(card)
       return card
     },
+    async select(card) {
+      this.selected = card
+      this.comments = []
+      if (card) this.comments = await api(`/cards/${card.id}/comments`, { token: useAuthStore().token })
+    },
     async updateCard(card, data) {
       const token = useAuthStore().token
-      const saved = await api(`/cards/${card.id}`, { method: 'PUT', body: data, token })
+      const body = {
+        title: card.title,
+        description: card.description,
+        due_date: card.due_date,
+        assignee_id: card.assignee?.id ?? null,
+        ...data,
+      }
+      const saved = await api(`/cards/${card.id}`, { method: 'PUT', body, token })
       Object.assign(card, saved)
       return saved
+    },
+    async setLabels(card, labelIds) {
+      const token = useAuthStore().token
+      const saved = await api(`/cards/${card.id}/labels`, { method: 'PUT', body: { label_ids: labelIds }, token })
+      Object.assign(card, saved)
+    },
+    async createLabel(name, color) {
+      const token = useAuthStore().token
+      const label = await api(`/projects/${this.projectId}/labels`, { method: 'POST', body: { name, color }, token })
+      this.labels.push(label)
+      this.labels.sort((a, b) => a.name.localeCompare(b.name))
+      return label
+    },
+    async addComment(card, text) {
+      const token = useAuthStore().token
+      const comment = await api(`/cards/${card.id}/comments`, { method: 'POST', body: { text }, token })
+      this.comments.push(comment)
+      return comment
+    },
+    async deleteComment(comment) {
+      await api(`/comments/${comment.id}`, { method: 'DELETE', token: useAuthStore().token })
+      this.comments.splice(this.comments.indexOf(comment), 1)
     },
     async archiveCard(card) {
       await this.move(card.id, card.column, 'archived', 0)

@@ -11,8 +11,8 @@ const board = useBoardStore()
     :class="board.selected?.id === card.id ? 'border-accent' : 'border-border'"
     tabindex="0"
     role="button"
-    @click="board.selected = card"
-    @keydown.enter="board.selected = card"
+    @click="board.select(card)"
+    @keydown.enter="board.select(card)"
   >
     <p class="leading-snug">{{ card.title }}</p>
     <p class="mt-1 text-[13px] text-muted tabular-nums">#{{ card.number }}</p>
