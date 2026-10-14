@@ -15,14 +15,12 @@ class TimeEntryManager(models.Manager):
         total = closed.aggregate(total=Sum(F('ended_at') - F('started_at')))['total']
         return total or timedelta()
 
-    def manual(self, card, user, hours, date, note=''):
-        """RN-72: lançamento manual de horas numa data (começa às 09:00 daquele dia)."""
+    @staticmethod
+    def manual_span(hours, date):
+        """RN-72: lançamento manual ocupa `hours` a partir das 09:00 do dia informado."""
         start = timezone.make_aware(datetime.combine(date, time(9, 0)))
-        return self.create(
-            card=card,
-            user=user,
-            started_at=start,
-            ended_at=start + timedelta(hours=hours),
-            note=note,
-            is_manual=True,
-        )
+        return start, start + timedelta(hours=hours)
+
+    def manual(self, card, user, hours, date, note=''):
+        start, end = self.manual_span(hours, date)
+        return self.create(card=card, user=user, started_at=start, ended_at=end, note=note, is_manual=True)
