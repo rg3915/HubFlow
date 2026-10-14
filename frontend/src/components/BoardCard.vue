@@ -11,6 +11,9 @@ const due = computed(() => {
   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')
 })
 
+const progress = computed(() => props.card.progress)
+const barWidth = computed(() => `${Math.min(100, progress.value?.percent ?? 0)}%`)
+
 const initials = computed(() => {
   const who = props.card.assignee
   if (!who) return null
@@ -44,6 +47,17 @@ const initials = computed(() => {
       </span>
     </div>
     <p class="leading-snug">{{ card.title }}</p>
+    <div
+      v-if="progress?.percent !== null && progress?.percent !== undefined"
+      class="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface-2"
+      role="progressbar"
+      :aria-valuenow="progress.percent"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      :title="`${progress.spent_hours}h de ${progress.estimate_hours}h (${progress.percent}%)`"
+    >
+      <div class="h-full rounded-full" :class="progress.percent > 100 ? 'bg-danger' : 'bg-accent'" :style="{ width: barWidth }"></div>
+    </div>
     <div class="mt-1.5 flex items-center gap-2 text-[13px] text-muted tabular-nums">
       <span>#{{ card.number }}</span>
       <span v-if="due" :class="card.is_overdue ? 'rounded px-1 font-medium text-danger' : ''" :title="card.is_overdue ? 'Atrasado' : 'Prazo'">
@@ -53,6 +67,9 @@ const initials = computed(() => {
         ☑ {{ card.checklist.done }}/{{ card.checklist.total }}
       </span>
       <span v-if="card.attachments_count" :title="`${card.attachments_count} anexo(s)`">📎 {{ card.attachments_count }}</span>
+      <span v-if="card.time?.hours || card.time?.running" :class="card.time.running ? 'text-accent' : ''" :title="card.time.running ? 'Cronômetro rodando' : 'Horas registradas'">
+        ⏱ {{ card.time.running ? 'rodando' : `${card.time.hours}h` }}
+      </span>
       <span
         v-if="initials"
         class="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-surface-2 text-[11px] font-medium text-text"

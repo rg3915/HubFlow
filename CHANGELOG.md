@@ -17,6 +17,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: timesheets. #77
 * Exportação xlsx do timesheet por projeto e período (entradas, por dia, por mês, por sprint). #78
 * Painel do card: cronômetro, lançamento manual de horas e lista de entradas. #79
+* Quadro: estimativa no painel e barra gasto × estimado no card (vermelha ao estourar), horas no card. #80
 
 ## [0.4.0] - 2026-10-14
 
