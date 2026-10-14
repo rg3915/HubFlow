@@ -15,6 +15,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Relatórios agendados (semanal, quinzenal, mensal) por cliente ou projeto: API /api/report-schedules (cada pessoa gerencia os seus), envio uma vez por período encerrado pelo comando send_reports, que o scheduler roda a cada 15 min. #161
 * CLI: hubflow report show/pdf/send e report schedule list/add/remove (--client/--project, --period + --date ou --start/--end); `task lint` formata antes de checar. #162
 * Tela de relatórios (menu Relatórios): cliente, projeto, semana/quinzena/mês ou datas; números, horas por pessoa, cards com mais horas, faturamento, baixar PDF e enviar por e-mail; CORS expõe o nome do arquivo baixado. #163
+* Tela de relatórios agendados (Relatórios › Agendar envios): lista com ligar/desligar e cancelar, período já coberto e criação por cliente ou projeto, frequência e e-mails; páginas novas abrem no topo. #164
 
 ## [0.13.0] - 2026-10-14
 

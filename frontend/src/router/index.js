@@ -12,6 +12,7 @@ import LabelsView from '../views/LabelsView.vue'
 import LoginView from '../views/LoginView.vue'
 import PaymentsView from '../views/PaymentsView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import ReportSchedulesView from '../views/ReportSchedulesView.vue'
 import ReportsView from '../views/ReportsView.vue'
 import PublicFormView from '../views/PublicFormView.vue'
 import UsersView from '../views/UsersView.vue'
@@ -38,6 +39,7 @@ const routes = [
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto', perm: 'projects.change_project' } },
   { path: '/reports', name: 'reports', component: ReportsView, meta: { title: 'Relatórios' } },
+  { path: '/reports/schedules', name: 'report-schedules', component: ReportSchedulesView, meta: { title: 'Relatórios agendados' } },
   { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos', payments: true } },
   { path: '/settings/users', name: 'users', component: UsersView, meta: { title: 'Usuários e permissões', perm: 'accounts.change_user' } },
   { path: '/settings/profile', name: 'profile', component: ProfileView, meta: { title: 'Perfil' } },
@@ -58,7 +60,8 @@ const routes = [
   },
 ]
 
-const router = createRouter({ history: createWebHistory(), routes })
+// Página nova abre no topo; voltar/avançar restaura a rolagem.
+const router = createRouter({ history: createWebHistory(), routes, scrollBehavior: (to, from, saved) => saved || { top: 0 } })
 
 // Rotas privadas exigem token; quem já está logado não volta para o login.
 router.beforeEach(async (to) => {

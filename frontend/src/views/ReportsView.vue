@@ -181,6 +181,7 @@ onMounted(async () => {
           <input id="r-emails" v-model="emails" class="field h-9" type="text" placeholder="Vazio = e-mails do projeto/cliente; ou: a@hubflow.com, b@hubflow.com" />
         </div>
         <button type="submit" class="btn btn-primary h-9" :disabled="busy">Enviar PDF</button>
+        <RouterLink to="/reports/schedules" class="btn btn-ghost h-9 text-muted">Agendar envios</RouterLink>
         <p v-if="notice" class="w-full text-muted" role="status">{{ notice }}</p>
       </form>
     </template>
