@@ -5,7 +5,7 @@ from ninja import Router, Status
 from ninja.errors import HttpError
 
 from .models import Token, User
-from .schemas import DetailOut, ForgotPasswordIn, LoginIn, ResetPasswordIn, TokenOut, UserOut
+from .schemas import ChangePasswordIn, DetailOut, ForgotPasswordIn, LoginIn, ResetPasswordIn, TokenOut, UserOut
 from .services import get_user_from_reset_link, send_password_reset_email
 
 router = Router(tags=['auth'])
@@ -53,3 +53,17 @@ def password_reset(request, data: ResetPasswordIn):
     user.set_password(data.password)
     user.save()
     return {'detail': 'Senha redefinida com sucesso.'}
+
+
+@router.post('/password/change', response={200: DetailOut, 400: DetailOut})
+def password_change(request, data: ChangePasswordIn):
+    user = request.user
+    if not user.check_password(data.current_password):
+        return Status(400, {'detail': 'Senha atual incorreta.'})
+    try:
+        validate_password(data.new_password, user)
+    except ValidationError as error:
+        return Status(400, {'detail': ' '.join(error.messages)})
+    user.set_password(data.new_password)
+    user.save()
+    return {'detail': 'Senha alterada com sucesso.'}

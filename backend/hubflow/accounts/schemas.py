@@ -28,3 +28,8 @@ class ResetPasswordIn(Schema):
     uid: str
     token: str
     password: str
+
+
+class ChangePasswordIn(Schema):
+    current_password: str
+    new_password: str
