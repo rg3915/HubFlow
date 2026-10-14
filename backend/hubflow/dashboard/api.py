@@ -9,6 +9,7 @@ from hubflow.billing.summary import money, split_totals, valued_payments
 from hubflow.boards.models import Card, CardEvent, CardMove, Column, Comment
 from hubflow.boards.services import card_queryset
 from hubflow.clients.models import Client
+from hubflow.permissions.services import visible_payments
 from hubflow.projects.models import Project
 from hubflow.timetracking.models import TimeEntry
 from hubflow.timetracking.services import project_median_estimate
@@ -185,7 +186,7 @@ def billing(request):
     today = timezone.localdate()
     current = today.replace(day=1)
     previous = (current - timedelta(days=1)).replace(day=1)
-    payments = valued_payments()
+    payments = valued_payments(visible_payments(request.user))  # sem permissão, tudo zerado
     pending = payments.filter(status='pending').aggregate(total=Sum('value'))['total']
     return {
         'current': month_totals(payments, current),

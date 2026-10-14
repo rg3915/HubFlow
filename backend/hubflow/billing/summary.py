@@ -21,8 +21,8 @@ def _seconds(entries, group_by):
     )
 
 
-def valued_payments():
-    """Pagamentos com `value` em SQL: valor fechado ou horas × valor/hora (RN-80).
+def valued_payments(payments=None):
+    """Pagamentos (todos ou os de `payments`) com `value` em SQL: valor fechado ou horas × valor/hora (RN-80).
 
     Horas = entradas da sprint ou, sem sprint, do projeto dentro do período.
     """
@@ -45,7 +45,8 @@ def valued_payments():
     seconds = Coalesce(scoped_seconds, Value(0.0), output_field=FloatField())
     hours = Round(ExpressionWrapper(seconds / Value(3600.0), output_field=FloatField()), 2, output_field=FloatField())
     hours_value = ExpressionWrapper(F('hourly_rate') * hours, output_field=MONEY)
-    return Payment.objects.annotate(value=Coalesce(F('fixed_value'), hours_value, output_field=MONEY))
+    base = Payment.objects if payments is None else payments
+    return base.annotate(value=Coalesce(F('fixed_value'), hours_value, output_field=MONEY))
 
 
 def split_totals(queryset):
@@ -64,8 +65,8 @@ def money(value):
     return (value or ZERO).quantize(ZERO)
 
 
-def payments_summary(client_id=None, year=None):
-    payments = valued_payments()
+def payments_summary(payments, client_id=None, year=None):
+    payments = valued_payments(payments)
     if client_id:
         payments = payments.filter(project__client_id=client_id)
     scoped = payments.filter(issue_date__year=year) if year else payments

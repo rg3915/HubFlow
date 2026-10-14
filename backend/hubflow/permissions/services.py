@@ -108,3 +108,21 @@ def require_card_delete(user, card):
         from ninja.errors import HttpError
 
         raise HttpError(403, 'Você só pode excluir ou arquivar os seus próprios cards.')
+
+
+def visible_payments(user):
+    """`billing.view_payment` vê todos; `view_own_payments` só os dos seus clientes; sem nenhuma, nenhum."""
+    from hubflow.billing.models import Payment
+
+    if has_perm(user, 'billing.view_payment'):
+        return Payment.objects.all()
+    if has_perm(user, 'permissions.view_own_payments'):
+        return Payment.objects.filter(project__client__memberships__user=user)
+    return Payment.objects.none()
+
+
+def require_payments_view(user):
+    if not (has_perm(user, 'billing.view_payment') or has_perm(user, 'permissions.view_own_payments')):
+        from ninja.errors import HttpError
+
+        raise HttpError(403, 'Você não tem permissão para ver pagamentos.')
