@@ -138,6 +138,8 @@ class CardOut(Schema):
     attachments_count: int
     sprint: SprintBrief | None
     estimate_hours: float | None
+    issue_number: int | None
+    issue_url: str
     time: TimeSummary
     progress: ProgressOut
 

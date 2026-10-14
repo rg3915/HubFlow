@@ -45,6 +45,9 @@ class Card(TimeStampedModel, CreatedByModel):
     sprint = models.ForeignKey(Sprint, null=True, blank=True, on_delete=models.PROTECT, related_name='cards')
     due_date = models.DateField('prazo', null=True, blank=True)
     estimate_hours = models.FloatField('estimativa (horas)', null=True, blank=True)
+    # Issue espelhada no repositório (GitHub: number; GitLab: iid).
+    issue_number = models.PositiveIntegerField('número da issue', null=True, blank=True)
+    issue_url = models.URLField('URL da issue', blank=True)
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,

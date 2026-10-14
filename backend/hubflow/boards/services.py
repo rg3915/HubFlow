@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Count, Q
@@ -9,6 +11,8 @@ from .activity import record
 from .models import Card, CardMove, Column
 from .notifications import notify
 
+logger = logging.getLogger(__name__)
+
 
 def resolve_sprint(project, sprint=None):
     """RN-61: sprint informada → usa; senão a última aberta; se não houver, cria a próxima."""
@@ -18,12 +22,26 @@ def resolve_sprint(project, sprint=None):
 
 
 def create_card(project, user=None, **data):
-    """Cria o card no Backlog (RN-31), na sprint certa (RN-61), e avisa os destinatários."""
+    """Cria o card no Backlog (RN-31), na sprint certa (RN-61), avisa os destinatários e, se o projeto pedir,
+    abre a issue no repositório (falha remota não impede o card)."""
     data['sprint'] = resolve_sprint(project, data.get('sprint'))
     card = Card.objects.create(project=project, created_by=user, **data)
     record(card, 'created', user)
+    if project.create_issues:
+        mirror_issue(card)
     notify('created', card)
     return card
+
+
+def mirror_issue(card):
+    from hubflow.integrations.client import RepoClient, RepoError
+
+    try:
+        card.issue_number, card.issue_url = RepoClient(card.project).create_issue(card.title, card.description)
+    except RepoError as error:
+        logger.warning('Card #%s de %s sem issue no repositório: %s', card.number, card.project, error)
+        return
+    card.save(update_fields=['issue_number', 'issue_url'])
 
 
 def resolve_assignee(assignee_id):

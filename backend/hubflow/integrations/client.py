@@ -55,3 +55,11 @@ class RepoClient:
             'private': data.get('visibility') == 'private',
             'open_issues': data.get('open_issues_count', 0),
         }
+
+    def create_issue(self, title, body=''):
+        """Cria a issue no repositório; devolve (número, url)."""
+        if self.is_github:
+            data = self.request('POST', '/issues', json={'title': title, 'body': body})
+            return data['number'], data['html_url']
+        data = self.request('POST', '/issues', json={'title': title, 'description': body})
+        return data['iid'], data['web_url']
