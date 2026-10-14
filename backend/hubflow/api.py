@@ -3,6 +3,7 @@ from ninja import NinjaAPI
 from hubflow.accounts.api import router as accounts_router
 from hubflow.accounts.api import users_router
 from hubflow.accounts.auth import TokenAuth
+from hubflow.automations.api import router as automations_router
 from hubflow.billing.api import router as payments_router
 from hubflow.boards.api import router as boards_router
 from hubflow.boards.form_api import router as form_router
@@ -25,6 +26,7 @@ api.add_router('/clients', clients_router)
 api.add_router('/projects', projects_router)
 api.add_router('', boards_router)
 api.add_router('', form_router)
+api.add_router('', automations_router)
 api.add_router('', sprints_router)
 api.add_router('', time_router)
 api.add_router('/payments', payments_router)
