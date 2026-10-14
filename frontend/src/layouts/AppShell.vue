@@ -24,15 +24,26 @@ onMounted(async () => {
     }
   }
 })
-const sidebarOpen = ref(false)
+const sidebarOpen = ref(false) // gaveta no celular
+const collapsed = ref(localStorage.getItem('sidebar') === 'collapsed') // recolhido no desktop
+
+function toggleSidebar() {
+  if (matchMedia('(min-width: 768px)').matches) {
+    collapsed.value = !collapsed.value
+    localStorage.setItem('sidebar', collapsed.value ? 'collapsed' : 'open')
+  } else {
+    sidebarOpen.value = !sidebarOpen.value
+  }
+}
 </script>
 
 <template>
   <div class="flex min-h-screen">
     <!-- Barra lateral: Cliente → Projetos -->
     <aside
-      class="fixed inset-y-0 left-0 z-20 flex w-60 -translate-x-full flex-col border-r border-border bg-surface transition-transform md:static md:translate-x-0"
-      :class="{ 'translate-x-0': sidebarOpen }"
+      class="fixed inset-y-0 left-0 z-20 flex w-60 -translate-x-full flex-col overflow-hidden border-r border-border bg-surface transition-[transform,width] md:static md:translate-x-0"
+      :class="[sidebarOpen ? 'translate-x-0' : '', collapsed ? 'md:w-0 md:border-r-0' : 'md:w-60']"
+      :aria-hidden="collapsed"
     >
       <RouterLink to="/" class="flex h-12 items-center border-b border-border px-4 text-base font-semibold">
         HubFlow
@@ -78,7 +89,13 @@ const sidebarOpen = ref(false)
 
     <div class="flex min-w-0 flex-1 flex-col">
       <header class="flex h-12 items-center gap-3 border-b border-border bg-surface px-4">
-        <button type="button" class="btn btn-ghost h-8 w-8 justify-center px-0 md:hidden" aria-label="Abrir menu" @click="sidebarOpen = true">
+        <button
+          type="button"
+          class="btn btn-ghost h-8 w-8 justify-center px-0"
+          :aria-label="collapsed ? 'Mostrar menu' : 'Recolher menu'"
+          :aria-expanded="!collapsed"
+          @click="toggleSidebar"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
         </button>
         <h1 class="truncate text-xl font-semibold">{{ route.meta.title }}</h1>

@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Menu lateral recolhível. #108
+
 ## [0.3.0] - 2026-10-13
 
 Colaboração no card: comentários com @menções, etiquetas, prazo e responsável, checklist, anexos e histórico de atividade, na API, na CLI e no quadro.
