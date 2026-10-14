@@ -146,3 +146,59 @@ def emails(
         typer.echo(f'Avisos de {project["name"]} vão para: {", ".join(project["emails"])}')
     else:
         typer.echo(f'{project["name"]} sem e-mails próprios: os avisos vão para os e-mails do cliente.')
+
+
+def show_repo(settings):
+    yes_no = lambda value: 'sim' if value else 'não'  # noqa: E731
+    typer.echo(f'Repositório: {settings["repository_url"]} ({settings["provider"]})')
+    typer.echo(f'  token: {yes_no(settings["has_token"])}')
+    if settings['provider'] == 'gitlab':
+        typer.echo(f'  id do projeto no GitLab: {settings["gitlab_project_id"] or "—"}')
+    typer.echo(f'  criar issue ao criar card: {yes_no(settings["create_issues"])}')
+    typer.echo(f'  segredo do webhook: {yes_no(settings["has_webhook_secret"])}')
+    typer.echo(f'  URL do webhook: <sua-api>{settings["webhook_path"]}')
+
+
+@app.command()
+def repo(
+    name: str = typer.Argument(..., help='Nome do projeto.'),
+    token: str | None = typer.Option(None, help='Token do GitHub/GitLab ("" apaga).'),
+    gitlab_id: int | None = typer.Option(None, '--gitlab-id', help='Id numérico do projeto no GitLab.'),
+    create_issues: bool | None = typer.Option(
+        None, '--create-issues/--no-create-issues', help='Criar issue ao criar card.'
+    ),
+    webhook_secret: str | None = typer.Option(None, '--webhook-secret', help='Segredo do webhook ("" apaga).'),
+):
+    """Mostra ou altera a integração do projeto com o repositório."""
+    project = find_project(name)
+    current = request('GET', f'/projects/{project["id"]}/repo').json()
+    changes = {'token': token, 'webhook_secret': webhook_secret}
+    if any(value is not None for value in (token, gitlab_id, create_issues, webhook_secret)):
+        body = changes | {
+            'gitlab_project_id': current['gitlab_project_id'] if gitlab_id is None else gitlab_id,
+            'create_issues': current['create_issues'] if create_issues is None else create_issues,
+        }
+        current = request('PUT', f'/projects/{project["id"]}/repo', json=body).json()
+    show_repo(current)
+
+
+@app.command('repo-check')
+def repo_check(name: str = typer.Argument(..., help='Nome do projeto.')):
+    """Testa a conexão com o repositório."""
+    project = find_project(name)
+    data = request('POST', f'/projects/{project["id"]}/repo/check').json()
+    visibility = 'privado' if data['private'] else 'público'
+    typer.echo(f'Conectado a {data["name"]} ({visibility}), {data["open_issues"]} issues abertas.')
+
+
+@app.command('import-issues')
+def import_issues(
+    name: str = typer.Argument(..., help='Nome do projeto.'),
+    include_closed: bool = typer.Option(
+        False, '--include-closed', help='Traz também as issues fechadas (vão para Concluído).'
+    ),
+):
+    """Importa as issues do repositório como cards."""
+    project = find_project(name)
+    data = request('POST', f'/projects/{project["id"]}/import-issues', json={'include_closed': include_closed}).json()
+    typer.echo(f'{data["created"]} cards criados, {data["skipped"]} issues puladas (já importadas ou pull requests).')

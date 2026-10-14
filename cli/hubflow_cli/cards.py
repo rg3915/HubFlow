@@ -92,6 +92,8 @@ def create(
     card = request('POST', f'/projects/{owner["id"]}/cards', json=body).json()
     where = f'Sprint {card["sprint"]["number"]}' if card.get('sprint') else 'Backlog'
     typer.echo(f'Card #{card["number"]} {card["title"]} criado em {owner["name"]} ({where}).')
+    if card.get('issue_number'):
+        typer.echo(f'Issue #{card["issue_number"]} aberta no repositório: {card["issue_url"]}')
 
 
 @app.command('list')

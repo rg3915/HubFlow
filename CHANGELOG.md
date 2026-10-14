@@ -14,6 +14,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Importar issues do repositório como cards (sem duplicar, PRs de fora, fechadas em Concluído). #97
 * Sprint nova pareada com o último milestone aberto do repositório (milestone segue opcional). #98
 * Webhooks do GitHub (assinatura HMAC) e do GitLab (token): commit ou PR/MR mesclado com close/fixes/resolves #N conclui o card. #99
+* CLI: project repo, repo-check e import-issues; card create mostra a issue aberta. #100
 
 ## [0.7.0] - 2026-10-14
 
