@@ -1,7 +1,7 @@
 import typer
 
 from .client import fail, format_money, parse_iso_date, request
-from .projects import find_client
+from .projects import find_client, find_project
 from .sprints import find_sprint
 
 app = typer.Typer(help='Pagamentos por sprint.', no_args_is_help=True)
@@ -12,7 +12,7 @@ STATUS = {'pending': 'pendente', 'paid': 'pago'}
 def describe(payment):
     invoice = f'  NF {payment["invoice_number"]}' if payment['invoice_number'] else ''
     when = payment['issue_date'] or '—'
-    where = f'{payment["client_name"]} / {payment["project_name"]}  Sprint {payment["sprint_number"]}'
+    where = f'{payment["client_name"]} / {payment["project_name"]}  {payment["scope"]}'
     money = format_money(payment['total_value'])
     return f'#{payment["id"]:<4} {where}  {money}  {when}{invoice}  ({STATUS[payment["status"]]})'
 
@@ -20,7 +20,8 @@ def describe(payment):
 @app.command()
 def create(
     project: str = typer.Option(..., help='Nome do projeto.'),
-    sprint: int = typer.Option(..., help='Número da sprint.'),
+    sprint: int | None = typer.Option(None, help='Número da sprint (opcional).'),
+    month: str = typer.Option('', help='Mês do período, AAAA-MM (opcional; use sprint ou mês).'),
     rate: str = typer.Option(..., help='Valor por hora, ex.: 150.'),
     hours: str = typer.Option('', help='Horas estimadas (opcional).'),
     fixed: str = typer.Option('', help='Valor fechado (opcional; vale no lugar de horas × valor/hora).'),
@@ -28,10 +29,14 @@ def create(
     invoice: str = typer.Option('', help='Número da NF.'),
     issue_date: str = typer.Option('', '--issue-date', help='Emissão AAAA-MM-DD.'),
 ):
-    """Cria um pagamento para a sprint do projeto."""
-    chosen = find_sprint(project, sprint)
+    """Cria um pagamento do projeto, por sprint ou por mês."""
+    if (sprint is None) == (not month):
+        raise typer.BadParameter('Informe --sprint N ou --month AAAA-MM (um dos dois).')
+    owner = find_project(project)
     body = {
-        'sprint_id': chosen['id'],
+        'project_id': owner['id'],
+        'sprint_id': find_sprint(project, sprint)['id'] if sprint is not None else None,
+        'month': month or None,
         'hourly_rate': rate,
         'estimated_hours': hours or None,
         'fixed_value': fixed or None,

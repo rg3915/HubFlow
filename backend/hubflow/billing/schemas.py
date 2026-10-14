@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Literal
@@ -7,7 +8,11 @@ from pydantic import field_validator
 
 
 class PaymentIn(Schema):
-    sprint_id: int
+    project_id: int
+    sprint_id: int | None = None
+    month: str | None = None  # 'AAAA-MM' preenche o período com o mês inteiro
+    period_start: date | None = None
+    period_end: date | None = None
     description: str = ''
     hourly_rate: Decimal
     estimated_hours: Decimal | None = None
@@ -23,11 +28,23 @@ class PaymentIn(Schema):
             raise ValueError('O valor por hora precisa ser maior que zero.')
         return value
 
+    @field_validator('month')
+    @classmethod
+    def mes_valido(cls, value):
+        if value is None:
+            return None
+        if not re.fullmatch(r'\d{4}-(0[1-9]|1[0-2])', value):
+            raise ValueError('Use o formato AAAA-MM, por exemplo 2026-10.')
+        return value
+
 
 class PaymentOut(Schema):
     id: int
-    sprint_id: int
-    sprint_number: int
+    sprint_id: int | None
+    sprint_number: int | None
+    period_start: date | None
+    period_end: date | None
+    scope: str
     project_id: int
     project_name: str
     client_id: int
@@ -47,23 +64,19 @@ class PaymentOut(Schema):
 
     @staticmethod
     def resolve_sprint_number(payment):
-        return payment.sprint.number
-
-    @staticmethod
-    def resolve_project_id(payment):
-        return payment.sprint.project_id
+        return payment.sprint.number if payment.sprint_id else None
 
     @staticmethod
     def resolve_project_name(payment):
-        return payment.sprint.project.name
+        return payment.project.name
 
     @staticmethod
     def resolve_client_id(payment):
-        return payment.sprint.project.client_id
+        return payment.project.client_id
 
     @staticmethod
     def resolve_client_name(payment):
-        return payment.sprint.project.client.name
+        return payment.project.client.name
 
 
 class ClientTotalsOut(Schema):

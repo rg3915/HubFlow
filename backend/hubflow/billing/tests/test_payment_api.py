@@ -17,6 +17,7 @@ def sprint(loja):
 
 def payload(sprint, **overrides):
     return {
+        'project_id': sprint.project_id,
         'sprint_id': sprint.id,
         'hourly_rate': '150.00',
         'estimated_hours': '40',

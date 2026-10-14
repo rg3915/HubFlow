@@ -13,6 +13,9 @@ PAYMENT = {
     'id': 4,
     'sprint_id': 3,
     'sprint_number': 2,
+    'period_start': None,
+    'period_end': None,
+    'scope': 'Sprint 2',
     'project_id': 5,
     'project_name': 'Loja',
     'client_id': 1,
@@ -67,7 +70,8 @@ def test_payment_create_resolve_projeto_e_sprint(run):
 
     assert result.exit_code == 0, result.output
     sent = body(route)
-    assert sent['sprint_id'] == 3 and sent['hourly_rate'] == '150' and sent['estimated_hours'] == '40'
+    assert sent['project_id'] == 5 and sent['sprint_id'] == 3 and sent['month'] is None
+    assert sent['hourly_rate'] == '150' and sent['estimated_hours'] == '40'
     assert sent['issue_date'] == '2026-10-14' and sent['description'] == 'Outubro'
     assert '#4' in result.output and 'R$' in result.output
 
@@ -148,3 +152,23 @@ def test_payment_summary(run):
         and 'ACME' in result.output
         and '2026-10' in result.output
     )
+
+
+@respx.mock
+def test_payment_create_mensal(run):
+    monthly = PAYMENT | {'sprint_id': None, 'sprint_number': None, 'scope': '01/10/2026 a 31/10/2026'}
+    route = respx.post('http://api.test/api/payments').mock(return_value=Response(201, json=monthly))
+
+    result = run('payment', 'create', '--project', 'Loja', '--month', '2026-10', '--rate', '150')
+
+    assert result.exit_code == 0, result.output
+    sent = body(route)
+    assert sent['sprint_id'] is None and sent['month'] == '2026-10' and sent['project_id'] == 5
+    assert '01/10/2026' in result.output
+
+
+@respx.mock
+def test_payment_create_exige_sprint_ou_mes(run):
+    assert run('payment', 'create', '--project', 'Loja', '--rate', '150').exit_code != 0
+    both = run('payment', 'create', '--project', 'Loja', '--rate', '150', '--sprint', '2', '--month', '2026-10')
+    assert both.exit_code != 0

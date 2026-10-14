@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API CRUD de pagamentos com filtros (cliente, status, ano), pagar e copiar. #83
 * Resumo financeiro em SQL: recebido, pendente, por cliente, por mês e anos. #84
 * CLI: payment create, list, pay, copy e summary. #85
+* Pagamento pertence ao projeto; sprint opcional; pagamento por período (mensal) com --month; copiar avança o mês. #131
 
 ## [0.5.0] - 2026-10-14
 
