@@ -6,15 +6,24 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-14
+
+Quadro em tempo real (SSE + Redis), presença, avatar no perfil e card com trecho da descrição.
+
 ### Adicionado
+
+#### Quadro em tempo real
 
 * Backend ASGI (uvicorn) com Redis no compose e eventos do projeto via pub/sub. #40
 * Eventos card_created, card_moved, card_updated e card_deleted publicados a cada mudança (API, CLI e webhooks). #41
 * Quadro ao vivo: endpoint SSE por projeto (token na query) e o quadro aplica os eventos sem recarregar, com indicador ao vivo/offline e reconexão automática. #42
-* Banco de teste com nome único por checkout (suítes em paralelo).
+* Presença: quem está com o quadro aberto (heartbeat com TTL no Redis, evento presence, avatares no quadro). #43
+
+#### Polimento
+
 * Avatar no perfil do usuário (upload, remoção, first_name e avatar_url na API). #132
 * Card do quadro com trecho da descrição (2 linhas) e avatar/primeiro nome do dono. #133
-* Presença: quem está com o quadro aberto (heartbeat com TTL no Redis, evento presence, avatares no quadro). #43
+* Banco de teste com nome único por checkout (suítes em paralelo).
 
 ## [0.8.0] - 2026-10-14
 
@@ -202,7 +211,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/rg3915/HubFlow/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/rg3915/HubFlow/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/rg3915/HubFlow/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/rg3915/HubFlow/compare/v0.5.0...v0.6.0

@@ -12,6 +12,8 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
 - **Sprints** numeradas por projeto (todo card pertence a uma; sem sprint informada usa a última aberta ou cria a primeira) e milestone opcional.
 - **Controle de tempo**: cronômetro por card (um aberto por card; vários em cards diferentes), regra dos 15 minutos, lançamento manual de horas (só o dono apaga), estimativa com progresso gasto × estimado e exportação xlsx por período.
+- **Quadro em tempo real**: quem mexer no quadro (tela, CLI ou webhook) atualiza a tela dos outros na hora (SSE + Redis), com indicador de quem está vendo.
+- **Perfil** com avatar; cards mostram trecho da descrição e o dono.
 - **Sincronização com GitHub/GitLab**: token por projeto, issue criada ao criar o card, edição e conclusão refletidas na issue, importação de issues existentes, milestone do repositório pareado com a sprint e webhooks (commit/PR com `close #N` conclui o card).
 - **Dashboard** na página inicial: totais, cards por etapa, em desenvolvimento agora, cronômetros abertos, prazos, atividade recente, heatmap de horas (26 semanas), horas da semana por projeto e faturamento do mês.
 - **Faturamento**: pagamentos por sprint ou por mês (valor/hora × horas registradas ou valor fechado), NF, emissão, pagamento, pendente/pago, resumo por cliente e por mês com gráficos.
@@ -27,7 +29,7 @@ O que vem a seguir está em [docs/especificacao.md](docs/especificacao.md) (noti
 
 | Camada | Tecnologia |
 |---|---|
-| Backend | Python 3.14, Django 6.1, Django Ninja, Postgres 18 |
+| Backend | Python 3.14, Django 6.1 (ASGI/uvicorn), Django Ninja, Postgres 18, Redis |
 | Frontend | Vue 3, Vite, Vue Router, Pinia, Tailwind 4, SortableJS |
 | CLI | Python, Typer, httpx |
 | E-mail (dev) | Mailpit |
@@ -57,6 +59,7 @@ docker compose exec backend uv run python manage.py createsuperuser
 | API e documentação | http://localhost:8000/api/docs |
 | Admin do Django | http://localhost:8000/admin/ |
 | Mailpit (e-mails enviados) | http://localhost:8025 |
+| Redis (tempo real) | localhost:6379 |
 
 O `.env.example` já aponta para os serviços do compose. As variáveis que importam: `SECRET_KEY`, `DEBUG`, `DATABASE_URL`, `EMAIL_HOST`/`EMAIL_PORT`, `FRONTEND_URL` (usado nos links dos e-mails) e `VITE_API_URL`.
 
@@ -137,6 +140,8 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `GET/POST /api/payments`, `GET/PUT/DELETE /api/payments/{id}`, `POST .../pay`, `.../copy`, `GET /api/payments/summary` | Faturamento |
 | `GET/PUT /api/projects/{id}/repo`, `POST .../repo/check`, `POST .../import-issues` | Integração com o repositório |
 | `POST /api/webhooks/github/{id}`, `/api/webhooks/gitlab/{id}` | Webhooks (sem token; assinatura/segredo) |
+| `GET /api/projects/{id}/events?token=` (SSE), `GET/POST/DELETE /api/projects/{id}/presence` | Tempo real e presença |
+| `POST/DELETE /api/auth/me/avatar` | Avatar do usuário |
 | `GET /api/dashboard`, `/activity`, `/deadlines`, `/heatmap`, `/week`, `/billing` | Dashboard |
 | `GET /api/users` | Usuários ativos (responsáveis e menções) |
 
