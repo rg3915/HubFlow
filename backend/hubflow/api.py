@@ -10,6 +10,7 @@ from hubflow.core.api import router as backups_router
 from hubflow.dashboard.api import router as dashboard_router
 from hubflow.integrations.api import router as integrations_router
 from hubflow.projects.api import router as projects_router
+from hubflow.search.api import router as search_router
 from hubflow.sprints.api import router as sprints_router
 from hubflow.timetracking.api import router as time_router
 
@@ -26,6 +27,7 @@ api.add_router('/payments', payments_router)
 api.add_router('/dashboard', dashboard_router)
 api.add_router('', integrations_router)
 api.add_router('/backups', backups_router)
+api.add_router('/search', search_router)
 
 
 @api.get('/health', auth=None)
