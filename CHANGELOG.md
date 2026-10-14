@@ -24,3 +24,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Layout base com tema claro e escuro. #14
 * Tela de login. #15
 * Tela esqueci minha senha. #16
+* Tela redefinir senha. #17

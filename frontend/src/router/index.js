@@ -3,6 +3,7 @@ import ClientFormView from '../views/ClientFormView.vue'
 import ForgotPasswordView from '../views/ForgotPasswordView.vue'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
+import ResetPasswordView from '../views/ResetPasswordView.vue'
 
 const auth = { layout: 'auth' }
 
@@ -15,6 +16,12 @@ const routes = [
     name: 'forgot-password',
     component: ForgotPasswordView,
     meta: { ...auth, title: 'Esqueci minha senha' },
+  },
+  {
+    path: '/reset-password/:uid/:token',
+    name: 'reset-password',
+    component: ResetPasswordView,
+    meta: { ...auth, title: 'Nova senha' },
   },
 ]
 

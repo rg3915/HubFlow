@@ -24,11 +24,12 @@ Cada entregável é um milestone no GitHub. A versão do CHANGELOG avança a cad
 | 4 | Notificações por e-mail | 0.2.0 |
 | 5 | Colaboração no card | 0.3.0 |
 | 6 | Sincronização GitHub/GitLab | 0.4.0 |
-| 7 | Campos personalizados e formulários | 0.5.0 |
-| 8 | Automações e SLA | 0.6.0 |
-| 9 | Controle de tempo | 0.7.0 |
-| 10 | Relatórios e métricas | 0.8.0 |
-| 11 | Polimento: papéis, busca e atalhos | 0.9.0 |
+| 7 | Quadro em tempo real | 0.5.0 |
+| 8 | Campos personalizados e formulários | 0.6.0 |
+| 9 | Automações e SLA | 0.7.0 |
+| 10 | Controle de tempo | 0.8.0 |
+| 11 | Relatórios e métricas | 0.9.0 |
+| 12 | Polimento: papéis, busca e atalhos | 0.9.0 |
 
 ## Stack
 
