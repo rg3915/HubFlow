@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-14
+
+Configuração toda pelo settings.py com python-decouple.
+
 ### Alterado
 
 * Configuração toda pelo `settings.py` com python-decouple: armazenamento S3 via settings `AWS_*` lidos direto pelo django-storages (sem montar opções à parte) e `CLOUDINARY_URL` no settings; CLI lê `HUBFLOW_URL`, `HUBFLOW_TOKEN` e `HUBFLOW_CONFIG_DIR` com python-decouple; README atualizado.
@@ -365,7 +369,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/rg3915/HubFlow/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rg3915/HubFlow/compare/v0.15.0...v1.0.0
 [0.15.0]: https://github.com/rg3915/HubFlow/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/rg3915/HubFlow/compare/v0.13.0...v0.14.0
