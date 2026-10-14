@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-14
+
+Polimento: notificações no app (sino), meus cards, anexos no S3, atalhos com taskipy e uuid7 em todos os models.
+
 ### Adicionado
 
 * Notificações no app: menção, comentário em card seu ou de que é responsável e card seu movido por outra pessoa (sem duplicar, sem avisar quem fez); GET /api/notifications (não lidas primeiro + total), POST /api/notifications/{id}/read e /read-all. #114
@@ -256,7 +260,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/rg3915/HubFlow/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/rg3915/HubFlow/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/rg3915/HubFlow/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/rg3915/HubFlow/compare/v0.7.0...v0.8.0

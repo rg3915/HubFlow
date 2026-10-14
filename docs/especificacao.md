@@ -33,7 +33,7 @@ Cada entregável é um milestone no GitHub. A versão do CHANGELOG avança a cad
 | 8 | Automações e SLA | 1.x | |
 | 10 | Relatórios e métricas (PDF por período, envio por e-mail) | 1.x | a definir |
 | 17 | Permissões (papéis, permissões por pessoa, clientes vinculados, CLI, pagamentos, tela de gestão) | 0.10.0 | concluído |
-| 11 | Polimento: busca global, notificações no app, backup .sql, S3, taskipy | 1.x | |
+| 11 | Polimento: busca global, notificações no app, backup .sql, S3, taskipy | 0.10.0 / 0.11.0 | concluído |
 | 16 | Mobile (2.5): layout responsivo | 2.5 | extra no final |
 
 Fora do escopo (decidido em 13/10/26): Pipefy, GitHub Projects v2, Bitbucket, prefixo de título por projeto, geração de tarefas.txt/commit/changelog a partir do card, app de barra de menu, matriz de horas e heatmap fora do dashboard.
