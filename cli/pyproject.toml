@@ -24,6 +24,7 @@ dev = [
     "pytest",
     "respx",
     "ruff",
+    "taskipy>=1.14.1",
 ]
 
 [tool.pytest.ini_options]
@@ -37,3 +38,8 @@ select = ["E", "F", "I"]
 
 [tool.ruff.format]
 quote-style = "single"
+
+# Atalhos de desenvolvimento: uv run task <nome>.
+[tool.taskipy.tasks]
+test = { cmd = "pytest", help = "roda a suíte da CLI" }
+lint = { cmd = "ruff check --fix . && ruff format .", help = "lint e formatação" }

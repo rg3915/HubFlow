@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API meus cards: GET /api/me/cards com os cards em aberto sob sua responsabilidade (projeto, cliente, coluna, prazo), vencidos primeiro. #116
 * Cabeçalho com sino (contador de não lidas, lista, marcar todas; abrir a notificação marca como lida e abre o card) e meus cards (contador e lista com prazo/vencidos), atualizados a cada minuto e a cada troca de página. #115
 * Anexos e avatares no S3 (AWS ou compatível) via django-storages com STORAGE_BACKEND=s3; S3 local (SeaweedFS) no perfil `s3` do compose com o bucket criado automaticamente; frontend aceita URL absoluta dos arquivos. #113
+* Atalhos de desenvolvimento com taskipy (backend: test, lint, makemigrations, migrate, sync; CLI: test, lint). #135
 
 ### Alterado
 

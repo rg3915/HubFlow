@@ -25,6 +25,7 @@ dev = [
     "pytest-django",
     "respx>=0.23.1",
     "ruff",
+    "taskipy>=1.14.1",
 ]
 
 [tool.pytest.ini_options]
@@ -41,3 +42,11 @@ select = ["E", "F", "I"]
 
 [tool.ruff.format]
 quote-style = "single"
+
+# Atalhos de desenvolvimento: uv run task <nome> (uv run task --list mostra todos).
+[tool.taskipy.tasks]
+test = { cmd = "pytest -W error", help = "roda a suíte do backend" }
+lint = { cmd = "ruff check --fix . && ruff format .", help = "lint e formatação" }
+makemigrations = { cmd = "python manage.py makemigrations", help = "gera migrations" }
+migrate = { cmd = "docker compose exec -T backend uv run python manage.py migrate", help = "aplica as migrations no container" }
+sync = { cmd = "docker compose exec -T backend uv sync --frozen && docker compose restart backend", help = "instala dependências novas no container e reinicia" }

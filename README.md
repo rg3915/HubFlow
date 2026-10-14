@@ -233,6 +233,23 @@ cd cli && uv run pytest
 
 Os testes do backend usam o Postgres do compose. O frontend ainda não tem testes automatizados.
 
+### Atalhos (taskipy)
+
+```bash
+cd backend
+uv run task test             # suíte do backend
+uv run task lint             # ruff check --fix + ruff format
+uv run task makemigrations   # gera migrations
+uv run task migrate          # aplica as migrations no container
+uv run task sync             # instala dependências novas no container e reinicia o backend
+
+cd cli
+uv run task test
+uv run task lint
+```
+
+`uv run task --list` mostra todos.
+
 ## Documentação
 
 - [docs/especificacao.md](docs/especificacao.md): conceitos, entregáveis, endpoints e CLI.
