@@ -4,6 +4,7 @@ from ninja.errors import HttpError
 
 from hubflow.projects.models import Project
 
+from .mentions import notify_mentions
 from .models import Card, Column, Comment
 from .schemas import BoardOut, CardIn, CardMoveOut, CardOut, CommentIn, CommentOut, MoveIn
 from .services import create_card, delete_card, move_card, start_card
@@ -79,13 +80,15 @@ def archive(request, card_id: int):
 @router.get('/cards/{card_id}/comments', response=list[CommentOut])
 def list_comments(request, card_id: int):
     card = get_object_or_404(Card, id=card_id)
-    return card.comments.select_related('author')
+    return card.comments.select_related('author').prefetch_related('mentions')
 
 
 @router.post('/cards/{card_id}/comments', response={201: CommentOut})
 def add_comment(request, card_id: int, data: CommentIn):
-    card = get_object_or_404(Card, id=card_id)
-    return Status(201, Comment.objects.create(card=card, author=request.user, text=data.text))
+    card = get_object_or_404(Card.objects.select_related('project__client'), id=card_id)
+    comment = Comment.objects.create(card=card, author=request.user, text=data.text)
+    notify_mentions(comment)
+    return Status(201, comment)
 
 
 def own_comment_or_403(request, comment_id):
@@ -100,6 +103,7 @@ def update_comment(request, comment_id: int, data: CommentIn):
     comment = own_comment_or_403(request, comment_id)
     comment.text = data.text
     comment.save(update_fields=['text', 'modified'])
+    notify_mentions(comment)
     return comment
 
 

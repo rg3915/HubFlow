@@ -67,3 +67,12 @@ def password_change(request, data: ChangePasswordIn):
     user.set_password(data.new_password)
     user.save()
     return {'detail': 'Senha alterada com sucesso.'}
+
+
+users_router = Router(tags=['users'])
+
+
+@users_router.get('', response=list[UserOut])
+def list_users(request):
+    """Usuários ativos, para responsáveis e @menções."""
+    return User.objects.filter(is_active=True).order_by('email')

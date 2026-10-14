@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Comentários no card. #50
+* @menções em comentários e GET /api/users. #51
 
 ## [0.2.0] - 2026-10-13
 

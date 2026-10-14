@@ -78,5 +78,6 @@ class CommentOut(Schema):
     card_id: int
     author: UserOut
     text: str
+    mentions: list[UserOut]
     created: datetime
     modified: datetime
