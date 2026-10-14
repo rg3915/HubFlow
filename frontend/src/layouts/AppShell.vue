@@ -1,0 +1,73 @@
+<script setup>
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import ThemeToggle from '../components/ThemeToggle.vue'
+
+const route = useRoute()
+const sidebarOpen = ref(false)
+
+// Clientes e projetos entram com a API (#25, #26). Até lá, a lista fica vazia.
+const clients = ref([])
+</script>
+
+<template>
+  <div class="flex min-h-screen">
+    <!-- Barra lateral: Cliente → Projetos -->
+    <aside
+      class="fixed inset-y-0 left-0 z-20 flex w-60 -translate-x-full flex-col border-r border-border bg-surface transition-transform md:static md:translate-x-0"
+      :class="{ 'translate-x-0': sidebarOpen }"
+    >
+      <RouterLink to="/" class="flex h-12 items-center border-b border-border px-4 text-base font-semibold">
+        HubFlow
+      </RouterLink>
+
+      <nav class="flex-1 overflow-y-auto px-2 py-3" aria-label="Clientes e projetos">
+        <template v-if="clients.length">
+          <div v-for="client in clients" :key="client.id" class="mb-3">
+            <RouterLink
+              :to="`/clients/${client.id}`"
+              class="block rounded-[var(--radius-control)] px-2 py-1 font-medium hover:bg-surface-2"
+            >
+              {{ client.name }}
+            </RouterLink>
+            <RouterLink
+              v-for="project in client.projects"
+              :key="project.id"
+              :to="`/projects/${project.id}`"
+              class="block rounded-[var(--radius-control)] py-1 pl-5 pr-2 text-muted hover:bg-surface-2 hover:text-text"
+              active-class="bg-surface-2 text-text"
+            >
+              {{ project.name }}
+            </RouterLink>
+          </div>
+        </template>
+        <p v-else class="px-2 py-1 text-muted">Nenhum cliente ainda.</p>
+      </nav>
+
+      <div class="border-t border-border p-2">
+        <RouterLink to="/clients/new" class="btn w-full justify-start">
+          <span class="text-muted">+</span> Novo cliente
+        </RouterLink>
+      </div>
+    </aside>
+
+    <div v-if="sidebarOpen" class="fixed inset-0 z-10 bg-black/40 md:hidden" @click="sidebarOpen = false" />
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="flex h-12 items-center gap-3 border-b border-border bg-surface px-4">
+        <button type="button" class="btn btn-ghost h-8 w-8 justify-center px-0 md:hidden" aria-label="Abrir menu" @click="sidebarOpen = true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+        <h1 class="truncate text-xl font-semibold">{{ route.meta.title }}</h1>
+        <div class="ml-auto flex items-center gap-2">
+          <ThemeToggle />
+          <!-- Menu do usuário entra na #18 -->
+        </div>
+      </header>
+
+      <main class="flex-1 p-6">
+        <RouterView />
+      </main>
+    </div>
+  </div>
+</template>
