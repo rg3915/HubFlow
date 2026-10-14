@@ -1,5 +1,8 @@
 export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+// Arquivos (anexos, avatares): caminho relativo no disco local da API ou URL completa no S3.
+export const mediaUrl = (url) => (!url ? null : /^https?:\/\//.test(url) ? url : BASE_URL + url)
+
 export class ApiError extends Error {
   constructor(status, detail) {
     super(detail)

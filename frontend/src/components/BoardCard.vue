@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { BASE_URL } from '../api'
+import { mediaUrl } from '../api'
 import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 
@@ -19,7 +19,7 @@ const barWidth = computed(() => `${Math.min(100, progress.value?.percent ?? 0)}%
 
 // Dono do card: o responsável ou, sem ele, quem criou.
 const owner = computed(() => props.card.assignee || props.card.created_by || null)
-const ownerAvatar = computed(() => (owner.value?.avatar_url ? BASE_URL + owner.value.avatar_url : null))
+const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
 </script>
 
 <template>

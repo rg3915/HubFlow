@@ -3,6 +3,8 @@ from pathlib import Path
 from decouple import Csv, config
 from dj_database_url import parse as dburl
 
+from hubflow.core.storage import storages_for
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
@@ -89,6 +91,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+# STORAGE_BACKEND=local (padrão) ou s3; as variáveis AWS_* estão no .env.example.
+_S3_VARS = ['AWS_STORAGE_BUCKET_NAME', 'AWS_S3_ENDPOINT_URL', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
+_S3_VARS += ['AWS_S3_REGION_NAME', 'AWS_S3_CUSTOM_DOMAIN', 'AWS_S3_URL_PROTOCOL']
+STORAGES = storages_for(
+    config('STORAGE_BACKEND', default='local'), {name: config(name, default='') for name in _S3_VARS}
+)
 
 # Anexos dos cards: tamanho máximo por arquivo.
 ATTACHMENT_MAX_BYTES = config('ATTACHMENT_MAX_BYTES', default=10 * 1024 * 1024, cast=int)

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { BASE_URL } from '../api'
+import { mediaUrl } from '../api'
 import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 
@@ -31,7 +31,7 @@ function size(bytes) {
   <div>
     <ul class="space-y-1">
       <li v-for="attachment in board.attachments" :key="attachment.id" class="flex items-center gap-2 text-sm">
-        <a :href="BASE_URL + attachment.url" target="_blank" rel="noopener" class="truncate text-accent hover:underline">{{ attachment.name }}</a>
+        <a :href="mediaUrl(attachment.url)" target="_blank" rel="noopener" class="truncate text-accent hover:underline">{{ attachment.name }}</a>
         <span class="text-[13px] text-muted tabular-nums">{{ size(attachment.size) }}</span>
         <button v-if="canUpload || attachment.uploaded_by.id === auth.user?.id" type="button" class="ml-auto text-[13px] text-muted hover:text-danger" @click="board.deleteAttachment(attachment)">Excluir</button>
       </li>

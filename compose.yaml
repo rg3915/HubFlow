@@ -63,6 +63,32 @@ services:
     depends_on:
       - backend
 
+  # Anexos no modo S3 sem conta na AWS (SeaweedFS; as imagens do MinIO deixaram de ser públicas):
+  # docker compose --profile s3 up -d e STORAGE_BACKEND=s3 no .env. Sem credenciais: só para desenvolvimento.
+  s3:
+    image: chrislusf/seaweedfs:4.48
+    profiles: [s3]
+    command: server -dir=/data -s3 -s3.port=8333
+    volumes:
+      - s3data:/data
+    ports:
+      - "8333:8333"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8333/status || exit 1"]
+      interval: 3s
+      retries: 30
+
+  # Cria o bucket dos anexos.
+  s3-init:
+    image: chrislusf/seaweedfs:4.48
+    profiles: [s3]
+    depends_on:
+      s3:
+        condition: service_healthy
+    env_file: .env
+    entrypoint: ["sh", "-c", "echo \"s3.bucket.create -name $${AWS_STORAGE_BUCKET_NAME:-hubflow}\" | weed shell -master=s3:9333"]
+
 volumes:
   pgdata:
   media:
+  s3data:

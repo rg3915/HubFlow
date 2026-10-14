@@ -15,6 +15,7 @@ dependencies = [
     "redis>=8.1.0",
     "uvicorn>=0.54.0",
     "pillow>=12.3.0",
+    "django-storages[s3]>=1.14.6",
 ]
 
 [dependency-groups]

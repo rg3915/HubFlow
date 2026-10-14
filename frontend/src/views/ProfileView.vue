@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { BASE_URL, api } from '../api'
+import { api, mediaUrl } from '../api'
 import { useAuthStore } from '../stores/auth'
 
 const auth = useAuthStore()
@@ -8,7 +8,7 @@ const error = ref('')
 const loading = ref(false)
 const input = ref(null)
 
-const avatarUrl = computed(() => (auth.user?.avatar_url ? BASE_URL + auth.user.avatar_url : null))
+const avatarUrl = computed(() => mediaUrl(auth.user?.avatar_url))
 
 async function send(request) {
   error.value = ''

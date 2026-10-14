@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { BASE_URL } from '../api'
+import { mediaUrl } from '../api'
 import BoardColumn from '../components/BoardColumn.vue'
 import CardPanel from '../components/CardPanel.vue'
 import { useAuthStore } from '../stores/auth'
@@ -59,7 +59,7 @@ const visibleColumns = computed(() =>
       <RouterLink v-if="auth.can('projects.change_project')" :to="`/projects/${projectId}/edit`" class="text-muted hover:text-text">Configurar</RouterLink>
       <span v-if="board.viewers.length" class="ml-auto flex items-center -space-x-1" :title="`Vendo agora: ${board.viewers.map((v) => v.first_name).join(', ')}`">
         <template v-for="viewer in board.viewers.slice(0, 5)" :key="viewer.id">
-          <img v-if="viewer.avatar_url" :src="BASE_URL + viewer.avatar_url" :alt="viewer.first_name" class="h-6 w-6 rounded-full border-2 border-surface object-cover" />
+          <img v-if="viewer.avatar_url" :src="mediaUrl(viewer.avatar_url)" :alt="viewer.first_name" class="h-6 w-6 rounded-full border-2 border-surface object-cover" />
           <span v-else class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface bg-surface-2 text-[10px] font-medium">{{ viewer.first_name.slice(0, 2) }}</span>
         </template>
         <span v-if="board.viewers.length > 5" class="pl-2 text-[13px] text-muted">+{{ board.viewers.length - 5 }}</span>
