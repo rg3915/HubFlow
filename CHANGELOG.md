@@ -13,6 +13,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * PDF do relatório (GET /api/reports/pdf) gerado com WeasyPrint a partir de template HTML/CSS no visual do HubFlow; pango e fontes no Dockerfile; `task test` acha o pango do Homebrew no macOS. #159
 * Envio do relatório por e-mail (POST /api/reports/send) com o PDF anexado, para os e-mails informados ou os do projeto/cliente. #160
 * Relatórios agendados (semanal, quinzenal, mensal) por cliente ou projeto: API /api/report-schedules (cada pessoa gerencia os seus), envio uma vez por período encerrado pelo comando send_reports, que o scheduler roda a cada 15 min. #161
+* CLI: hubflow report show/pdf/send e report schedule list/add/remove (--client/--project, --period + --date ou --start/--end); `task lint` formata antes de checar. #162
 
 ## [0.13.0] - 2026-10-14
 

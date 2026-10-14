@@ -49,7 +49,7 @@ quote-style = "single"
 [tool.taskipy.tasks]
 # DYLD_*: no macOS o WeasyPrint acha o pango do Homebrew (no Linux não muda nada).
 test = { cmd = "DYLD_FALLBACK_LIBRARY_PATH=${DYLD_FALLBACK_LIBRARY_PATH:-/opt/homebrew/lib} pytest -W error", help = "roda a suíte do backend" }
-lint = { cmd = "ruff check --fix . && ruff format .", help = "lint e formatação" }
+lint = { cmd = "ruff format . && ruff check --fix .", help = "formatação e lint" }
 makemigrations = { cmd = "python manage.py makemigrations", help = "gera migrations" }
 migrate = { cmd = "docker compose exec -T backend uv run python manage.py migrate", help = "aplica as migrations no container" }
 sync = { cmd = "docker compose exec -T backend uv sync --frozen && docker compose restart backend", help = "instala dependências novas no container e reinicia" }

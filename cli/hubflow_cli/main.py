@@ -1,6 +1,6 @@
 import typer
 
-from . import automations, cards, clients, config, fields, payments, projects, sprints, users
+from . import automations, cards, clients, config, fields, payments, projects, reports, sprints, users
 from .cards import board_cards, column_label, local_time
 from .client import fail, format_hours, request
 from .projects import find_project
@@ -12,6 +12,7 @@ app.add_typer(clients.app, name='client')
 projects.app.add_typer(fields.app, name='field')
 projects.app.command('sla')(automations.sla)
 app.add_typer(automations.app, name='automation')
+app.add_typer(reports.app, name='report')
 app.add_typer(projects.app, name='project')
 app.add_typer(cards.app, name='card')
 app.add_typer(sprints.app, name='sprint')

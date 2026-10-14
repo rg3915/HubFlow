@@ -229,6 +229,10 @@ hubflow automation add "QA aprovado" --project Loja --when entered:qa --then mov
 hubflow automation list --project Loja / hubflow automation toggle 1 --project Loja / hubflow automation remove 1
 hubflow project sla Loja [--column qa --hours 48 | --column qa --clear]
 
+hubflow report show --client ACME [--period week|fortnight|month --date 2026-10-14 | --start 2026-10-01 --end 2026-10-15]
+hubflow report pdf --project Loja [--output ~/Downloads] / hubflow report send --client ACME [--email diretoria@hubflow.com]
+hubflow report schedule add --client ACME --frequency week [--email ...] / report schedule list / report schedule remove 1
+
 hubflow user list                                                     # só quem gerencia usuários
 hubflow user invite ana@hubflow.com --name Ana --role Desenvolvedor --client ACME
 hubflow user role ana@hubflow.com --set Gerente [--set Financeiro]

@@ -42,4 +42,4 @@ quote-style = "single"
 # Atalhos de desenvolvimento: uv run task <nome>.
 [tool.taskipy.tasks]
 test = { cmd = "pytest", help = "roda a suíte da CLI" }
-lint = { cmd = "ruff check --fix . && ruff format .", help = "lint e formatação" }
+lint = { cmd = "ruff format . && ruff check --fix .", help = "formatação e lint" }
