@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import Breadcrumb from '../components/Breadcrumb.vue'
 import GlobalSearch from '../components/GlobalSearch.vue'
+import HeaderInbox from '../components/HeaderInbox.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { useAuthStore } from '../stores/auth'
@@ -100,6 +101,7 @@ function toggleSidebar() {
         <Breadcrumb />
         <div class="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2">
           <GlobalSearch class="hidden md:block" />
+          <HeaderInbox />
           <ThemeToggle />
           <UserMenu />
         </div>

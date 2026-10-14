@@ -10,6 +10,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Notificações no app: menção, comentário em card seu ou de que é responsável e card seu movido por outra pessoa (sem duplicar, sem avisar quem fez); GET /api/notifications (não lidas primeiro + total), POST /api/notifications/{id}/read e /read-all. #114
 * API meus cards: GET /api/me/cards com os cards em aberto sob sua responsabilidade (projeto, cliente, coluna, prazo), vencidos primeiro. #116
+* Cabeçalho com sino (contador de não lidas, lista, marcar todas; abrir a notificação marca como lida e abre o card) e meus cards (contador e lista com prazo/vencidos), atualizados a cada minuto e a cada troca de página. #115
 
 ### Alterado
 
