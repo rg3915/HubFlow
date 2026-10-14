@@ -41,8 +41,10 @@ def update_client(request, client_id: int, data: ClientIn):
     return client
 
 
-@router.delete('/{client_id}', response={204: None})
+@router.delete('/{client_id}', response={204: None, 400: DetailOut})
 def delete_client(request, client_id: int):
     client = get_object_or_404(Client, id=client_id)
+    if client.projects.exists():  # RN-11
+        return Status(400, {'detail': 'Este cliente tem projetos. Arquive-o em vez de excluir.'})
     client.delete()
     return Status(204, None)
