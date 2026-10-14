@@ -64,3 +64,24 @@ class PaymentOut(Schema):
     @staticmethod
     def resolve_client_name(payment):
         return payment.sprint.project.client.name
+
+
+class ClientTotalsOut(Schema):
+    client_id: int
+    client_name: str
+    received: Decimal
+    pending: Decimal
+
+
+class MonthTotalsOut(Schema):
+    month: str
+    received: Decimal
+    pending: Decimal
+
+
+class SummaryOut(Schema):
+    received: Decimal
+    pending: Decimal
+    by_client: list[ClientTotalsOut]
+    by_month: list[MonthTotalsOut]
+    years: list[int]

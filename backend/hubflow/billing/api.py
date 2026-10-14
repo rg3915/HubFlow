@@ -4,13 +4,19 @@ from ninja import Router, Status
 from hubflow.sprints.models import Sprint
 
 from .models import Payment
-from .schemas import PaymentIn, PaymentOut
+from .schemas import PaymentIn, PaymentOut, SummaryOut
+from .summary import payments_summary
 
 router = Router(tags=['payments'])
 
 
 def payment_queryset():
     return Payment.objects.select_related('sprint__project__client')
+
+
+@router.get('/summary', response=SummaryOut)
+def summary(request, client: int | None = None, year: int | None = None):
+    return payments_summary(client_id=client, year=year)
 
 
 @router.get('', response=list[PaymentOut])
