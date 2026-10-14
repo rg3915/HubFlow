@@ -12,6 +12,7 @@ from .models import Card, CardMove, Column
 from .notifications import notify
 
 logger = logging.getLogger(__name__)
+CLOSED_COLUMNS = (Column.DONE, Column.ARCHIVED)
 
 
 def resolve_sprint(project, sprint=None):
@@ -33,15 +34,37 @@ def create_card(project, user=None, **data):
     return card
 
 
-def mirror_issue(card):
+def with_repo(card, action, *args):
+    """Executa `action(client, *args)` no repositório do card; falha remota só gera aviso."""
     from hubflow.integrations.client import RepoClient, RepoError
 
     try:
-        card.issue_number, card.issue_url = RepoClient(card.project).create_issue(card.title, card.description)
+        return action(RepoClient(card.project), *args)
     except RepoError as error:
-        logger.warning('Card #%s de %s sem issue no repositório: %s', card.number, card.project, error)
+        logger.warning('Card #%s de %s: repositório não atualizado: %s', card.number, card.project, error)
+        return None
+
+
+def mirror_issue(card):
+    result = with_repo(card, lambda client: client.create_issue(card.title, card.description))
+    if result:
+        card.issue_number, card.issue_url = result
+        card.save(update_fields=['issue_number', 'issue_url'])
+
+
+def sync_issue_fields(card):
+    """Título e descrição do card vão para a issue, se houver."""
+    if card.issue_number:
+        with_repo(card, lambda client: client.update_issue(card.issue_number, card.title, card.description))
+
+
+def sync_issue_state(card, from_column, to_column):
+    """Concluído/Arquivadas fecha a issue; sair delas reabre."""
+    if not card.issue_number:
         return
-    card.save(update_fields=['issue_number', 'issue_url'])
+    was_closed, is_closed = from_column in CLOSED_COLUMNS, to_column in CLOSED_COLUMNS
+    if was_closed != is_closed:
+        with_repo(card, lambda client: client.set_issue_state(card.issue_number, is_closed))
 
 
 def resolve_assignee(assignee_id):
@@ -91,6 +114,7 @@ def move_card(card, column, position=None, user=None):
     if source is not target:
         renumber(source)
     card.save(update_fields=['column', 'modified'])
+    sync_issue_state(card, from_column, column)
     if column == Column.DONE:
         notify('done', card)
     elif column not in (from_column, Column.ARCHIVED):

@@ -10,6 +10,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Token e identificação do repositório por projeto (token nunca exposto), opção de criar issues e teste de conexão com GitHub/GitLab. #94
 * Criar card abre a issue no GitHub/GitLab (quando o projeto pedir); número e URL da issue no card. #95
+* Editar card atualiza a issue; Concluído/Arquivadas fecha e sair delas reabre. #96
 
 ## [0.7.0] - 2026-10-14
 

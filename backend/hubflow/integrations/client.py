@@ -63,3 +63,13 @@ class RepoClient:
             return data['number'], data['html_url']
         data = self.request('POST', '/issues', json={'title': title, 'description': body})
         return data['iid'], data['web_url']
+
+    def update_issue(self, number, title, body=''):
+        if self.is_github:
+            return self.request('PATCH', f'/issues/{number}', json={'title': title, 'body': body})
+        return self.request('PUT', f'/issues/{number}', json={'title': title, 'description': body})
+
+    def set_issue_state(self, number, closed):
+        if self.is_github:
+            return self.request('PATCH', f'/issues/{number}', json={'state': 'closed' if closed else 'open'})
+        return self.request('PUT', f'/issues/{number}', json={'state_event': 'close' if closed else 'reopen'})

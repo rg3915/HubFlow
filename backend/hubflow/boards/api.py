@@ -29,7 +29,16 @@ from .schemas import (
     LabelOut,
     MoveIn,
 )
-from .services import card_queryset, create_card, delete_card, move_card, renumber, resolve_assignee, start_card
+from .services import (
+    card_queryset,
+    create_card,
+    delete_card,
+    move_card,
+    renumber,
+    resolve_assignee,
+    start_card,
+    sync_issue_fields,
+)
 
 router = Router(tags=['boards'])
 
@@ -109,6 +118,7 @@ def update_card(request, card_id: int, data: CardIn):
         card.sprint = sprint
     card.save(update_fields=['title', 'description', 'due_date', 'estimate_hours', 'assignee', 'sprint', 'modified'])
     record_card_changes(card, request.user, before)
+    sync_issue_fields(card)
     return card
 
 
