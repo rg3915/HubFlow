@@ -12,8 +12,10 @@ def run(trigger, card, column=None):
     from .models import Automation
 
     rules = Automation.objects.filter(project_id=card.project_id, is_active=True, trigger=trigger)
-    if column:
-        rules = rules.filter(trigger_column=column) if trigger == 'entered_column' else rules
+    if trigger == 'entered_column':
+        rules = rules.filter(trigger_column=column)
+    elif trigger == 'sla_breached':  # coluna opcional: vazia vale para todas
+        rules = rules.filter(trigger_column__in=['', column])
     token = _running.set(True)
     try:
         for rule in rules.select_related('action_user', 'action_label'):

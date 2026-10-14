@@ -50,6 +50,8 @@ class Card(UuidModel, TimeStampedModel, CreatedByModel):
     estimate_hours = models.FloatField('estimativa (horas)', null=True, blank=True)
     custom_values = models.JSONField('campos personalizados', default=dict, blank=True)  # {id do campo: valor}
     column_entered_at = models.DateTimeField('entrou na coluna em', default=timezone.now)  # base do SLA
+    sla_breached_at = models.DateTimeField('SLA estourado em', null=True, blank=True)  # zera ao mudar de coluna
+    due_notified_on = models.DateField('prazo já avisado', null=True, blank=True)  # avisa de novo se o prazo mudar
     # Issue espelhada no repositório (GitHub: number; GitLab: iid).
     issue_number = models.PositiveIntegerField('número da issue', null=True, blank=True)
     issue_url = models.URLField('URL da issue', blank=True)
@@ -176,7 +178,13 @@ class CardEvent(UuidModel, TimeStampedModel):
 class Notification(UuidModel, TimeStampedModel):
     """Aviso no app (sino): menção, comentário em card seu ou de que é responsável, card seu movido."""
 
-    KINDS = {'mention': 'Menção', 'comment': 'Comentário', 'moved': 'Card movido', 'automation': 'Automação'}
+    KINDS = {
+        'mention': 'Menção',
+        'comment': 'Comentário',
+        'moved': 'Card movido',
+        'automation': 'Automação',
+        'overdue': 'Prazo vencido',
+    }
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
     actor = models.ForeignKey(

@@ -67,6 +67,10 @@ docker compose exec backend uv run python manage.py createsuperuser
 
 O `.env.example` já aponta para os serviços do compose. As variáveis que importam: `SECRET_KEY`, `DEBUG`, `DATABASE_URL`, `EMAIL_HOST`/`EMAIL_PORT`, `FRONTEND_URL` (usado nos links dos e-mails) e `VITE_API_URL`.
 
+### Agendador
+
+O serviço `scheduler` do compose roda `python manage.py check_sla` a cada 15 minutos: dispara as automações de SLA estourado e avisa no sino os prazos vencidos. Fora do Docker, agende o mesmo comando (cron, por exemplo).
+
 ### Anexos no S3 ou no Cloudinary (opcional)
 
 Por padrão os anexos e avatares ficam no disco (volume `media`). Para guardar num bucket S3 (AWS ou compatível), defina `STORAGE_BACKEND=s3` e as variáveis `AWS_*` do `.env.example`. Em desenvolvimento há um S3 local (SeaweedFS) no perfil `s3`, já com o bucket criado:

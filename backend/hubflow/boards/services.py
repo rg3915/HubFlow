@@ -130,12 +130,12 @@ def move_card(card, column, position=None, user=None, sync=True):
     if column != from_column:
         CardMove.objects.create(card=card, from_column=from_column, to_column=column, user=user)
     if column != from_column:
-        card.column_entered_at = timezone.now()
+        card.column_entered_at, card.sla_breached_at = timezone.now(), None
     card.column = column
     renumber(target)
     if source is not target:
         renumber(source)
-    card.save(update_fields=['column', 'column_entered_at', 'modified'])
+    card.save(update_fields=['column', 'column_entered_at', 'sla_breached_at', 'modified'])
     if sync:
         sync_issue_state(card, from_column, column)
     broadcast.card_moved(card, from_column, column, user)

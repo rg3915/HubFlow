@@ -51,6 +51,24 @@ services:
       redis:
         condition: service_healthy
 
+  # Verificação periódica de SLA e prazos (RN-111/112): a cada 15 minutos.
+  scheduler:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      EMAIL_HOST: mailpit
+      REDIS_URL: redis://redis:6379/0
+    command: sh -c "while true; do uv run python manage.py check_sla; sleep 900; done"
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   frontend:
     build: ./frontend
     env_file: .env
