@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
       <span v-if="notes.unread" class="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent px-1 text-[10px] font-medium leading-4 text-white tabular-nums">{{ notes.unread }}</span>
     </button>
 
-    <div v-if="open === 'notes'" class="panel absolute right-0 top-9 z-30 w-[22rem] max-w-[calc(100vw-2rem)] shadow-sm">
+    <div v-if="open === 'notes'" class="panel fixed inset-x-2 top-12 z-30 shadow-sm md:absolute md:inset-x-auto md:right-0 md:top-9 md:w-[22rem]">
       <header class="flex items-center border-b border-border px-3 py-2">
         <h2 class="font-medium">Notificações</h2>
         <button v-if="notes.unread" type="button" class="ml-auto text-[13px] text-accent hover:underline" @click="readAll">Marcar todas como lidas</button>
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
       </ul>
     </div>
 
-    <div v-if="open === 'cards'" class="panel absolute right-0 top-9 z-30 w-[22rem] max-w-[calc(100vw-2rem)] shadow-sm">
+    <div v-if="open === 'cards'" class="panel fixed inset-x-2 top-12 z-30 shadow-sm md:absolute md:inset-x-auto md:right-0 md:top-9 md:w-[22rem]">
       <h2 class="border-b border-border px-3 py-2 font-medium">Meus cards</h2>
       <ul class="max-h-96 overflow-y-auto">
         <li v-for="card in cards" :key="card.id">

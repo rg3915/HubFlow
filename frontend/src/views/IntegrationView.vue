@@ -117,7 +117,7 @@ function generateSecret() {
             <button type="button" class="btn" @click="generateSecret">Gerar</button>
           </div>
           <p class="mt-1 text-[13px] text-muted">
-            Configure no repositório um webhook de push e pull request para <code class="rounded bg-surface-2 px-1">{{ webhookUrl }}</code> com este segredo.
+            Configure no repositório um webhook de push e pull request para <code class="break-all rounded bg-surface-2 px-1">{{ webhookUrl }}</code> com este segredo.
             Commits e PRs com "close #N" concluem o card.
           </p>
         </div>

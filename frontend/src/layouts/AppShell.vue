@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import Breadcrumb from '../components/Breadcrumb.vue'
 import GlobalSearch from '../components/GlobalSearch.vue'
 import HeaderInbox from '../components/HeaderInbox.vue'
@@ -14,6 +15,8 @@ const clientsStore = useClientsStore()
 // O usuário (e as permissões) já vem carregado pela guarda de rotas.
 onMounted(() => auth.token && clientsStore.load().catch(() => {}))
 const sidebarOpen = ref(false) // gaveta no celular
+const route = useRoute()
+watch(() => route.fullPath, () => (sidebarOpen.value = false)) // fecha ao navegar
 const collapsed = ref(localStorage.getItem('sidebar') === 'collapsed') // recolhido no desktop
 
 function toggleSidebar() {
@@ -91,7 +94,8 @@ function toggleSidebar() {
     <div v-if="sidebarOpen" class="fixed inset-0 z-10 bg-black/40 md:hidden" @click="sidebarOpen = false" />
 
     <div class="flex min-w-0 flex-1 flex-col">
-      <header class="flex h-12 items-center gap-2 border-b border-border bg-surface px-2 md:gap-3 md:px-4">
+      <!-- Área segura do iOS (notch) com viewport-fit=cover. -->
+      <header class="flex h-[calc(3rem+env(safe-area-inset-top))] items-center gap-2 border-b border-border bg-surface px-2 pt-[env(safe-area-inset-top)] md:gap-3 md:px-4">
         <button
           type="button"
           class="btn btn-ghost h-8 w-8 justify-center px-0"

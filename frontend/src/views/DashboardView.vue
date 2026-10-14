@@ -71,7 +71,7 @@ function describe(item) {
     <div class="grid gap-3 lg:grid-cols-3">
       <section class="panel p-4 lg:col-span-2">
         <h2 class="mb-2 font-medium">Cards por etapa</h2>
-        <ol class="grid grid-cols-3 gap-2 md:grid-cols-6">
+        <ol class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
           <li v-for="col in overview.by_column" :key="col.key" class="rounded-[var(--radius-control)] bg-surface-2 px-3 py-2">
             <p class="text-[13px] text-muted">{{ col.label }}</p>
             <p class="text-xl font-semibold tabular-nums">{{ col.count }}</p>
