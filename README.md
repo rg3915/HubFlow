@@ -12,6 +12,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
 - **Sprints** numeradas por projeto (todo card pertence a uma; sem sprint informada usa a última aberta ou cria a primeira) e milestone opcional.
 - **Controle de tempo**: cronômetro por card (um aberto por card; vários em cards diferentes), regra dos 15 minutos, lançamento manual de horas (só o dono apaga), estimativa com progresso gasto × estimado e exportação xlsx por período.
+- **Faturamento**: pagamentos por sprint ou por mês (valor/hora × horas registradas ou valor fechado), NF, emissão, pagamento, pendente/pago, resumo por cliente e por mês com gráficos.
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
@@ -131,6 +132,7 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `POST /api/cards/{id}/timer/start`, `/timer/stop`, `GET /api/cards/{id}/time` | Cronômetro e tempo do card |
 | `POST /api/cards/{id}/time-entries`, `PUT/DELETE /api/time-entries/{id}` | Horas manuais (só o dono edita/apaga) |
 | `GET /api/projects/{id}/timesheet.xlsx?from=&to=` | Exportação xlsx do timesheet |
+| `GET/POST /api/payments`, `GET/PUT/DELETE /api/payments/{id}`, `POST .../pay`, `.../copy`, `GET /api/payments/summary` | Faturamento |
 | `GET /api/users` | Usuários ativos (responsáveis e menções) |
 
 A documentação interativa fica em http://localhost:8000/api/docs.
@@ -177,6 +179,11 @@ hubflow card stop 3 --project Loja           # fecha o cronômetro (mostra sess�
 hubflow card log 3 --project Loja --hours 1.5 --date 2026-10-13 --note "Reunião"
 hubflow card time 3 --project Loja           # entradas e total do card
 hubflow timesheets --project Loja --limit 10 # últimas entradas
+
+hubflow payment create --project Loja --month 2026-10 --rate 150     # ou --sprint 2; --hours, --fixed, --invoice, --issue-date
+hubflow payment list [--client ACME] [--status pending|paid] [--year 2026]
+hubflow payment pay 1 / hubflow payment copy 1
+hubflow payment summary [--client ACME] [--year 2026]
 ```
 
 Variáveis de ambiente: `HUBFLOW_URL` (padrão `http://localhost:8000`) e `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração).

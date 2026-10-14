@@ -6,7 +6,13 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-14
+
+Faturamento: pagamentos por sprint ou por período (mensal), resumo financeiro, CLI e tela com KPIs e gráficos.
+
 ### Adicionado
+
+#### Faturamento por sprint
 
 * Model Payment ligado à sprint (valor/hora, estimativas, tempo gasto, valor total, NF, datas, status, pagar e copiar). #82
 * API CRUD de pagamentos com filtros (cliente, status, ano), pagar e copiar. #83
@@ -14,6 +20,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: payment create, list, pay, copy e summary. #85
 * Pagamento pertence ao projeto; sprint opcional; pagamento por período (mensal) com --month; copiar avança o mês. #131
 * Tela de pagamentos: KPIs, gráficos por mês e por cliente, filtros, formulário e ações (editar, copiar, pagar, excluir). #86
+* CHANGELOG 0.6.0. #87
 
 ## [0.5.0] - 2026-10-14
 
@@ -152,7 +159,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/rg3915/HubFlow/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rg3915/HubFlow/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rg3915/HubFlow/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rg3915/HubFlow/compare/v0.2.0...v0.3.0
