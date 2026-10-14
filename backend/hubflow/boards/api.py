@@ -7,6 +7,7 @@ from ninja.files import UploadedFile
 from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
 from hubflow.sprints.models import Sprint
+from hubflow.timetracking.services import project_median_estimate
 
 from .activity import card_activity, record_card_changes, record_labels
 from .mentions import notify_mentions
@@ -60,8 +61,10 @@ def board(request, project_id: int, archived: bool = False, sprint: int | None =
     if not archived:  # RN-37
         cards = cards.exclude(column=Column.ARCHIVED)
     # Uma consulta só; o agrupamento por coluna é feito em memória.
+    median = project_median_estimate(project.id)  # RN-75: uma vez por quadro
     by_column = {key: [] for key in Column.values}
     for card in cards:
+        card.project_median = median
         by_column[card.column].append(card)
     return {
         'project': {'id': project.id, 'name': project.name, 'client_name': project.client.name},
@@ -97,13 +100,14 @@ def update_card(request, card_id: int, data: CardIn):
     card = get_object_or_404(Card, id=card_id)
     before = {'assignee_id': card.assignee_id, 'due_date': card.due_date}
     card.title, card.description, card.due_date = data.title, data.description, data.due_date
+    card.estimate_hours = data.estimate_hours
     card.assignee = resolve_assignee(data.assignee_id)
     if data.sprint_id is not None:
         sprint = project_sprint_or_400(card.project_id, data.sprint_id)
         if isinstance(sprint, Status):
             return sprint
         card.sprint = sprint
-    card.save(update_fields=['title', 'description', 'due_date', 'assignee', 'sprint', 'modified'])
+    card.save(update_fields=['title', 'description', 'due_date', 'estimate_hours', 'assignee', 'sprint', 'modified'])
     record_card_changes(card, request.user, before)
     return card
 

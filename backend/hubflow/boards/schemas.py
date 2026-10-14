@@ -14,6 +14,14 @@ class CardIn(Schema):
     due_date: date | None = None
     assignee_id: int | None = None
     sprint_id: int | None = None
+    estimate_hours: float | None = None
+
+    @field_validator('estimate_hours')
+    @classmethod
+    def estimativa_nao_negativa(cls, value):
+        if value is not None and value < 0:
+            raise ValueError('A estimativa não pode ser negativa.')
+        return value
 
     @field_validator('title')
     @classmethod
@@ -107,6 +115,13 @@ class TimeSummary(Schema):
     running: bool
 
 
+class ProgressOut(Schema):
+    spent_hours: float
+    estimate_hours: float | None
+    percent: int | None
+    source: str | None
+
+
 class CardOut(Schema):
     id: int
     project_id: int
@@ -122,17 +137,35 @@ class CardOut(Schema):
     checklist: ChecklistSummary
     attachments_count: int
     sprint: SprintBrief | None
+    estimate_hours: float | None
     time: TimeSummary
+    progress: ProgressOut
+
+    @staticmethod
+    def spent_hours(card):
+        if hasattr(card, 'time_spent'):
+            return round(card.time_spent.total_seconds() / 3600, 2) if card.time_spent else 0.0
+        from hubflow.timetracking.models import TimeEntry
+
+        return round(TimeEntry.objects.total_for(card).total_seconds() / 3600, 2)
 
     @staticmethod
     def resolve_time(card):
-        if hasattr(card, 'time_spent'):
-            spent = card.time_spent.total_seconds() / 3600 if card.time_spent else 0.0
-            return {'hours': round(spent, 2), 'running': card.time_running}
-        from hubflow.timetracking.models import TimeEntry
+        if hasattr(card, 'time_running'):
+            running = card.time_running
+        else:
+            from hubflow.timetracking.models import TimeEntry
 
-        total = TimeEntry.objects.total_for(card).total_seconds() / 3600
-        return {'hours': round(total, 2), 'running': TimeEntry.objects.running_for(card) is not None}
+            running = TimeEntry.objects.running_for(card) is not None
+        return {'hours': CardOut.spent_hours(card), 'running': running}
+
+    @staticmethod
+    def resolve_progress(card):
+        from hubflow.timetracking.services import card_progress, project_median_estimate
+
+        # O quadro calcula a mediana uma vez por projeto e anota em cada card; fora dele, calcula aqui.
+        median = card.project_median if hasattr(card, 'project_median') else project_median_estimate(card.project_id)
+        return card_progress(card, CardOut.spent_hours(card), median)
 
     @staticmethod
     def resolve_attachments_count(card):

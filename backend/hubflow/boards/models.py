@@ -44,6 +44,7 @@ class Card(TimeStampedModel, CreatedByModel):
     # RN-61: todo card pertence a uma sprint (o serviço garante; o banco aceita nulo só para dados antigos).
     sprint = models.ForeignKey(Sprint, null=True, blank=True, on_delete=models.PROTECT, related_name='cards')
     due_date = models.DateField('prazo', null=True, blank=True)
+    estimate_hours = models.FloatField('estimativa (horas)', null=True, blank=True)
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,

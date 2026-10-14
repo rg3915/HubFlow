@@ -32,3 +32,37 @@ def stop_timer(card):
     entry.ended_at = timezone.now()
     entry.save(update_fields=['ended_at'])
     return entry
+
+
+def project_median_estimate(project_id):
+    """RN-75: mediana das horas gastas nos cards concluídos do projeto (None sem histórico)."""
+    from statistics import median
+
+    from django.db.models import F, Sum
+
+    from hubflow.boards.models import Column
+
+    totals = (
+        TimeEntry.objects.filter(card__project_id=project_id, card__column=Column.DONE, ended_at__isnull=False)
+        .values('card_id')
+        .annotate(total=Sum(F('ended_at') - F('started_at')))
+        .values_list('total', flat=True)
+    )
+    hours = [t.total_seconds() / 3600 for t in totals if t]
+    return round(median(hours), 2) if hours else None
+
+
+def card_progress(card, spent_hours, median_hours):
+    """Gasto × estimado: estimativa do card ou, na falta, a mediana do projeto."""
+    if card.estimate_hours:
+        estimate, source = card.estimate_hours, 'card'
+    elif median_hours:
+        estimate, source = median_hours, 'median'
+    else:
+        return {'spent_hours': spent_hours, 'estimate_hours': None, 'percent': None, 'source': None}
+    return {
+        'spent_hours': spent_hours,
+        'estimate_hours': estimate,
+        'percent': round(spent_hours / estimate * 100),
+        'source': source,
+    }
