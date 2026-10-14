@@ -82,6 +82,11 @@ Numeradas para serem citadas em issues, testes e commits (ex.: `RN-07`).
 - **RN-96** O convite cria a pessoa sem senha e manda o link para defini-la (mesmo fluxo da redefinição, RN-04).
 - **RN-97** Toda mudança de papel, permissão por pessoa, vínculo, situação ou convite fica registrada com quem fez, quando, o antes e o depois.
 
+## Campos personalizados e formulários (entregável 7)
+
+- **RN-100** Cada projeto define seus campos (texto, número, data, seleção, sim/não), com nome único no projeto e ordem. O valor é validado pelo tipo; na seleção, só as opções do campo. Obrigatórios são exigidos ao criar o card e não podem ser esvaziados depois; ao editar, só os campos enviados são checados. Mudanças de valores entram no histórico.
+- **RN-101** O formulário público do projeto, quando ligado, cria card no Backlog sem login a partir de um link com token. Gerar outro link invalida o anterior. Os envios têm limite por IP e hora (`FORM_SUBMISSIONS_PER_HOUR`).
+
 ## Versionamento
 
 - **RN-50** O CHANGELOG segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento semântico. Começa em 0.1.0 e cada entregável concluído gera uma versão.

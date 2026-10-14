@@ -6,10 +6,15 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-14
+
+Campos personalizados por projeto (no card, no quadro, na API e na CLI), formulário público que cria card sem login e anexos no Cloudinary.
+
 ### Adicionado
 
+#### Campos personalizados e formulários
+
 * Model de campo personalizado por projeto: nome (único no projeto), tipo (texto, número, data, seleção, sim/não), opções, obrigatório e ordem. #136
-* Anexos e avatares no Cloudinary (STORAGE_BACKEND=cloudinary e CLOUDINARY_URL) com a lib oficial do Cloudinary. #145
 * API de campos personalizados: listar, criar, editar, excluir e reordenar (projects.change_project para alterar). #137
 * Valores dos campos personalizados no card (`fields` na criação/edição, `custom_values` na resposta): validação por tipo, opção da seleção, obrigatórios ao criar e não podem ser esvaziados; mudanças entram no histórico. #138
 * CLI: hubflow project field list/add/remove, card create --field Nome=valor e card fields (mostra/altera). #139
@@ -17,6 +22,11 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Campos no painel do card (entrada conforme o tipo, obrigatórios marcados, salva só o que mudou), obrigatórios pedidos no "Novo card", até dois valores no card do quadro e mudanças de campos no histórico. #141
 * Formulário público do projeto: link com token (ligar/desligar, gerar outro) que cria card no Backlog sem login, com título, descrição, contato e campos; limite de envios por IP (FORM_SUBMISSIONS_PER_HOUR). #142
 * Tela do formulário público (/form/TOKEN, sem login, com confirmação do card criado) e configuração na tela de campos: ligar, copiar, abrir e gerar outro link. #143
+* CHANGELOG 0.12.0; README e regras RN-100 e RN-101. #144
+
+#### Polimento
+
+* Anexos e avatares no Cloudinary (STORAGE_BACKEND=cloudinary e CLOUDINARY_URL) com a lib oficial do Cloudinary. #145
 
 ### Corrigido
 
@@ -277,7 +287,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/rg3915/HubFlow/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/rg3915/HubFlow/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/rg3915/HubFlow/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/rg3915/HubFlow/compare/v0.8.0...v0.9.0

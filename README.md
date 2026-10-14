@@ -20,6 +20,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
 - **Permissões**: papéis padrão (Administrador, Gerente, Desenvolvedor, Financeiro, Cliente, Leitura) com as permissões do Django, permissões extras por pessoa, vínculo pessoa ↔ cliente (quem não vê todos só enxerga os seus), uso da CLI e visibilidade de pagamentos controlados, convite por e-mail, histórico das alterações e tela de gestão de usuários.
+- **Campos personalizados** por projeto (texto, número, data, seleção, sim/não, obrigatórios) no card, no quadro, na API e na CLI, e **formulário público** com link que cria card no Backlog sem login.
 - **Notificações no app**: sino com menções, comentários e movimentações dos seus cards, e atalho "meus cards" com prazos.
 - **Anexos** no disco ou num bucket S3 (AWS ou compatível).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
