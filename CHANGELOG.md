@@ -10,6 +10,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Preferências de notificação por projeto. #44
 * Serviço de notificação por e-mail. #45
+* Disparo nos eventos card criado, movido e concluído. #46
 
 ## [0.1.0] - 2026-10-13
 

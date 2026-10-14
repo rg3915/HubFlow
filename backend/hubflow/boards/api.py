@@ -11,7 +11,7 @@ router = Router(tags=['boards'])
 
 
 @router.post('/projects/{project_id}/cards', response={201: CardOut})
-def create_card(request, project_id: int, data: CardIn):
+def add_card(request, project_id: int, data: CardIn):
     project = get_object_or_404(Project, id=project_id)
     return Status(201, create_card(project, user=request.user, **data.dict()))
 
