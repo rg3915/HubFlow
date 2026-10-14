@@ -1,6 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useBoardStore } from '../stores/board'
+import ActivityList from './ActivityList.vue'
+import AttachmentsBox from './AttachmentsBox.vue'
+import ChecklistBox from './ChecklistBox.vue'
 import CommentBox from './CommentBox.vue'
 import LabelPicker from './LabelPicker.vue'
 
@@ -103,9 +106,24 @@ async function remove() {
         <LabelPicker :card="board.selected" />
       </section>
 
-      <section class="p-4">
+      <section class="border-b border-border p-4">
+        <h3 class="label">Checklist</h3>
+        <ChecklistBox />
+      </section>
+
+      <section class="border-b border-border p-4">
+        <h3 class="label">Anexos</h3>
+        <AttachmentsBox />
+      </section>
+
+      <section class="border-b border-border p-4">
         <h3 class="label">Comentários</h3>
         <CommentBox :card="board.selected" />
+      </section>
+
+      <section class="p-4">
+        <h3 class="label">Atividade</h3>
+        <ActivityList />
       </section>
     </div>
   </aside>

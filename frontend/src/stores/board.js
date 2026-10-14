@@ -12,6 +12,9 @@ export const useBoardStore = defineStore('board', {
     labels: [],
     users: [],
     comments: [],
+    checklist: [],
+    attachments: [],
+    activity: [],
   }),
   actions: {
     async load(projectId, { archived = false } = {}) {
@@ -41,8 +44,57 @@ export const useBoardStore = defineStore('board', {
     },
     async select(card) {
       this.selected = card
-      this.comments = []
-      if (card) this.comments = await api(`/cards/${card.id}/comments`, { token: useAuthStore().token })
+      this.comments = this.checklist = this.attachments = this.activity = []
+      if (!card) return
+      const token = useAuthStore().token
+      ;[this.comments, this.checklist, this.attachments, this.activity] = await Promise.all([
+        api(`/cards/${card.id}/comments`, { token }),
+        api(`/cards/${card.id}/checklist`, { token }),
+        api(`/cards/${card.id}/attachments`, { token }),
+        api(`/cards/${card.id}/activity`, { token }),
+      ])
+    },
+    async refreshActivity() {
+      this.activity = await api(`/cards/${this.selected.id}/activity`, { token: useAuthStore().token })
+    },
+    syncChecklistSummary() {
+      this.selected.checklist = { done: this.checklist.filter((i) => i.done).length, total: this.checklist.length }
+    },
+    async addChecklistItem(text) {
+      const token = useAuthStore().token
+      const item = await api(`/cards/${this.selected.id}/checklist`, { method: 'POST', body: { text }, token })
+      this.checklist.push(item)
+      this.syncChecklistSummary()
+    },
+    async toggleChecklistItem(item) {
+      const token = useAuthStore().token
+      const body = { text: item.text, done: !item.done }
+      Object.assign(item, await api(`/checklist/${item.id}`, { method: 'PUT', body, token }))
+      this.syncChecklistSummary()
+    },
+    async deleteChecklistItem(item) {
+      await api(`/checklist/${item.id}`, { method: 'DELETE', token: useAuthStore().token })
+      this.checklist.splice(this.checklist.indexOf(item), 1)
+      this.syncChecklistSummary()
+    },
+    async reorderChecklist(itemIds) {
+      const token = useAuthStore().token
+      const body = { item_ids: itemIds }
+      this.checklist = await api(`/cards/${this.selected.id}/checklist/order`, { method: 'PUT', body, token })
+    },
+    async uploadAttachment(file) {
+      const form = new FormData()
+      form.append('file', file)
+      const token = useAuthStore().token
+      const attachment = await api(`/cards/${this.selected.id}/attachments`, { method: 'POST', form, token })
+      this.attachments.push(attachment)
+      this.selected.attachments_count = this.attachments.length
+      await this.refreshActivity()
+    },
+    async deleteAttachment(attachment) {
+      await api(`/attachments/${attachment.id}`, { method: 'DELETE', token: useAuthStore().token })
+      this.attachments.splice(this.attachments.indexOf(attachment), 1)
+      this.selected.attachments_count = this.attachments.length
     },
     async updateCard(card, data) {
       const token = useAuthStore().token
@@ -73,6 +125,7 @@ export const useBoardStore = defineStore('board', {
       const token = useAuthStore().token
       const comment = await api(`/cards/${card.id}/comments`, { method: 'POST', body: { text }, token })
       this.comments.push(comment)
+      await this.refreshActivity()
       return comment
     },
     async deleteComment(comment) {

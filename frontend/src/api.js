@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export class ApiError extends Error {
   constructor(status, detail) {
@@ -7,14 +7,16 @@ export class ApiError extends Error {
   }
 }
 
-export async function api(path, { method = 'GET', body, token } = {}) {
+export async function api(path, { method = 'GET', body, token, form } = {}) {
   const headers = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   if (token) headers.Authorization = `Bearer ${token}`
 
   let response
   try {
-    response = await fetch(`${BASE_URL}/api${path}`, { method, headers, body: body && JSON.stringify(body) })
+    // `form` é um FormData (upload); o navegador define o Content-Type com o boundary.
+    const payload = form || (body && JSON.stringify(body))
+    response = await fetch(`${BASE_URL}/api${path}`, { method, headers, body: payload })
   } catch {
     throw new ApiError(0, 'Não foi possível falar com o servidor. Verifique sua conexão.')
   }
