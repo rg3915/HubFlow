@@ -11,6 +11,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 #### Mobile
 
 * Quadro em telas pequenas: uma coluna por vez com encaixe ao rolar, barra do quadro rolável, cards com alvo de toque maior, arraste com espera ajustada para o toque e "Mover para" no painel do card como alternativa ao arraste. #104
+* Painel do card em tela cheia no celular: cabeçalho fixo com "← Quadro", seções recolhíveis (fechadas no celular, menos comentários), área segura do iOS e campos em duas colunas. #105
 
 ## [0.14.0] - 2026-10-14
 

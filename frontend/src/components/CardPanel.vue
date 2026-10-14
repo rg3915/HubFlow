@@ -20,6 +20,8 @@ const estimate = ref('')
 const values = ref({}) // campos personalizados {id: valor}
 const error = ref('')
 const saved = ref(false)
+// No celular as seções começam fechadas (menos comentários) para o formulário caber na tela.
+const wide = matchMedia('(min-width: 768px)').matches
 
 const labels = {
   backlog: 'Backlog',
@@ -80,8 +82,14 @@ async function remove() {
 </script>
 
 <template>
-  <aside v-if="board.selected" class="flex w-[26rem] shrink-0 flex-col border-l border-border bg-surface" aria-label="Detalhes do card">
-    <header class="flex items-center gap-2 border-b border-border px-4 py-2">
+  <!-- Celular: folha de tela cheia; desktop: painel lateral. -->
+  <aside
+    v-if="board.selected"
+    class="fixed inset-0 z-40 flex flex-col bg-surface pb-[env(safe-area-inset-bottom)] md:static md:z-auto md:w-[26rem] md:shrink-0 md:border-l md:border-border md:pb-0"
+    aria-label="Detalhes do card"
+  >
+    <header class="flex items-center gap-2 border-b border-border px-4 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:pt-2">
+      <button type="button" class="btn btn-ghost h-8 px-2 md:hidden" @click="board.select(null)">← Quadro</button>
       <span class="text-muted tabular-nums">#{{ board.selected.number }}</span>
       <!-- Mover sem arrastar (útil no celular). -->
       <label class="sr-only" for="card-move">Mover para</label>
@@ -96,7 +104,7 @@ async function remove() {
       </select>
       <span v-else class="text-muted">· {{ labels[board.selected.column] }}</span>
       <span v-if="board.selected.is_overdue" class="rounded-full bg-danger/10 px-2 text-[13px] text-danger">Atrasado</span>
-      <button type="button" class="btn btn-ghost ml-auto h-8 w-8 justify-center px-0" aria-label="Fechar" @click="board.select(null)">×</button>
+      <button type="button" class="btn btn-ghost ml-auto hidden h-8 w-8 justify-center px-0 md:inline-flex" aria-label="Fechar" @click="board.select(null)">×</button>
     </header>
 
     <div class="flex-1 overflow-y-auto">
@@ -110,7 +118,7 @@ async function remove() {
           <label class="label" for="card-description">Descrição</label>
           <textarea id="card-description" v-model="description" class="field h-28 resize-none py-2" placeholder="O que precisa ser feito?"></textarea>
         </div>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div>
             <label class="label" for="card-assignee">Responsável</label>
             <select id="card-assignee" v-model="assigneeId" class="field">
@@ -152,35 +160,35 @@ async function remove() {
         </div>
       </form>
 
-      <section class="border-b border-border p-4">
-        <h3 class="label">Tempo</h3>
+      <details class="group border-b border-border p-4" :open="wide">
+        <summary class="label flex cursor-pointer select-none list-none items-center justify-between">Tempo<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span></summary>
         <TimeBox />
-      </section>
+      </details>
 
-      <section class="border-b border-border p-4">
-        <h3 class="label">Etiquetas</h3>
+      <details class="group border-b border-border p-4" :open="wide">
+        <summary class="label flex cursor-pointer select-none list-none items-center justify-between">Etiquetas<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span></summary>
         <fieldset :disabled="!auth.canEditCard(board.selected)"><LabelPicker :card="board.selected" /></fieldset>
-      </section>
+      </details>
 
-      <section class="border-b border-border p-4">
-        <h3 class="label">Checklist</h3>
+      <details class="group border-b border-border p-4" :open="wide">
+        <summary class="label flex cursor-pointer select-none list-none items-center justify-between">Checklist<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span></summary>
         <ChecklistBox />
-      </section>
+      </details>
 
-      <section class="border-b border-border p-4">
-        <h3 class="label">Anexos</h3>
+      <details class="group border-b border-border p-4" :open="wide">
+        <summary class="label flex cursor-pointer select-none list-none items-center justify-between">Anexos<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span></summary>
         <AttachmentsBox :can-upload="auth.canEditCard(board.selected)" />
-      </section>
+      </details>
 
-      <section class="border-b border-border p-4">
-        <h3 class="label">Comentários</h3>
+      <details class="group border-b border-border p-4" :open="true">
+        <summary class="label flex cursor-pointer select-none list-none items-center justify-between">Comentários<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span></summary>
         <CommentBox :card="board.selected" />
-      </section>
+      </details>
 
-      <section class="p-4">
-        <h3 class="label">Atividade</h3>
+      <details class="group p-4" :open="wide">
+        <summary class="label flex cursor-pointer select-none list-none items-center justify-between">Atividade<span class="text-muted transition-transform group-open:rotate-180" aria-hidden="true">▾</span></summary>
         <ActivityList />
-      </section>
+      </details>
     </div>
   </aside>
 </template>
