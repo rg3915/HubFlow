@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Preferências de notificação por projeto. #44
+
 ## [0.1.0] - 2026-10-13
 
 Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadro kanban, com API e CLI.

@@ -15,6 +15,9 @@ class ProjectIn(Schema):
     description: str = ''
     emails: list[str] = []
     is_active: bool = True
+    notify_on_created: bool = True
+    notify_on_moved: bool = True
+    notify_on_done: bool = True
 
     _emails = field_validator('emails')(emails_validos)
 
@@ -31,6 +34,9 @@ class ProjectOut(Schema):
     description: str
     emails: list[str]
     is_active: bool
+    notify_on_created: bool
+    notify_on_moved: bool
+    notify_on_done: bool
 
     @staticmethod
     def resolve_client_name(obj):

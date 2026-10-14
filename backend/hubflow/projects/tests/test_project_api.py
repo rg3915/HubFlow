@@ -38,6 +38,9 @@ def test_lista_projetos(api, loja):
             'description': '',
             'emails': [],
             'is_active': True,
+            'notify_on_created': True,
+            'notify_on_moved': True,
+            'notify_on_done': True,
         }
     ]
 
