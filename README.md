@@ -11,6 +11,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Projetos** ligados a um repositório (`github` ou `gitlab`, `owner/repo`), com e-mails próprios; sem e-mails, valem os do cliente.
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
 - **Sprints** numeradas por projeto (todo card pertence a uma; sem sprint informada usa a última aberta ou cria a primeira) e milestone opcional.
+- **Controle de tempo**: cronômetro por card (um aberto por card; vários em cards diferentes), regra dos 15 minutos, lançamento manual de horas (só o dono apaga), estimativa com progresso gasto × estimado e exportação xlsx por período.
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
@@ -127,6 +128,9 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `GET/POST /api/projects/{id}/labels`, `PUT/DELETE /api/labels/{id}`, `PUT /api/cards/{id}/labels` | Etiquetas |
 | `GET/POST /api/cards/{id}/checklist`, `PUT/DELETE /api/checklist/{id}`, `PUT .../checklist/order` | Checklist |
 | `GET/POST /api/cards/{id}/attachments`, `DELETE /api/attachments/{id}` | Anexos |
+| `POST /api/cards/{id}/timer/start`, `/timer/stop`, `GET /api/cards/{id}/time` | Cronômetro e tempo do card |
+| `POST /api/cards/{id}/time-entries`, `PUT/DELETE /api/time-entries/{id}` | Horas manuais (só o dono edita/apaga) |
+| `GET /api/projects/{id}/timesheet.xlsx?from=&to=` | Exportação xlsx do timesheet |
 | `GET /api/users` | Usuários ativos (responsáveis e menções) |
 
 A documentação interativa fica em http://localhost:8000/api/docs.
@@ -167,6 +171,12 @@ hubflow card comment 3 --project Loja "Pronto para QA, @bruno@hubflow.com"
 hubflow card label 3 --project Loja --add bug --remove ui
 hubflow card assign 3 --project Loja --to bruno@hubflow.com   # ou --clear
 hubflow card due 3 --project Loja 2026-10-20                  # ou "nenhum"
+
+hubflow card start 3 --project Loja          # move para Em desenvolvimento e abre o cronômetro
+hubflow card stop 3 --project Loja           # fecha o cronômetro (mostra sessão e total)
+hubflow card log 3 --project Loja --hours 1.5 --date 2026-10-13 --note "Reunião"
+hubflow card time 3 --project Loja           # entradas e total do card
+hubflow timesheets --project Loja --limit 10 # últimas entradas
 ```
 
 Variáveis de ambiente: `HUBFLOW_URL` (padrão `http://localhost:8000`) e `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração).

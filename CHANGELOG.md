@@ -6,7 +6,13 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-14
+
+Controle de tempo: cronômetro por card, lançamento manual de horas, estimativa e progresso, exportação xlsx, na API, na CLI e no quadro.
+
 ### Adicionado
+
+#### Controle de tempo
 
 * Model TimeEntry: cronômetro por card e lançamento manual. #71
 * Regra dos 15 minutos ao iniciar o cronômetro. #72
@@ -18,6 +24,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Exportação xlsx do timesheet por projeto e período (entradas, por dia, por mês, por sprint). #78
 * Painel do card: cronômetro, lançamento manual de horas e lista de entradas. #79
 * Quadro: estimativa no painel e barra gasto × estimado no card (vermelha ao estourar), horas no card. #80
+* CHANGELOG 0.5.0. #81
 
 ## [0.4.0] - 2026-10-14
 
@@ -136,7 +143,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/rg3915/HubFlow/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rg3915/HubFlow/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rg3915/HubFlow/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rg3915/HubFlow/compare/v0.1.0...v0.2.0
