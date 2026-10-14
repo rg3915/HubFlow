@@ -4,7 +4,7 @@ import ChangePasswordView from '../views/ChangePasswordView.vue'
 import ClientFormView from '../views/ClientFormView.vue'
 import ClientsView from '../views/ClientsView.vue'
 import ForgotPasswordView from '../views/ForgotPasswordView.vue'
-import HomeView from '../views/HomeView.vue'
+import DashboardView from '../views/DashboardView.vue'
 import LabelsView from '../views/LabelsView.vue'
 import LoginView from '../views/LoginView.vue'
 import PaymentsView from '../views/PaymentsView.vue'
@@ -17,7 +17,7 @@ import SprintsView from '../views/SprintsView.vue'
 const auth = { layout: 'auth', public: true }
 
 const routes = [
-  { path: '/', name: 'home', component: HomeView, meta: { title: 'Início' } },
+  { path: '/', name: 'home', component: DashboardView, meta: { title: 'Dashboard' } },
   { path: '/clients', name: 'clients', component: ClientsView, meta: { title: 'Clientes' } },
   { path: '/clients/new', name: 'client-new', component: ClientFormView, meta: { title: 'Novo cliente' } },
   { path: '/clients/:id/edit', name: 'client-edit', component: ClientFormView, meta: { title: 'Editar cliente' } },

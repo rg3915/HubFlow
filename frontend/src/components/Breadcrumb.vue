@@ -14,7 +14,7 @@ const crumbs = computed(() => {
   const project = name?.startsWith('project') && id ? clients.projects.find((p) => p.id === id) : null
   const client = name?.startsWith('client') && id ? clients.clients.find((c) => c.id === id) : null
 
-  if (name === 'home') return [{ label: 'Início' }]
+  if (name === 'home') return [{ label: 'Dashboard' }]
   if (name?.startsWith('client')) {
     items.push({ label: 'Clientes', to: '/clients' })
     if (client) items.push({ label: client.name, to: `/clients/${client.id}/edit` })

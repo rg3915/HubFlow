@@ -51,6 +51,9 @@ function toggleSidebar() {
       </RouterLink>
 
       <nav class="flex-1 overflow-y-auto px-2 py-3" aria-label="Clientes e projetos">
+        <RouterLink to="/" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" exact-active-class="bg-surface-2 text-text">
+          Dashboard
+        </RouterLink>
         <RouterLink to="/clients" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
           Todos os clientes
         </RouterLink>

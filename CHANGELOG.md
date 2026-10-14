@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API do dashboard: atividade recente e prazos (vencidos e próximos 7 dias). #89
 * API do dashboard: heatmap de 26 semanas (níveis 0–4) e horas da semana por projeto. #90
 * API do dashboard: faturamento do mês corrente e do anterior. #91
+* Tela do dashboard como página inicial: totais, cards por etapa, faturamento, em desenvolvimento, cronômetros, prazos, atividade, heatmap e horas da semana. #92
 
 ## [0.6.0] - 2026-10-14
 
