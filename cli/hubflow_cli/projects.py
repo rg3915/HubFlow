@@ -64,3 +64,67 @@ def list_projects(client: str = typer.Option('', help='Filtra pelo nome do clien
         status = '' if project['is_active'] else '  (inativo)'
         title = f'{project["client_name"]} / {project["name"]}'
         typer.echo(f'#{project["id"]:<4} {title}  {project["repository_url"]}{status}')
+
+
+EVENTS = {'created': 'card criado', 'moved': 'card movido', 'done': 'card concluído'}
+PROJECT_FIELDS = (
+    'client_id',
+    'name',
+    'provider',
+    'owner',
+    'repo',
+    'description',
+    'emails',
+    'is_active',
+    'notify_on_created',
+    'notify_on_moved',
+    'notify_on_done',
+)
+
+
+def update_project(project, **changes):
+    """PUT com o projeto inteiro (a API não tem PATCH), aplicando só as mudanças pedidas."""
+    body = {field: project[field] for field in PROJECT_FIELDS} | changes
+    return request('PUT', f'/projects/{project["id"]}', json=body).json()
+
+
+def parse_events(value):
+    events = [e.strip() for e in value.split(',') if e.strip()]
+    unknown = [e for e in events if e not in EVENTS]
+    if unknown:
+        raise typer.BadParameter(f'Evento desconhecido: {", ".join(unknown)}. Use: created, moved, done')
+    return events
+
+
+def show_notify(project):
+    for key, label in EVENTS.items():
+        state = 'ligado' if project[f'notify_on_{key}'] else 'desligado'
+        typer.echo(f'  {label:<16} {state}')
+
+
+@app.command()
+def notify(
+    name: str = typer.Argument(..., help='Nome do projeto.'),
+    on: str = typer.Option('', help='Eventos a ligar, separados por vírgula: created, moved, done.'),
+    off: str = typer.Option('', help='Eventos a desligar, separados por vírgula.'),
+):
+    """Liga ou desliga os avisos por e-mail do projeto; sem opções, mostra o estado."""
+    project = find_project(name)
+    changes = {f'notify_on_{e}': True for e in parse_events(on)} | {f'notify_on_{e}': False for e in parse_events(off)}
+    if changes:
+        project = update_project(project, **changes)
+    typer.echo(f'Avisos de {project["name"]}:')
+    show_notify(project)
+
+
+@app.command()
+def emails(
+    name: str = typer.Argument(..., help='Nome do projeto.'),
+    set_emails: str = typer.Option(..., '--set', help='E-mails separados por vírgula. Vazio = usa os do cliente.'),
+):
+    """Define os e-mails que recebem os avisos do projeto."""
+    project = update_project(find_project(name), emails=parse_emails(set_emails))
+    if project['emails']:
+        typer.echo(f'Avisos de {project["name"]} vão para: {", ".join(project["emails"])}')
+    else:
+        typer.echo(f'{project["name"]} sem e-mails próprios: os avisos vão para os e-mails do cliente.')
