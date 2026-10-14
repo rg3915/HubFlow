@@ -52,7 +52,7 @@ function when(iso) {
           <span class="font-medium">{{ comment.author.name || comment.author.email }}</span>
           <span class="text-[13px] text-muted">{{ when(comment.created) }}</span>
           <button
-            v-if="comment.author.id === auth.user?.id"
+            v-if="comment.author.id === auth.user?.id || auth.can('boards.delete_comment')"
             type="button"
             class="ml-auto text-[13px] text-muted hover:text-danger"
             @click="board.deleteComment(comment)"

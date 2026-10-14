@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 import ActivityList from './ActivityList.vue'
 import AttachmentsBox from './AttachmentsBox.vue'
@@ -8,6 +9,7 @@ import CommentBox from './CommentBox.vue'
 import LabelPicker from './LabelPicker.vue'
 import TimeBox from './TimeBox.vue'
 
+const auth = useAuthStore()
 const board = useBoardStore()
 const title = ref('')
 const description = ref('')
@@ -73,6 +75,7 @@ async function remove() {
 
     <div class="flex-1 overflow-y-auto">
       <form class="space-y-4 border-b border-border p-4" @submit.prevent="save">
+        <fieldset :disabled="!auth.canEditCard(board.selected)" class="space-y-4">
         <div>
           <label class="label" for="card-title">Título</label>
           <input id="card-title" v-model="title" class="field" type="text" required />
@@ -103,13 +106,17 @@ async function remove() {
           ({{ board.selected.progress.percent }}%<span v-if="board.selected.progress.source === 'median'">, estimativa pela mediana do projeto</span>)
         </p>
 
+        </fieldset>
+        <p v-if="!auth.canEditCard(board.selected)" class="text-[13px] text-muted">Só quem criou, o responsável ou quem pode editar qualquer card altera este card.</p>
         <p v-if="error" class="rounded-[var(--radius-control)] border border-danger/40 px-3 py-2 text-danger" role="alert">{{ error }}</p>
         <p v-else-if="saved" class="text-muted" role="status">Salvo.</p>
 
         <div class="flex flex-wrap gap-2">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <button v-if="board.selected.column !== 'archived'" type="button" class="btn" @click="board.archiveCard(board.selected)">Arquivar</button>
-          <button type="button" class="btn btn-ghost ml-auto text-danger" @click="remove">Excluir</button>
+          <button v-if="auth.canEditCard(board.selected)" type="submit" class="btn btn-primary">Salvar</button>
+          <template v-if="auth.canDeleteCard(board.selected)">
+            <button v-if="board.selected.column !== 'archived'" type="button" class="btn" @click="board.archiveCard(board.selected)">Arquivar</button>
+            <button type="button" class="btn btn-ghost ml-auto text-danger" @click="remove">Excluir</button>
+          </template>
         </div>
       </form>
 
@@ -120,7 +127,7 @@ async function remove() {
 
       <section class="border-b border-border p-4">
         <h3 class="label">Etiquetas</h3>
-        <LabelPicker :card="board.selected" />
+        <fieldset :disabled="!auth.canEditCard(board.selected)"><LabelPicker :card="board.selected" /></fieldset>
       </section>
 
       <section class="border-b border-border p-4">
@@ -130,7 +137,7 @@ async function remove() {
 
       <section class="border-b border-border p-4">
         <h3 class="label">Anexos</h3>
-        <AttachmentsBox />
+        <AttachmentsBox :can-upload="auth.canEditCard(board.selected)" />
       </section>
 
       <section class="border-b border-border p-4">

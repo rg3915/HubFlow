@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useClientsStore } from '../stores/clients'
+
+const auth = useAuthStore()
 
 const store = useClientsStore()
 onMounted(() => store.load())
@@ -10,7 +13,7 @@ onMounted(() => store.load())
   <div class="mx-auto max-w-5xl">
     <div class="mb-4 flex items-center justify-between">
       <p class="text-muted">{{ store.clients.length }} cliente{{ store.clients.length === 1 ? '' : 's' }}</p>
-      <RouterLink to="/clients/new" class="btn btn-primary">Novo cliente</RouterLink>
+      <RouterLink v-if="auth.can('clients.add_client')" to="/clients/new" class="btn btn-primary">Novo cliente</RouterLink>
     </div>
 
     <section v-if="store.loaded && !store.clients.length" class="panel p-8 text-center">
@@ -36,7 +39,7 @@ onMounted(() => store.load())
           <td class="border-b border-border px-4 py-2.5 tabular-nums">{{ client.projects.length }}</td>
           <td class="border-b border-border px-4 py-2.5 text-muted">{{ client.emails.join(', ') || '—' }}</td>
           <td class="border-b border-border px-4 py-2.5 text-right">
-            <RouterLink :to="`/clients/${client.id}/edit`" class="text-accent hover:underline">Editar</RouterLink>
+            <RouterLink v-if="auth.can('clients.change_client')" :to="`/clients/${client.id}/edit`" class="text-accent hover:underline">Editar</RouterLink>
           </td>
         </tr>
       </tbody>

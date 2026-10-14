@@ -138,7 +138,7 @@ function date(value) {
         <option value="pending">Pendentes</option>
         <option value="paid">Pagos</option>
       </select>
-      <button type="button" class="btn btn-primary ml-auto" @click="openForm()">Novo pagamento</button>
+      <button v-if="auth.can('billing.add_payment')" type="button" class="btn btn-primary ml-auto" @click="openForm()">Novo pagamento</button>
     </div>
 
     <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -234,10 +234,12 @@ function date(value) {
             <span :class="payment.status === 'paid' ? 'text-[var(--chart-1)]' : 'text-[var(--chart-2)]'">{{ payment.status === 'paid' ? '● pago' : '○ pendente' }}</span>
           </td>
           <td class="border-b border-border px-3 py-2 text-right whitespace-nowrap">
-            <button type="button" class="text-accent hover:underline" @click="openForm(payment)">Editar</button>
-            <button type="button" class="ml-2 text-accent hover:underline" @click="act(payment, 'copy')">Copiar</button>
-            <button v-if="payment.status !== 'paid'" type="button" class="ml-2 text-accent hover:underline" @click="act(payment, 'pay')">Pagar</button>
-            <button type="button" class="ml-2 text-danger hover:underline" @click="act(payment, 'delete')">Excluir</button>
+            <template v-if="auth.can('billing.change_payment')">
+              <button type="button" class="text-accent hover:underline" @click="openForm(payment)">Editar</button>
+              <button type="button" class="ml-2 text-accent hover:underline" @click="act(payment, 'copy')">Copiar</button>
+              <button v-if="payment.status !== 'paid'" type="button" class="ml-2 text-accent hover:underline" @click="act(payment, 'pay')">Pagar</button>
+            </template>
+            <button v-if="auth.can('billing.delete_payment')" type="button" class="ml-2 text-danger hover:underline" @click="act(payment, 'delete')">Excluir</button>
           </td>
         </tr>
         <tr v-if="!payments.length"><td colspan="11" class="px-3 py-3 text-muted">Nenhum pagamento.</td></tr>

@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 
 const board = useBoardStore()
+defineProps({ canUpload: { type: Boolean, default: true } })
 const auth = useAuthStore()
 const error = ref('')
 const input = ref(null)
@@ -32,12 +33,12 @@ function size(bytes) {
       <li v-for="attachment in board.attachments" :key="attachment.id" class="flex items-center gap-2 text-sm">
         <a :href="BASE_URL + attachment.url" target="_blank" rel="noopener" class="truncate text-accent hover:underline">{{ attachment.name }}</a>
         <span class="text-[13px] text-muted tabular-nums">{{ size(attachment.size) }}</span>
-        <button v-if="attachment.uploaded_by.id === auth.user?.id" type="button" class="ml-auto text-[13px] text-muted hover:text-danger" @click="board.deleteAttachment(attachment)">Excluir</button>
+        <button v-if="canUpload || attachment.uploaded_by.id === auth.user?.id" type="button" class="ml-auto text-[13px] text-muted hover:text-danger" @click="board.deleteAttachment(attachment)">Excluir</button>
       </li>
       <li v-if="!board.attachments.length" class="text-sm text-muted">Nenhum anexo.</li>
     </ul>
     <input ref="input" type="file" class="sr-only" multiple @change="upload" />
-    <button type="button" class="btn mt-2 h-8" @click="input.click()">Enviar arquivo</button>
+    <button v-if="canUpload" type="button" class="btn mt-2 h-8" @click="input.click()">Enviar arquivo</button>
     <p v-if="error" class="mt-1 text-[13px] text-danger" role="alert">{{ error }}</p>
   </div>
 </template>

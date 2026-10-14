@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import Breadcrumb from '../components/Breadcrumb.vue'
 import GlobalSearch from '../components/GlobalSearch.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
@@ -8,24 +7,11 @@ import UserMenu from '../components/UserMenu.vue'
 import { useAuthStore } from '../stores/auth'
 import { useClientsStore } from '../stores/clients'
 
-const route = useRoute()
-const router = useRouter()
 const auth = useAuthStore()
 const clientsStore = useClientsStore()
 
-onMounted(async () => {
-  if (auth.user || !auth.token) return
-  try {
-    await auth.fetchUser()
-    await clientsStore.load()
-  } catch (e) {
-    // Token revogado ou expirado: volta para o login.
-    if (e.status === 401) {
-      await auth.logout()
-      router.push({ name: 'login', query: { redirect: route.fullPath } })
-    }
-  }
-})
+// O usuário (e as permissões) já vem carregado pela guarda de rotas.
+onMounted(() => auth.token && clientsStore.load().catch(() => {}))
 const sidebarOpen = ref(false) // gaveta no celular
 const collapsed = ref(localStorage.getItem('sidebar') === 'collapsed') // recolhido no desktop
 
@@ -61,17 +47,19 @@ function toggleSidebar() {
         <RouterLink to="/projects" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
           Todos os projetos
         </RouterLink>
-        <RouterLink to="/payments" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
+        <RouterLink v-if="auth.seesPayments" to="/payments" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
           Pagamentos
         </RouterLink>
         <template v-if="clientsStore.tree.length">
           <div v-for="client in clientsStore.tree" :key="client.id" class="mb-3">
             <RouterLink
+              v-if="auth.can('clients.change_client')"
               :to="`/clients/${client.id}/edit`"
               class="block rounded-[var(--radius-control)] px-2 py-1 font-medium hover:bg-surface-2"
             >
               {{ client.name }}
             </RouterLink>
+            <p v-else class="px-2 py-1 font-medium">{{ client.name }}</p>
             <RouterLink
               v-for="project in client.projects"
               :key="project.id"
@@ -86,7 +74,7 @@ function toggleSidebar() {
         <p v-else class="px-2 py-1 text-muted">Nenhum cliente ainda.</p>
       </nav>
 
-      <div class="border-t border-border p-2">
+      <div v-if="auth.can('clients.add_client')" class="border-t border-border p-2">
         <RouterLink to="/clients/new" class="btn w-full justify-start">
           <span class="text-muted">+</span> Novo cliente
         </RouterLink>

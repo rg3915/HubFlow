@@ -55,16 +55,16 @@ async function remove(label) {
     <p v-if="project" class="mb-4 text-muted">{{ project.client_name }} / {{ project.name }}</p>
 
     <section class="panel divide-y divide-border">
-      <div v-for="label in labels" :key="label.id" class="flex items-center gap-2 p-3">
+      <fieldset v-for="label in labels" :key="label.id" :disabled="!auth.can('boards.change_label')" class="flex items-center gap-2 p-3">
         <input v-model="label.color" type="color" class="h-8 w-10 cursor-pointer rounded-[var(--radius-control)] border border-border bg-surface p-0.5" :aria-label="`Cor de ${label.name}`" />
         <input v-model="label.name" class="field h-8 flex-1 text-sm" type="text" :aria-label="`Nome da etiqueta ${label.name}`" />
-        <button type="button" class="btn h-8" @click="save(label)">{{ label.saved ? 'Salvo' : 'Salvar' }}</button>
-        <button type="button" class="btn btn-ghost h-8 text-danger" @click="remove(label)">Excluir</button>
-      </div>
+        <button v-if="auth.can('boards.change_label')" type="button" class="btn h-8" @click="save(label)">{{ label.saved ? 'Salvo' : 'Salvar' }}</button>
+        <button v-if="auth.can('boards.delete_label')" type="button" class="btn btn-ghost h-8 text-danger" @click="remove(label)">Excluir</button>
+      </fieldset>
       <p v-if="!labels.length" class="p-3 text-muted">Nenhuma etiqueta ainda.</p>
     </section>
 
-    <form class="mt-4 flex items-center gap-2" @submit.prevent="create">
+    <form v-if="auth.can('boards.add_label')" class="mt-4 flex items-center gap-2" @submit.prevent="create">
       <input v-model="color" type="color" class="h-9 w-10 cursor-pointer rounded-[var(--radius-control)] border border-border bg-surface p-0.5" aria-label="Cor da nova etiqueta" />
       <label class="sr-only" for="new-label">Nome da nova etiqueta</label>
       <input id="new-label" v-model="name" class="field h-9 flex-1" type="text" placeholder="Nova etiqueta" required />

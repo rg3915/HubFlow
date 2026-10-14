@@ -21,6 +21,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Permissões de pagamentos: billing.view_payment vê todos, view_own_payments só os dos clientes de que é membro (lista, detalhe, resumo e faturamento do dashboard), sem nenhuma 403; criar, editar/pagar/copiar e excluir exigem add/change/delete_payment. #124
 * Convite por e-mail: POST /api/users/invite (accounts.add_user) cria a pessoa sem senha, com papéis e clientes, e envia o link para definir a senha (mesmo fluxo da redefinição). #125
 * Registro de alterações de permissões: convite, papéis, permissões por pessoa, clientes vinculados e situação guardam quem fez, quando, o antes e o depois; GET /api/users/changes (filtro ?user=) e admin. #126
+* Frontend respeita as permissões de /api/auth/me: menu, rotas, botões de criar/editar/excluir (clientes, projetos, cards, sprints, etiquetas, pagamentos), arrastar só os cards que a pessoa pode mover, painel do card só leitura para quem não pode editar. #127
 
 ## [0.9.0] - 2026-10-14
 

@@ -1,11 +1,13 @@
 <script setup>
 import Sortable from 'sortablejs'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 import BoardCard from './BoardCard.vue'
 import QuickAdd from './QuickAdd.vue'
 
 const props = defineProps({ column: { type: Object, required: true } })
+const auth = useAuthStore()
 const board = useBoardStore()
 const list = ref(null)
 let sortable
@@ -28,6 +30,8 @@ onMounted(() => {
     dragClass: 'shadow-lg',
     delayOnTouchOnly: true,
     delay: 120,
+    filter: '.locked', // card que a pessoa não pode mover (sem change_card e não é dela)
+    preventOnFilter: false,
     onEnd(event) {
       const cardId = Number(event.item.dataset.id)
       const from = event.from.dataset.column
@@ -53,6 +57,6 @@ onBeforeUnmount(() => sortable?.destroy())
     <div ref="list" :data-column="column.key" class="flex min-h-16 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
       <BoardCard v-for="card in column.cards" :key="card.id" :card="card" :data-id="card.id" />
     </div>
-    <QuickAdd v-if="column.key === 'backlog'" />
+    <QuickAdd v-if="column.key === 'backlog' && auth.can('boards.add_card')" />
   </section>
 </template>

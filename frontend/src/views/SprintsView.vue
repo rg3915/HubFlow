@@ -77,7 +77,7 @@ function period(sprint) {
             <span v-else class="text-muted">fechada</span>
           </td>
           <td class="border-b border-border px-4 py-2.5 text-right">
-            <button v-if="sprint.is_open" type="button" class="text-accent hover:underline" @click="close(sprint)">Fechar</button>
+            <button v-if="sprint.is_open && auth.can('sprints.change_sprint')" type="button" class="text-accent hover:underline" @click="close(sprint)">Fechar</button>
           </td>
         </tr>
         <tr v-if="!sprints.length">
@@ -86,7 +86,7 @@ function period(sprint) {
       </tbody>
     </table>
 
-    <form class="panel mt-4 flex flex-wrap items-end gap-3 p-4" @submit.prevent="create">
+    <form v-if="auth.can('sprints.add_sprint')" class="panel mt-4 flex flex-wrap items-end gap-3 p-4" @submit.prevent="create">
       <div class="min-w-48 flex-1">
         <label class="label" for="sprint-name">Nova sprint</label>
         <input id="sprint-name" v-model="form.name" class="field h-9" type="text" placeholder="Nome (opcional)" />

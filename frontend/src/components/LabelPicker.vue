@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 
+const auth = useAuthStore()
 const props = defineProps({ card: { type: Object, required: true } })
 const board = useBoardStore()
 const creating = ref(false)
@@ -47,7 +49,7 @@ async function create() {
       >
         {{ label.name }}
       </button>
-      <button type="button" class="rounded-full border border-dashed border-border px-2 py-0.5 text-[13px] text-muted hover:text-text" @click="creating = !creating">
+      <button v-if="auth.can('boards.add_label')" type="button" class="rounded-full border border-dashed border-border px-2 py-0.5 text-[13px] text-muted hover:text-text" @click="creating = !creating">
         + nova
       </button>
     </div>

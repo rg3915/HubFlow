@@ -1,9 +1,11 @@
 <script setup>
 import { computed } from 'vue'
 import { BASE_URL } from '../api'
+import { useAuthStore } from '../stores/auth'
 import { useBoardStore } from '../stores/board'
 
 const props = defineProps({ card: { type: Object, required: true } })
+const auth = useAuthStore()
 const board = useBoardStore()
 
 const due = computed(() => {
@@ -23,7 +25,7 @@ const ownerAvatar = computed(() => (owner.value?.avatar_url ? BASE_URL + owner.v
 <template>
   <article
     class="cursor-grab rounded-[var(--radius-control)] border bg-surface px-3 py-2 shadow-[0_1px_2px_rgb(0_0_0/.06)] active:cursor-grabbing"
-    :class="board.selected?.id === card.id ? 'border-accent' : 'border-border'"
+    :class="[board.selected?.id === card.id ? 'border-accent' : 'border-border', auth.canEditCard(card) ? '' : 'locked !cursor-pointer']"
     tabindex="0"
     role="button"
     @click="board.select(card)"

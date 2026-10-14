@@ -21,16 +21,16 @@ const auth = { layout: 'auth', public: true }
 const routes = [
   { path: '/', name: 'home', component: DashboardView, meta: { title: 'Dashboard' } },
   { path: '/clients', name: 'clients', component: ClientsView, meta: { title: 'Clientes' } },
-  { path: '/clients/new', name: 'client-new', component: ClientFormView, meta: { title: 'Novo cliente' } },
-  { path: '/clients/:id/edit', name: 'client-edit', component: ClientFormView, meta: { title: 'Editar cliente' } },
+  { path: '/clients/new', name: 'client-new', component: ClientFormView, meta: { title: 'Novo cliente', perm: 'clients.add_client' } },
+  { path: '/clients/:id/edit', name: 'client-edit', component: ClientFormView, meta: { title: 'Editar cliente', perm: 'clients.change_client' } },
   { path: '/projects', name: 'projects', component: ProjectsView, meta: { title: 'Projetos' } },
-  { path: '/projects/new', name: 'project-new', component: ProjectFormView, meta: { title: 'Novo projeto' } },
+  { path: '/projects/new', name: 'project-new', component: ProjectFormView, meta: { title: 'Novo projeto', perm: 'projects.add_project' } },
   { path: '/projects/:id', name: 'project', component: ProjectView, meta: { title: 'Quadro' } },
   { path: '/projects/:id/sprints', name: 'project-sprints', component: SprintsView, meta: { title: 'Sprints' } },
-  { path: '/projects/:id/integration', name: 'project-integration', component: IntegrationView, meta: { title: 'Integração' } },
+  { path: '/projects/:id/integration', name: 'project-integration', component: IntegrationView, meta: { title: 'Integração', perm: 'projects.change_project' } },
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
-  { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto' } },
-  { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos' } },
+  { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto', perm: 'projects.change_project' } },
+  { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos', payments: true } },
   { path: '/settings/profile', name: 'profile', component: ProfileView, meta: { title: 'Perfil' } },
   { path: '/settings/password', name: 'change-password', component: ChangePasswordView, meta: { title: 'Trocar senha' } },
   { path: '/login', name: 'login', component: LoginView, meta: { ...auth, title: 'Entrar' } },
@@ -51,10 +51,24 @@ const routes = [
 const router = createRouter({ history: createWebHistory(), routes })
 
 // Rotas privadas exigem token; quem já está logado não volta para o login.
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const auth = useAuthStore()
   if (!to.meta.public && !auth.isLoggedIn) return { name: 'login', query: { redirect: to.fullPath } }
   if (to.name === 'login' && auth.isLoggedIn) return { name: 'home' }
+  if (to.meta.public) return
+  if (!auth.user) {
+    try {
+      await auth.fetchUser()
+    } catch (e) {
+      // Token revogado ou expirado: volta para o login.
+      if (e.status === 401) {
+        await auth.logout()
+        return { name: 'login', query: { redirect: to.fullPath } }
+      }
+    }
+  }
+  // Sem a permissão, a rota nem abre (a API devolveria 403 de qualquer jeito).
+  if ((to.meta.perm && !auth.can(to.meta.perm)) || (to.meta.payments && !auth.seesPayments)) return { name: 'home' }
 })
 
 router.afterEach((to) => {

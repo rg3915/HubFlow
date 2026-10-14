@@ -1,8 +1,10 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 import { useClientsStore } from '../stores/clients'
 
+const auth = useAuthStore()
 const store = useClientsStore()
 const route = useRoute()
 const router = useRouter()
@@ -29,7 +31,7 @@ function filter(event) {
         <option v-for="client in store.clients" :key="client.id" :value="client.id">{{ client.name }}</option>
       </select>
       <p class="text-muted">{{ projects.length }} projeto{{ projects.length === 1 ? '' : 's' }}</p>
-      <RouterLink :to="{ path: '/projects/new', query: clientId ? { client: clientId } : {} }" class="btn btn-primary ml-auto">
+      <RouterLink v-if="auth.can('projects.add_project')" :to="{ path: '/projects/new', query: clientId ? { client: clientId } : {} }" class="btn btn-primary ml-auto">
         Novo projeto
       </RouterLink>
     </div>
@@ -61,7 +63,7 @@ function filter(event) {
             </a>
           </td>
           <td class="border-b border-border px-4 py-2.5 text-right">
-            <RouterLink :to="`/projects/${project.id}/edit`" class="text-accent hover:underline">Editar</RouterLink>
+            <RouterLink v-if="auth.can('projects.change_project')" :to="`/projects/${project.id}/edit`" class="text-accent hover:underline">Editar</RouterLink>
           </td>
         </tr>
       </tbody>
