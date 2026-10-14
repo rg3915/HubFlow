@@ -1,23 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AppShell from '../layouts/AppShell.vue'
-import AuthLayout from '../layouts/AuthLayout.vue'
-import LoginView from '../views/LoginView.vue'
-import HomeView from '../views/HomeView.vue'
 import ClientFormView from '../views/ClientFormView.vue'
+import ForgotPasswordView from '../views/ForgotPasswordView.vue'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+
+const auth = { layout: 'auth' }
 
 const routes = [
+  { path: '/', name: 'home', component: HomeView, meta: { title: 'Início' } },
+  { path: '/clients/new', name: 'client-new', component: ClientFormView, meta: { title: 'Novo cliente' } },
+  { path: '/login', name: 'login', component: LoginView, meta: { ...auth, title: 'Entrar' } },
   {
-    path: '/',
-    component: AuthLayout,
-    children: [{ path: 'login', name: 'login', component: LoginView, meta: { title: 'Entrar' } }],
-  },
-  {
-    path: '/',
-    component: AppShell,
-    children: [
-      { path: '', name: 'home', component: HomeView, meta: { title: 'Início' } },
-      { path: 'clients/new', name: 'client-new', component: ClientFormView, meta: { title: 'Novo cliente' } },
-    ],
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPasswordView,
+    meta: { ...auth, title: 'Esqueci minha senha' },
   },
 ]
 

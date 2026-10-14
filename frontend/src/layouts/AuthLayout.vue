@@ -10,7 +10,7 @@ import ThemeToggle from '../components/ThemeToggle.vue'
     <div class="flex flex-1 items-start justify-center px-4 pb-16 pt-6 sm:pt-16">
       <div class="w-full max-w-[400px]">
         <p class="mb-6 text-center text-base font-semibold">HubFlow</p>
-        <RouterView />
+        <slot />
       </div>
     </div>
   </div>
