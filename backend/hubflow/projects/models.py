@@ -1,9 +1,10 @@
 from django.db import models
 
 from hubflow.clients.models import Client, validate_email_list
+from hubflow.core.models import ActiveModel, TimeStampedModel
 
 
-class Project(models.Model):
+class Project(TimeStampedModel, ActiveModel):
     class Provider(models.TextChoices):
         GITHUB = 'github', 'GitHub'
         GITLAB = 'gitlab', 'GitLab'
@@ -18,7 +19,6 @@ class Project(models.Model):
     repo = models.CharField('repositório', max_length=120)
     description = models.TextField('descrição', blank=True)
     emails = models.JSONField('e-mails de notificação', default=list, blank=True, validators=[validate_email_list])
-    is_active = models.BooleanField('ativo', default=True)
     # RN-41: cada evento de notificação pode ser ligado/desligado por projeto.
     notify_on_created = models.BooleanField('avisar card criado', default=True)
     notify_on_moved = models.BooleanField('avisar card movido', default=True)
@@ -27,8 +27,6 @@ class Project(models.Model):
     last_card_number = models.PositiveIntegerField(default=0, editable=False)
     # RN-60: contador das sprints, nunca volta.
     last_sprint_number = models.PositiveIntegerField(default=0, editable=False)
-    created = models.DateTimeField('criado em', auto_now_add=True)
-    modified = models.DateTimeField('modificado em', auto_now=True)
 
     class Meta:
         ordering = ('client__name', 'name')

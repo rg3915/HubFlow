@@ -2,17 +2,19 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
 
+from hubflow.core.models import CreatedModel
 from hubflow.projects.models import Project
 
+from .managers import SprintManager
 
-class Milestone(models.Model):
+
+class Milestone(CreatedModel):
     """Marco opcional do projeto; pode espelhar um milestone do repositório (RN-60)."""
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='milestones', verbose_name='projeto')
     title = models.CharField('título', max_length=120)
     external_number = models.PositiveIntegerField('número no repositório', null=True, blank=True)
     is_open = models.BooleanField('aberto', default=True)
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-id',)
@@ -30,12 +32,7 @@ class Milestone(models.Model):
         return self.title
 
 
-class SprintManager(models.Manager):
-    def latest_open(self, project):
-        return self.filter(project=project, is_open=True).order_by('-number').first()
-
-
-class Sprint(models.Model):
+class Sprint(CreatedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='sprints', verbose_name='projeto')
     number = models.PositiveIntegerField('número', editable=False)  # RN-60
     name = models.CharField('nome', max_length=120, blank=True)
@@ -46,7 +43,6 @@ class Sprint(models.Model):
     end_date = models.DateField('fim', null=True, blank=True)
     is_open = models.BooleanField('aberta', default=True)
     closed_at = models.DateTimeField('fechada em', null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
 
     objects = SprintManager()
 

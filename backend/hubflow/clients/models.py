@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import models
 
+from hubflow.core.models import ActiveModel, TimeStampedModel
+
 
 def validate_email_list(value):
     # RN-12: lista opcional com um ou mais endereços válidos.
@@ -11,12 +13,9 @@ def validate_email_list(value):
         validate_email(email)
 
 
-class Client(models.Model):
+class Client(TimeStampedModel, ActiveModel):
     name = models.CharField('nome', max_length=120, unique=True)  # RN-10
     emails = models.JSONField('e-mails de notificação', default=list, blank=True, validators=[validate_email_list])
-    is_active = models.BooleanField('ativo', default=True)
-    created = models.DateTimeField('criado em', auto_now_add=True)
-    modified = models.DateTimeField('modificado em', auto_now=True)
 
     class Meta:
         ordering = ('name',)

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Max
 
+from hubflow.core.models import CreatedByModel, CreatedModel, TimeStampedModel
 from hubflow.projects.models import Project
 from hubflow.sprints.models import Sprint
 
@@ -32,7 +33,7 @@ class Label(models.Model):
         return self.name
 
 
-class Card(models.Model):
+class Card(TimeStampedModel, CreatedByModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='cards', verbose_name='projeto')
     number = models.PositiveIntegerField('número', editable=False)  # RN-32
     title = models.CharField('título', max_length=200)  # RN-38
@@ -51,11 +52,6 @@ class Card(models.Model):
         related_name='assigned_cards',
         verbose_name='responsável',
     )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
-    )
-    created = models.DateTimeField('criado em', auto_now_add=True)
-    modified = models.DateTimeField('modificado em', auto_now=True)
 
     class Meta:
         ordering = ('project', 'column', 'position')
@@ -89,7 +85,7 @@ class Card(models.Model):
         super().save(*args, **kwargs)
 
 
-class CardMove(models.Model):
+class CardMove(CreatedModel):
     # RN-35: histórico de movimentações entre colunas.
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='moves')
     from_column = models.CharField(max_length=10, choices=Column.choices)
@@ -97,7 +93,6 @@ class CardMove(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
     )
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-created', '-id')
@@ -106,13 +101,11 @@ class CardMove(models.Model):
         return f'{self.card} {self.from_column} → {self.to_column}'
 
 
-class Comment(models.Model):
+class Comment(TimeStampedModel):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField('texto')
     mentions = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='+')
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('created', 'id')
@@ -138,13 +131,12 @@ class ChecklistItem(models.Model):
         return self.text
 
 
-class Attachment(models.Model):
+class Attachment(CreatedModel):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField('arquivo', upload_to='attachments/%Y/%m/')
     name = models.CharField('nome', max_length=255)
     size = models.PositiveIntegerField('tamanho em bytes')
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='+')
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('created', 'id')
@@ -155,7 +147,7 @@ class Attachment(models.Model):
         return self.name
 
 
-class CardEvent(models.Model):
+class CardEvent(CreatedModel):
     """Mudanças no card que não são movimentação, comentário nem anexo (esses têm tabela própria)."""
 
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='events')
@@ -164,7 +156,6 @@ class CardEvent(models.Model):
     )
     kind = models.CharField(max_length=20)  # created, assignee, due_date, labels
     data = models.JSONField(default=dict, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-created', '-id')

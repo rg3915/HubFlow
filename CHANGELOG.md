@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Alterado
+
+* Refactor: abstract models (TimeStamped, Created, CreatedBy, Active) em core/models.py e managers.py por app. #117
+
 ### Adicionado
 
 * Menu lateral recolhível. #108
