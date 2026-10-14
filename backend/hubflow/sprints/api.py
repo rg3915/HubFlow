@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from ninja import Router, Status
 
 from hubflow.accounts.schemas import DetailOut
+from hubflow.integrations.services import pair_milestone
 from hubflow.projects.models import Project
 
 from .models import Milestone, Sprint
@@ -60,9 +61,12 @@ def list_sprints(request, project_id: int):
 
 @router.post('/projects/{project_id}/sprints', response={201: SprintOut, 400: DetailOut})
 def add_sprint(request, project_id: int, data: SprintIn):
-    sprint = Sprint(project=get_object_or_404(Project, id=project_id))
+    project = get_object_or_404(Project, id=project_id)
+    sprint = Sprint(project=project)
     if error := apply_sprint_data(sprint, data):
         return error
+    if data.milestone_id is None:
+        sprint.milestone = pair_milestone(project)  # milestone continua opcional
     sprint.save()
     return Status(201, sprint)
 

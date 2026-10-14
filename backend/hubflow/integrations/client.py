@@ -103,3 +103,16 @@ class RepoClient:
             }
             for issue in issues
         ]
+
+    def latest_open_milestone(self):
+        """Milestone aberto de maior número no repositório: {'number', 'title'} ou None."""
+        if self.is_github:
+            milestones = self.request('GET', '/milestones', params={'state': 'open', 'per_page': 100})
+            key = 'number'
+        else:
+            milestones = self.request('GET', '/milestones', params={'state': 'active', 'per_page': 100})
+            key = 'iid'
+        if not milestones:
+            return None
+        latest = max(milestones, key=lambda m: m[key])
+        return {'number': latest[key], 'title': latest['title']}
