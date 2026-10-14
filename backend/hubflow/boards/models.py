@@ -1,8 +1,10 @@
 from datetime import date
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Max
+from django.db.models.functions import Lower
 
 from hubflow.core.models import CreatedByModel, TimeStampedModel, UuidModel
 from hubflow.projects.models import Project
@@ -190,3 +192,40 @@ class Notification(UuidModel, TimeStampedModel):
 
     def __str__(self):
         return f'{self.get_kind_display()} para {self.user}'
+
+
+class CustomField(UuidModel, TimeStampedModel):
+    """Campo extra dos cards de um projeto (ex.: Prioridade, Cliente final)."""
+
+    KINDS = {'text': 'Texto', 'number': 'Número', 'date': 'Data', 'select': 'Seleção', 'bool': 'Sim/não'}
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='custom_fields')
+    name = models.CharField('nome', max_length=80)
+    kind = models.CharField('tipo', max_length=10, choices=KINDS)
+    options = models.JSONField('opções', default=list, blank=True)  # só para seleção
+    required = models.BooleanField('obrigatório', default=False)
+    position = models.PositiveIntegerField('ordem', default=0)
+
+    class Meta:
+        ordering = ('position', 'id')
+        constraints = [models.UniqueConstraint(Lower('name'), 'project', name='unique_custom_field_name_per_project')]
+        verbose_name = 'campo personalizado'
+        verbose_name_plural = 'campos personalizados'
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if self.kind == 'select':
+            if not self.options:
+                raise ValidationError({'options': 'Informe ao menos uma opção.'})
+            if len({o.strip().lower() for o in self.options}) != len(self.options):
+                raise ValidationError({'options': 'Há opção repetida.'})
+        elif self.options:
+            raise ValidationError({'options': 'Opções só valem para o tipo seleção.'})
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and not self.position:
+            last = CustomField.objects.filter(project_id=self.project_id).aggregate(last=Max('position'))['last']
+            self.position = 0 if last is None else last + 1
+        super().save(*args, **kwargs)

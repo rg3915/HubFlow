@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Model de campo personalizado por projeto: nome (único no projeto), tipo (texto, número, data, seleção, sim/não), opções, obrigatório e ordem. #136
+
 ## [0.11.0] - 2026-10-14
 
 Polimento: notificações no app (sino), meus cards, anexos no S3, atalhos com taskipy e uuid7 em todos os models.
