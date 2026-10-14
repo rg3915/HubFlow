@@ -6,6 +6,7 @@ from ninja.files import UploadedFile
 
 from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
+from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
 from hubflow.timetracking.services import project_median_estimate
 
@@ -119,12 +120,13 @@ def update_card(request, card_id: int, data: CardIn):
     card.save(update_fields=['title', 'description', 'due_date', 'estimate_hours', 'assignee', 'sprint', 'modified'])
     record_card_changes(card, request.user, before)
     sync_issue_fields(card)
+    broadcast.card_updated(card, request.user)
     return card
 
 
 @router.delete('/cards/{card_id}', response={204: None})
 def remove_card(request, card_id: int):
-    delete_card(get_object_or_404(Card, id=card_id))
+    delete_card(get_object_or_404(Card, id=card_id), user=request.user)
     return Status(204, None)
 
 
@@ -211,6 +213,7 @@ def set_card_labels(request, card_id: int, data: CardLabelsIn):
         return Status(400, {'detail': 'Use só etiquetas deste projeto.'})
     card.labels.set(labels)
     record_labels(card, request.user)
+    broadcast.card_updated(card, request.user)
     return card
 
 
@@ -223,7 +226,9 @@ def list_checklist(request, card_id: int):
 def add_checklist_item(request, card_id: int, data: ChecklistItemIn):
     card = get_object_or_404(Card, id=card_id)
     position = card.checklist_items.count()
-    return Status(201, ChecklistItem.objects.create(card=card, position=position, **data.dict()))
+    item = ChecklistItem.objects.create(card=card, position=position, **data.dict())
+    broadcast.card_updated(card, request.user)
+    return Status(201, item)
 
 
 @router.put('/checklist/{item_id}', response=ChecklistItemOut)
@@ -231,15 +236,17 @@ def update_checklist_item(request, item_id: int, data: ChecklistItemIn):
     item = get_object_or_404(ChecklistItem, id=item_id)
     item.text, item.done = data.text, data.done
     item.save(update_fields=['text', 'done'])
+    broadcast.card_updated(item.card, request.user)
     return item
 
 
 @router.delete('/checklist/{item_id}', response={204: None})
 def delete_checklist_item(request, item_id: int):
     item = get_object_or_404(ChecklistItem, id=item_id)
-    card_id = item.card_id
+    card = item.card
     item.delete()
-    renumber(list(ChecklistItem.objects.filter(card_id=card_id)))
+    renumber(list(ChecklistItem.objects.filter(card_id=card.id)))
+    broadcast.card_updated(card, request.user)
     return Status(204, None)
 
 
@@ -267,6 +274,7 @@ def add_attachment(request, card_id: int, file: UploadedFile = File(...)):
         return Status(400, {'detail': f'Arquivo grande demais. O tamanho máximo é {limit / 1024 / 1024:.0f} MB.'})
     attachment = Attachment(card=card, name=file.name, size=file.size, uploaded_by=request.user)
     attachment.file.save(file.name, file, save=True)
+    broadcast.card_updated(card, request.user)
     return Status(201, attachment)
 
 
@@ -275,8 +283,10 @@ def delete_attachment(request, attachment_id: int):
     attachment = get_object_or_404(Attachment, id=attachment_id)
     if attachment.uploaded_by_id != request.user.id:
         raise HttpError(403, 'Só quem enviou o anexo pode excluí-lo.')
+    card = attachment.card
     attachment.file.delete(save=False)
     attachment.delete()
+    broadcast.card_updated(card, request.user)
     return Status(204, None)
 
 

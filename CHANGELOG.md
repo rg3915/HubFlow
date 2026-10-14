@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Backend ASGI (uvicorn) com Redis no compose e eventos do projeto via pub/sub. #40
+* Eventos card_created, card_moved, card_updated e card_deleted publicados a cada mudança (API, CLI e webhooks). #41
 
 ## [0.8.0] - 2026-10-14
 

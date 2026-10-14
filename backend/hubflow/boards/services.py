@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 
+from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
 
 from .activity import record
@@ -31,6 +32,7 @@ def create_card(project, user=None, **data):
     if project.create_issues:
         mirror_issue(card)
     notify('created', card)
+    broadcast.card_created(card, user)
     return card
 
 
@@ -116,6 +118,7 @@ def move_card(card, column, position=None, user=None, sync=True):
     card.save(update_fields=['column', 'modified'])
     if sync:
         sync_issue_state(card, from_column, column)
+    broadcast.card_moved(card, from_column, column, user)
     if column == Column.DONE:
         notify('done', card)
     elif column not in (from_column, Column.ARCHIVED):
@@ -129,11 +132,12 @@ def start_card(card, user=None):
 
 
 @transaction.atomic
-def delete_card(card):
+def delete_card(card, user=None):
     """Exclui o card e fecha o buraco na coluna (RN-33)."""
-    column, project_id = card.column, card.project_id
+    column, project_id, card_id = card.column, card.project_id, card.id
     card.delete()
     renumber(list(Card.objects.filter(project_id=project_id, column=column).order_by('position', 'id')))
+    broadcast.card_deleted(project_id, card_id, user)
 
 
 @transaction.atomic
