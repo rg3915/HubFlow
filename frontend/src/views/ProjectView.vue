@@ -44,8 +44,9 @@ const visibleColumns = computed(() =>
 </script>
 
 <template>
-  <div v-if="board.project && board.projectId === projectId" class="-m-6 flex h-[calc(100vh-3rem)] flex-col">
-    <div class="flex items-center gap-3 border-b border-border bg-surface px-6 py-2">
+  <div v-if="board.project && board.projectId === projectId" class="-m-4 flex h-[calc(100dvh-3rem)] flex-col md:-m-6">
+    <!-- No celular a barra rola na horizontal em vez de quebrar o layout. -->
+    <div class="flex items-center gap-3 overflow-x-auto whitespace-nowrap border-b border-border bg-surface px-4 py-2 md:px-6">
       <label class="sr-only" for="sprint-filter">Sprint</label>
       <select id="sprint-filter" class="field h-8 w-auto text-sm" :value="sprintId || ''" @change="filterSprint">
         <option value="">Todas as sprints</option>
@@ -76,7 +77,8 @@ const visibleColumns = computed(() =>
       </label>
     </div>
     <div class="flex min-h-0 flex-1">
-      <div class="flex flex-1 gap-3 overflow-x-auto p-4">
+      <!-- Celular: uma coluna por vez, com encaixe ao rolar. -->
+      <div class="flex flex-1 snap-x snap-mandatory gap-3 overflow-x-auto p-4 md:snap-none">
         <BoardColumn v-for="column in visibleColumns" :key="column.key" :column="column" />
       </div>
       <CardPanel />

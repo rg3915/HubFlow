@@ -6,6 +6,12 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+#### Mobile
+
+* Quadro em telas pequenas: uma coluna por vez com encaixe ao rolar, barra do quadro rolável, cards com alvo de toque maior, arraste com espera ajustada para o toque e "Mover para" no painel do card como alternativa ao arraste. #104
+
 ## [0.14.0] - 2026-10-14
 
 Relatórios por período (semana, quinzena, mês ou datas) com PDF, envio por e-mail e envios agendados, na API, na CLI e na tela.

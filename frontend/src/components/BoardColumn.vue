@@ -29,7 +29,8 @@ onMounted(() => {
     ghostClass: 'opacity-40',
     dragClass: 'shadow-lg',
     delayOnTouchOnly: true,
-    delay: 120,
+    delay: 200, // no toque, segurar um instante para arrastar (rolar continua livre)
+    touchStartThreshold: 5,
     filter: '.locked', // card que a pessoa não pode mover (sem change_card e não é dela)
     preventOnFilter: false,
     onEnd(event) {
@@ -48,7 +49,7 @@ onBeforeUnmount(() => sortable?.destroy())
 </script>
 
 <template>
-  <section class="flex w-72 shrink-0 flex-col rounded-[var(--radius-panel)] bg-surface-2" :aria-label="column.label">
+  <section class="flex w-[85vw] max-w-80 shrink-0 snap-center flex-col rounded-[var(--radius-panel)] bg-surface-2 md:w-72" :aria-label="column.label">
     <header class="flex items-center gap-2 px-3 pb-2 pt-3">
       <span class="h-2 w-2 rounded-full" :class="dots[column.key]" aria-hidden="true"></span>
       <h2 class="font-medium">{{ column.label }}</h2>

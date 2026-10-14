@@ -110,7 +110,7 @@ function toggleSidebar() {
         </div>
       </header>
 
-      <main class="flex-1 p-6">
+      <main class="min-w-0 flex-1 p-4 md:p-6">
         <slot />
       </main>
     </div>

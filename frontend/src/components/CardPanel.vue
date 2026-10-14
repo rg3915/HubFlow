@@ -51,6 +51,11 @@ function changedFields() {
   return Object.fromEntries(Object.entries(values.value).filter(([id, value]) => value !== (current[id] ?? '')))
 }
 
+function moveTo(column) {
+  const card = board.selected
+  if (column !== card.column) board.move(card.id, card.column, column, board.column(column).cards.length).catch(() => {})
+}
+
 async function save() {
   error.value = ''
   try {
@@ -78,7 +83,18 @@ async function remove() {
   <aside v-if="board.selected" class="flex w-[26rem] shrink-0 flex-col border-l border-border bg-surface" aria-label="Detalhes do card">
     <header class="flex items-center gap-2 border-b border-border px-4 py-2">
       <span class="text-muted tabular-nums">#{{ board.selected.number }}</span>
-      <span class="text-muted">· {{ labels[board.selected.column] }}</span>
+      <!-- Mover sem arrastar (útil no celular). -->
+      <label class="sr-only" for="card-move">Mover para</label>
+      <select
+        v-if="auth.canEditCard(board.selected)"
+        id="card-move"
+        class="field h-8 w-auto py-0 text-sm"
+        :value="board.selected.column"
+        @change="moveTo($event.target.value)"
+      >
+        <option v-for="(text, key) in labels" :key="key" :value="key">{{ text }}</option>
+      </select>
+      <span v-else class="text-muted">· {{ labels[board.selected.column] }}</span>
       <span v-if="board.selected.is_overdue" class="rounded-full bg-danger/10 px-2 text-[13px] text-danger">Atrasado</span>
       <button type="button" class="btn btn-ghost ml-auto h-8 w-8 justify-center px-0" aria-label="Fechar" @click="board.select(null)">×</button>
     </header>

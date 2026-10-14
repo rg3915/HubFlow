@@ -26,7 +26,7 @@ const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
 
 <template>
   <article
-    class="cursor-grab rounded-[var(--radius-control)] border bg-surface px-3 py-2 shadow-[0_1px_2px_rgb(0_0_0/.06)] active:cursor-grabbing"
+    class="cursor-grab rounded-[var(--radius-control)] border bg-surface px-3 py-2.5 shadow-[0_1px_2px_rgb(0_0_0/.06)] active:cursor-grabbing"
     :class="[board.selected?.id === card.id ? 'border-accent' : 'border-border', auth.canEditCard(card) ? '' : 'locked !cursor-pointer']"
     tabindex="0"
     role="button"
