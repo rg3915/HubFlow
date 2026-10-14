@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from ninja import Schema
 
@@ -82,3 +82,29 @@ class ActivityItemOut(Schema):
 class DeadlinesOut(Schema):
     overdue: list[DashboardCardOut]
     upcoming: list[DashboardCardOut]
+
+
+class HeatmapDayOut(Schema):
+    date: date
+    hours: float
+    level: int
+
+
+class HeatmapOut(Schema):
+    weeks: int
+    days: list[HeatmapDayOut]
+    total_hours: float
+
+
+class ProjectHoursOut(Schema):
+    project_id: int
+    project_name: str
+    client_name: str
+    hours: float
+
+
+class WeekOut(Schema):
+    start: date
+    end: date
+    total_hours: float
+    by_project: list[ProjectHoursOut]
