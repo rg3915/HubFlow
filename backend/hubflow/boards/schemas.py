@@ -102,6 +102,11 @@ class SprintBrief(Schema):
     name: str
 
 
+class TimeSummary(Schema):
+    hours: float
+    running: bool
+
+
 class CardOut(Schema):
     id: int
     project_id: int
@@ -117,6 +122,17 @@ class CardOut(Schema):
     checklist: ChecklistSummary
     attachments_count: int
     sprint: SprintBrief | None
+    time: TimeSummary
+
+    @staticmethod
+    def resolve_time(card):
+        if hasattr(card, 'time_spent'):
+            spent = card.time_spent.total_seconds() / 3600 if card.time_spent else 0.0
+            return {'hours': round(spent, 2), 'running': card.time_running}
+        from hubflow.timetracking.models import TimeEntry
+
+        total = TimeEntry.objects.total_for(card).total_seconds() / 3600
+        return {'hours': round(total, 2), 'running': TimeEntry.objects.running_for(card) is not None}
 
     @staticmethod
     def resolve_attachments_count(card):
