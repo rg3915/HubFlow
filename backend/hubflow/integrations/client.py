@@ -73,3 +73,33 @@ class RepoClient:
         if self.is_github:
             return self.request('PATCH', f'/issues/{number}', json={'state': 'closed' if closed else 'open'})
         return self.request('PUT', f'/issues/{number}', json={'state_event': 'close' if closed else 'reopen'})
+
+    def list_issues(self, include_closed=False):
+        """Issues do repositório normalizadas: número, título, corpo, url, fechada, é_pull."""
+        if self.is_github:
+            state = 'all' if include_closed else 'open'
+            issues = self.request('GET', '/issues', params={'state': state, 'per_page': 100})
+            return [
+                {
+                    'number': issue['number'],
+                    'title': issue['title'],
+                    'body': issue.get('body') or '',
+                    'url': issue['html_url'],
+                    'closed': issue['state'] == 'closed',
+                    'is_pull': 'pull_request' in issue,
+                }
+                for issue in issues
+            ]
+        state = 'all' if include_closed else 'opened'
+        issues = self.request('GET', '/issues', params={'state': state, 'per_page': 100})
+        return [
+            {
+                'number': issue['iid'],
+                'title': issue['title'],
+                'body': issue.get('description') or '',
+                'url': issue['web_url'],
+                'closed': issue['state'] == 'closed',
+                'is_pull': False,
+            }
+            for issue in issues
+        ]

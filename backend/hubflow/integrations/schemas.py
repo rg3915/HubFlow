@@ -24,3 +24,12 @@ class RepoCheckOut(Schema):
     name: str
     private: bool
     open_issues: int
+
+
+class ImportIssuesIn(Schema):
+    include_closed: bool = False
+
+
+class ImportIssuesOut(Schema):
+    created: int
+    skipped: int
