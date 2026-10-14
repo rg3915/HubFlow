@@ -4,15 +4,18 @@ import { useRoute, useRouter } from 'vue-router'
 import ThemeToggle from '../components/ThemeToggle.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { useAuthStore } from '../stores/auth'
+import { useClientsStore } from '../stores/clients'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const clientsStore = useClientsStore()
 
 onMounted(async () => {
   if (auth.user || !auth.token) return
   try {
     await auth.fetchUser()
+    await clientsStore.load()
   } catch (e) {
     // Token revogado ou expirado: volta para o login.
     if (e.status === 401) {
@@ -22,9 +25,6 @@ onMounted(async () => {
   }
 })
 const sidebarOpen = ref(false)
-
-// Clientes e projetos entram com a API (#25, #26). Até lá, a lista fica vazia.
-const clients = ref([])
 </script>
 
 <template>
@@ -39,10 +39,13 @@ const clients = ref([])
       </RouterLink>
 
       <nav class="flex-1 overflow-y-auto px-2 py-3" aria-label="Clientes e projetos">
-        <template v-if="clients.length">
-          <div v-for="client in clients" :key="client.id" class="mb-3">
+        <RouterLink to="/clients" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
+          Todos os clientes
+        </RouterLink>
+        <template v-if="clientsStore.tree.length">
+          <div v-for="client in clientsStore.tree" :key="client.id" class="mb-3">
             <RouterLink
-              :to="`/clients/${client.id}`"
+              :to="`/clients/${client.id}/edit`"
               class="block rounded-[var(--radius-control)] px-2 py-1 font-medium hover:bg-surface-2"
             >
               {{ client.name }}
