@@ -42,3 +42,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: card create e card list. #32
 * CLI: card move e card start. #33
 * Quadro com as seis colunas. #34
+* Arrastar e soltar cards. #35
