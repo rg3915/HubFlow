@@ -15,6 +15,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Sprint nova pareada com o último milestone aberto do repositório (milestone segue opcional). #98
 * Webhooks do GitHub (assinatura HMAC) e do GitLab (token): commit ou PR/MR mesclado com close/fixes/resolves #N conclui o card. #99
 * CLI: project repo, repo-check e import-issues; card create mostra a issue aberta. #100
+* Tela de integração do projeto: token, opção de criar issues, segredo e URL do webhook, teste de conexão e importação; link da issue no card. #101
 
 ## [0.7.0] - 2026-10-14
 

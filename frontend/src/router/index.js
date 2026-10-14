@@ -5,6 +5,7 @@ import ClientFormView from '../views/ClientFormView.vue'
 import ClientsView from '../views/ClientsView.vue'
 import ForgotPasswordView from '../views/ForgotPasswordView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import IntegrationView from '../views/IntegrationView.vue'
 import LabelsView from '../views/LabelsView.vue'
 import LoginView from '../views/LoginView.vue'
 import PaymentsView from '../views/PaymentsView.vue'
@@ -25,6 +26,7 @@ const routes = [
   { path: '/projects/new', name: 'project-new', component: ProjectFormView, meta: { title: 'Novo projeto' } },
   { path: '/projects/:id', name: 'project', component: ProjectView, meta: { title: 'Quadro' } },
   { path: '/projects/:id/sprints', name: 'project-sprints', component: SprintsView, meta: { title: 'Sprints' } },
+  { path: '/projects/:id/integration', name: 'project-integration', component: IntegrationView, meta: { title: 'Integração' } },
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto' } },
   { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos' } },

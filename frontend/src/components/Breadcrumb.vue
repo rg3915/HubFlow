@@ -31,6 +31,7 @@ const crumbs = computed(() => {
     if (name === 'project-edit') items.push({ label: 'Configurar' })
     if (name === 'project-labels') items.push({ label: 'Etiquetas' })
     if (name === 'project-sprints') items.push({ label: 'Sprints' })
+    if (name === 'project-integration') items.push({ label: 'Integração' })
     if (name === 'project') items.push({ label: 'Quadro' })
   } else {
     items.push({ label: route.meta.title })

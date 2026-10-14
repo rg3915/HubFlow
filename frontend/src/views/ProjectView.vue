@@ -40,6 +40,7 @@ const visibleColumns = computed(() =>
       </select>
       <RouterLink :to="`/projects/${projectId}/sprints`" class="text-muted hover:text-text">Sprints</RouterLink>
       <RouterLink :to="`/projects/${projectId}/labels`" class="text-muted hover:text-text">Etiquetas</RouterLink>
+      <RouterLink :to="`/projects/${projectId}/integration`" class="text-muted hover:text-text">Integração</RouterLink>
       <RouterLink :to="`/projects/${projectId}/edit`" class="text-muted hover:text-text">Configurar</RouterLink>
       <label class="ml-auto flex items-center gap-2 text-muted">
         <input v-model="showArchived" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
