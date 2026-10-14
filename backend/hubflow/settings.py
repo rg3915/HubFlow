@@ -3,7 +3,7 @@ from pathlib import Path
 from decouple import Csv, config
 from dj_database_url import parse as dburl
 
-from hubflow.core.storage import storages_for
+from hubflow.core.storage import storage_backend
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -93,12 +93,27 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-# STORAGE_BACKEND=local (padrão), s3 ou cloudinary; as variáveis AWS_* estão no .env.example.
-_S3_VARS = ['AWS_STORAGE_BUCKET_NAME', 'AWS_S3_ENDPOINT_URL', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
-_S3_VARS += ['AWS_S3_REGION_NAME', 'AWS_S3_CUSTOM_DOMAIN', 'AWS_S3_URL_PROTOCOL', 'CLOUDINARY_URL']
-STORAGES = storages_for(
-    config('STORAGE_BACKEND', default='local'), {name: config(name, default='') for name in _S3_VARS}
-)
+# Anexos e avatares: STORAGE_BACKEND=local (padrão), s3 ou cloudinary. Valores no .env (veja o .env.example).
+STORAGE_BACKEND = config('STORAGE_BACKEND', default='local')
+
+# S3 (AWS ou compatível): o django-storages lê estes AWS_* direto daqui.
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL', default='') or None  # vazio = AWS; S3 local: http://s3:8333
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='') or None
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='') or None
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='') or None
+AWS_S3_CUSTOM_DOMAIN = config('AWS_S3_CUSTOM_DOMAIN', default='') or None  # bucket público (S3 local em dev)
+AWS_S3_URL_PROTOCOL = config('AWS_S3_URL_PROTOCOL', default='https:')
+AWS_QUERYSTRING_AUTH = not AWS_S3_CUSTOM_DOMAIN  # com domínio público, URLs sem assinatura
+AWS_S3_FILE_OVERWRITE = False
+
+# Cloudinary: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+CLOUDINARY_URL = config('CLOUDINARY_URL', default='')
+
+STORAGES = {
+    'default': {'BACKEND': storage_backend(STORAGE_BACKEND, AWS_STORAGE_BUCKET_NAME, CLOUDINARY_URL)},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+}
 
 # Anexos dos cards: tamanho máximo por arquivo.
 FORM_SUBMISSIONS_PER_HOUR = config('FORM_SUBMISSIONS_PER_HOUR', default=20, cast=int)  # por IP, formulário público

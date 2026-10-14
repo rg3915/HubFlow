@@ -9,39 +9,22 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 
-LOCAL = {'BACKEND': 'django.core.files.storage.FileSystemStorage'}
-STATIC = {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'}
+BACKENDS = {
+    'local': 'django.core.files.storage.FileSystemStorage',
+    's3': 'storages.backends.s3.S3Storage',  # lê os AWS_* do settings.py
+    'cloudinary': 'hubflow.core.storage.CloudinaryStorage',  # lê CLOUDINARY_URL do settings.py
+}
 
 
-def storages_for(backend, env):
-    """Monta STORAGES a partir de STORAGE_BACKEND e das variáveis AWS_* (env = dicionário de variáveis)."""
-    if backend == 'local':
-        return {'default': LOCAL, 'staticfiles': STATIC}
-    if backend == 'cloudinary':
-        if not env.get('CLOUDINARY_URL'):
-            raise ImproperlyConfigured('Com STORAGE_BACKEND=cloudinary, defina CLOUDINARY_URL.')
-        default = {
-            'BACKEND': 'hubflow.core.storage.CloudinaryStorage',
-            'OPTIONS': {'cloudinary_url': env['CLOUDINARY_URL']},
-        }
-        return {'default': default, 'staticfiles': STATIC}
-    if backend != 's3':
-        raise ImproperlyConfigured(f'STORAGE_BACKEND deve ser "local", "s3" ou "cloudinary", não "{backend}".')
-    if not env.get('AWS_STORAGE_BUCKET_NAME'):
+def storage_backend(name, bucket='', cloudinary_url=''):
+    """Classe de storage para STORAGE_BACKEND, conferindo o que cada uma precisa (erro claro ao subir)."""
+    if name not in BACKENDS:
+        raise ImproperlyConfigured(f'STORAGE_BACKEND deve ser "local", "s3" ou "cloudinary", não "{name}".')
+    if name == 's3' and not bucket:
         raise ImproperlyConfigured('Com STORAGE_BACKEND=s3, defina AWS_STORAGE_BUCKET_NAME.')
-    options = {
-        'bucket_name': env['AWS_STORAGE_BUCKET_NAME'],
-        'endpoint_url': env.get('AWS_S3_ENDPOINT_URL') or None,  # vazio = AWS; local: http://s3:8333
-        'access_key': env.get('AWS_ACCESS_KEY_ID') or None,
-        'secret_key': env.get('AWS_SECRET_ACCESS_KEY') or None,
-        'region_name': env.get('AWS_S3_REGION_NAME') or None,
-        # Com domínio público (bucket legível, ex.: S3 local em dev) as URLs não são assinadas.
-        'custom_domain': env.get('AWS_S3_CUSTOM_DOMAIN') or None,
-        'url_protocol': env.get('AWS_S3_URL_PROTOCOL') or 'https:',
-        'querystring_auth': not env.get('AWS_S3_CUSTOM_DOMAIN'),
-        'file_overwrite': False,
-    }
-    return {'default': {'BACKEND': 'storages.backends.s3.S3Storage', 'OPTIONS': options}, 'staticfiles': STATIC}
+    if name == 'cloudinary' and not cloudinary_url:
+        raise ImproperlyConfigured('Com STORAGE_BACKEND=cloudinary, defina CLOUDINARY_URL.')
+    return BACKENDS[name]
 
 
 @deconstructible
@@ -53,10 +36,11 @@ class CloudinaryStorage(Storage):
 
     resource_type = 'raw'
 
-    def __init__(self, cloudinary_url):
+    def __init__(self):
         import cloudinary
+        from django.conf import settings
 
-        parsed = urlparse(cloudinary_url)  # cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+        parsed = urlparse(settings.CLOUDINARY_URL)  # cloudinary://API_KEY:API_SECRET@CLOUD_NAME
         cloudinary.config(cloud_name=parsed.hostname, api_key=parsed.username, api_secret=parsed.password, secure=True)
         self.cloud_name = parsed.hostname
 

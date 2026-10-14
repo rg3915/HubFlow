@@ -69,6 +69,8 @@ docker compose exec backend uv run python manage.py createsuperuser
 
 O `.env.example` já aponta para os serviços do compose. As variáveis que importam: `SECRET_KEY`, `DEBUG`, `DATABASE_URL`, `EMAIL_HOST`/`EMAIL_PORT`, `FRONTEND_URL` (usado nos links dos e-mails) e `VITE_API_URL`.
 
+Toda a configuração do backend passa pelo `backend/hubflow/settings.py`, que lê o `.env` (ou as variáveis de ambiente) com o [python-decouple](https://github.com/HBNetwork/python-decouple). O resto do código usa só `django.conf.settings`: para mudar algo, ajuste o `.env` e reinicie o backend.
+
 ### Agendador
 
 O serviço `scheduler` do compose roda, a cada 15 minutos, `python manage.py check_sla` (automações de SLA estourado e aviso de prazos vencidos) e `python manage.py send_reports` (relatórios agendados dos períodos encerrados). Fora do Docker, agende o mesmo comando (cron, por exemplo).
@@ -97,7 +99,7 @@ Depois, `docker compose restart backend`: os botões aparecem na tela de login. 
 
 ### Anexos no S3 ou no Cloudinary (opcional)
 
-Por padrão os anexos e avatares ficam no disco (volume `media`). Para guardar num bucket S3 (AWS ou compatível), defina `STORAGE_BACKEND=s3` e as variáveis `AWS_*` do `.env.example`. Em desenvolvimento há um S3 local (SeaweedFS) no perfil `s3`, já com o bucket criado:
+Por padrão os anexos e avatares ficam no disco (volume `media`). Para guardar num bucket S3 (AWS ou compatível), defina `STORAGE_BACKEND=s3` e as variáveis `AWS_*` do `.env.example`; o `settings.py` as expõe como settings `AWS_*`, que o django-storages lê direto. Em desenvolvimento há um S3 local (SeaweedFS) no perfil `s3`, já com o bucket criado:
 
 ```bash
 docker compose --profile s3 up -d      # S3 em http://localhost:8333, bucket "hubflow"
@@ -266,7 +268,7 @@ hubflow project repo-check Loja
 hubflow project import-issues Loja [--include-closed]
 ```
 
-Variáveis de ambiente: `HUBFLOW_URL` (padrão `http://localhost:8000`) e `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração).
+Variáveis de ambiente (lidas com o python-decouple, sem procurar arquivo `.env`): `HUBFLOW_URL` (padrão `http://localhost:8000`), `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração) e `HUBFLOW_CONFIG_DIR` (pasta do `config.toml`).
 
 ## Testes
 

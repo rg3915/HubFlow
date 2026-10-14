@@ -1,12 +1,16 @@
-import os
 import tomllib
 from pathlib import Path
+
+from decouple import Config, RepositoryEmpty
+
+# Só variáveis de ambiente (sem procurar .env): a CLI instalada não deve ler o .env da pasta onde for chamada.
+env = Config(RepositoryEmpty())
 
 DEFAULT_URL = 'http://localhost:8000'
 
 
 def config_path():
-    base = os.environ.get('HUBFLOW_CONFIG_DIR') or Path.home() / '.config' / 'hubflow'
+    base = env('HUBFLOW_CONFIG_DIR', default='') or Path.home() / '.config' / 'hubflow'
     return Path(base) / 'config.toml'
 
 
@@ -25,8 +29,8 @@ def save_config(data):
 
 
 def api_url():
-    return os.environ.get('HUBFLOW_URL') or load_config().get('url') or DEFAULT_URL
+    return env('HUBFLOW_URL', default='') or load_config().get('url') or DEFAULT_URL
 
 
 def token():
-    return os.environ.get('HUBFLOW_TOKEN') or load_config().get('token')
+    return env('HUBFLOW_TOKEN', default='') or load_config().get('token')

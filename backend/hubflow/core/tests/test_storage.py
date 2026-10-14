@@ -1,82 +1,59 @@
 import pytest
 from django.core.exceptions import ImproperlyConfigured
+from django.core.files.base import ContentFile
+from django.test import override_settings
 
-from hubflow.core.storage import storages_for
+from hubflow.core.storage import CloudinaryStorage, storage_backend
 
-ENV = {
+S3 = {
     'AWS_STORAGE_BUCKET_NAME': 'hubflow',
     'AWS_S3_ENDPOINT_URL': 'http://s3:8333',
     'AWS_ACCESS_KEY_ID': 'chave',
     'AWS_SECRET_ACCESS_KEY': 'segredo',
+    'AWS_S3_CUSTOM_DOMAIN': 'localhost:8333/hubflow',
+    'AWS_S3_URL_PROTOCOL': 'http:',
+    'AWS_QUERYSTRING_AUTH': False,
+    'AWS_S3_FILE_OVERWRITE': False,
 }
+CLOUDINARY_URL = 'cloudinary://123456:segredo@hubflow-demo'
 
 
 def test_local_e_o_padrao():
-    assert storages_for('local', {})['default']['BACKEND'] == 'django.core.files.storage.FileSystemStorage'
+    assert storage_backend('local') == 'django.core.files.storage.FileSystemStorage'
 
 
-def test_s3_le_as_variaveis():
-    default = storages_for('s3', ENV | {'AWS_S3_CUSTOM_DOMAIN': 'localhost:8333/hubflow'})['default']
-
-    assert default['BACKEND'] == 'storages.backends.s3.S3Storage'
-    assert (
-        default['OPTIONS'].items()
-        >= {
-            'bucket_name': 'hubflow',
-            'endpoint_url': 'http://s3:8333',
-            'access_key': 'chave',
-            'secret_key': 'segredo',
-            'custom_domain': 'localhost:8333/hubflow',
-            'file_overwrite': False,
-        }.items()
-    )
+def test_s3_e_cloudinary():
+    assert storage_backend('s3', bucket='hubflow') == 'storages.backends.s3.S3Storage'
+    assert storage_backend('cloudinary', cloudinary_url=CLOUDINARY_URL) == 'hubflow.core.storage.CloudinaryStorage'
 
 
 def test_s3_sem_bucket_avisa():
     with pytest.raises(ImproperlyConfigured, match='AWS_STORAGE_BUCKET_NAME'):
-        storages_for('s3', {})
-
-
-def test_backend_desconhecido_avisa():
-    with pytest.raises(ImproperlyConfigured, match='STORAGE_BACKEND'):
-        storages_for('ftp', {})
-
-
-def test_s3_monta_a_url_do_arquivo():
-    from django.core.files.storage import storages
-    from django.test import override_settings
-
-    public = {'AWS_S3_CUSTOM_DOMAIN': 'localhost:8333/hubflow', 'AWS_S3_URL_PROTOCOL': 'http:'}
-    with override_settings(STORAGES=storages_for('s3', ENV | public)):
-        storages._storages = {}  # descarta a instância já criada
-        url = storages['default'].url('attachments/a.txt')
-    storages._storages = {}
-
-    assert url == 'http://localhost:8333/hubflow/attachments/a.txt'
-
-
-CLOUDINARY = {'CLOUDINARY_URL': 'cloudinary://123456:segredo@hubflow-demo'}
-
-
-def test_cloudinary_le_a_url_de_configuracao():
-    default = storages_for('cloudinary', CLOUDINARY)['default']
-
-    assert default == {
-        'BACKEND': 'hubflow.core.storage.CloudinaryStorage',
-        'OPTIONS': {'cloudinary_url': 'cloudinary://123456:segredo@hubflow-demo'},
-    }
+        storage_backend('s3')
 
 
 def test_cloudinary_sem_url_avisa():
     with pytest.raises(ImproperlyConfigured, match='CLOUDINARY_URL'):
-        storages_for('cloudinary', {})
+        storage_backend('cloudinary')
 
 
-def test_cloudinary_envia_monta_url_e_apaga(monkeypatch):
-    from django.core.files.base import ContentFile
+def test_backend_desconhecido_avisa():
+    with pytest.raises(ImproperlyConfigured, match='STORAGE_BACKEND'):
+        storage_backend('ftp')
 
-    from hubflow.core.storage import CloudinaryStorage
 
+def test_s3_le_os_aws_do_settings():
+    from storages.backends.s3 import S3Storage
+
+    with override_settings(**S3):
+        storage = S3Storage()
+
+    assert storage.bucket_name == 'hubflow' and storage.endpoint_url == 'http://s3:8333'
+    assert storage.access_key == 'chave' and storage.querystring_auth is False and storage.file_overwrite is False
+    assert storage.url('attachments/a.txt') == 'http://localhost:8333/hubflow/attachments/a.txt'
+
+
+def test_cloudinary_le_a_url_do_settings_envia_monta_url_e_apaga(monkeypatch):
     calls = {}
 
     def upload(file, **options):
@@ -85,7 +62,8 @@ def test_cloudinary_envia_monta_url_e_apaga(monkeypatch):
 
     monkeypatch.setattr('cloudinary.uploader.upload', upload)
     monkeypatch.setattr('cloudinary.uploader.destroy', lambda name, **o: calls.setdefault('destroy', (name, o)))
-    storage = CloudinaryStorage(cloudinary_url=CLOUDINARY['CLOUDINARY_URL'])
+    with override_settings(CLOUDINARY_URL=CLOUDINARY_URL):
+        storage = CloudinaryStorage()
 
     name = storage.save('attachments/2026/10/print.png', ContentFile(b'png'))
 

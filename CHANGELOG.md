@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Alterado
+
+* Configuração toda pelo `settings.py` com python-decouple: armazenamento S3 via settings `AWS_*` lidos direto pelo django-storages (sem montar opções à parte) e `CLOUDINARY_URL` no settings; CLI lê `HUBFLOW_URL`, `HUBFLOW_TOKEN` e `HUBFLOW_CONFIG_DIR` com python-decouple; README atualizado.
+
 ## [1.0.0] - 2026-10-14
 
 Essencial completo: login com Google e GitHub para contas já cadastradas. Com ele, a 1.0.0 reúne tudo o que saiu nas versões 0.x:
