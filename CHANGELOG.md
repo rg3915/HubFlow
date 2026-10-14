@@ -19,6 +19,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Permissões em sprints, milestones, etiquetas e anexos: add/change/delete de sprint, milestone e etiqueta exigem as permissões padrão; sprint/etiqueta de cliente de fora dá 404; anexar e excluir anexo seguem a regra do card (quem enviou ou quem pode editar o card). #122
 * Permissão de uso da CLI: a CLI se identifica com X-HubFlow-Client: cli; o login pela CLI exige permissions.use_cli (403 com o motivo) e marca o token (is_cli), que deixa de valer se a permissão for retirada. #123
 * Permissões de pagamentos: billing.view_payment vê todos, view_own_payments só os dos clientes de que é membro (lista, detalhe, resumo e faturamento do dashboard), sem nenhuma 403; criar, editar/pagar/copiar e excluir exigem add/change/delete_payment. #124
+* Convite por e-mail: POST /api/users/invite (accounts.add_user) cria a pessoa sem senha, com papéis e clientes, e envia o link para definir a senha (mesmo fluxo da redefinição). #125
 
 ## [0.9.0] - 2026-10-14
 

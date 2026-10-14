@@ -5,10 +5,23 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 
-def send_password_reset_email(user):
+def password_link(user):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = default_token_generator.make_token(user)
-    link = f'{settings.FRONTEND_URL}/reset-password/{uid}/{token}'
+    return f'{settings.FRONTEND_URL}/reset-password/{uid}/{default_token_generator.make_token(user)}'
+
+
+def send_invite_email(user, invited_by):
+    body = (
+        f'Olá{", " + user.first_name if user.first_name else ""},\n\n'
+        f'{invited_by.name or invited_by.email} convidou você para o HubFlow.\n'
+        f'Para definir sua senha e entrar, acesse:\n\n{password_link(user)}\n\n'
+        f'Seu login é o e-mail {user.email}. O link vale por 24 horas.\n'
+    )
+    EmailMessage(subject='Convite para o HubFlow', body=body, to=[user.email]).send()
+
+
+def send_password_reset_email(user):
+    link = password_link(user)
     body = (
         'Olá,\n\n'
         'Recebemos um pedido para redefinir a senha da sua conta no HubFlow.\n'

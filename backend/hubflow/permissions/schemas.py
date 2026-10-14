@@ -21,6 +21,13 @@ class UserAccessOut(Schema):
     clients: list[ClientBriefOut]
 
 
+class InviteIn(Schema):
+    email: str
+    name: str = ''
+    roles: list[str] = []
+    client_ids: list[int] = []
+
+
 class RolesIn(Schema):
     roles: list[str]
 
