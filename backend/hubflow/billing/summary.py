@@ -2,8 +2,8 @@
 
 from decimal import Decimal
 
-from django.db.models import Case, DecimalField, ExpressionWrapper, F, OuterRef, Subquery, Sum, Value, When
-from django.db.models.functions import Coalesce, Extract, TruncMonth
+from django.db.models import Case, DecimalField, ExpressionWrapper, F, FloatField, OuterRef, Subquery, Sum, Value, When
+from django.db.models.functions import Coalesce, Extract, Round, TruncMonth
 
 from hubflow.timetracking.models import TimeEntry
 
@@ -21,9 +21,10 @@ def valued_payments():
         .annotate(seconds=Extract(Sum(F('ended_at') - F('started_at')), 'epoch'))
         .values('seconds')[:1]
     )
-    hours_value = ExpressionWrapper(
-        F('hourly_rate') * Coalesce(Subquery(sprint_seconds), Value(0.0)) / Value(3600.0), output_field=MONEY
-    )
+    # Horas arredondadas a 2 casas antes de multiplicar, igual a Payment.spent_hours.
+    seconds = Coalesce(Subquery(sprint_seconds, output_field=FloatField()), Value(0.0), output_field=FloatField())
+    hours = Round(ExpressionWrapper(seconds / Value(3600.0), output_field=FloatField()), 2, output_field=FloatField())
+    hours_value = ExpressionWrapper(F('hourly_rate') * hours, output_field=MONEY)
     return Payment.objects.annotate(value=Coalesce(F('fixed_value'), hours_value, output_field=MONEY))
 
 

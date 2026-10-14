@@ -65,3 +65,22 @@ def test_sem_pagamentos(api):
     data = api.get('/api/payments/summary').json()
 
     assert data == {'received': '0.00', 'pending': '0.00', 'by_client': [], 'by_month': [], 'years': []}
+
+
+def test_resumo_bate_com_o_valor_total_do_pagamento(api, loja, user):
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    from hubflow.boards.models import Card
+    from hubflow.timetracking.models import TimeEntry
+
+    sprint = Sprint.objects.create(project=loja)
+    card = Card.objects.create(project=loja, title='A', sprint=sprint)
+    start = timezone.now() - timedelta(hours=3)
+    TimeEntry.objects.create(card=card, user=user, started_at=start, ended_at=start + timedelta(hours=2, seconds=9))
+    payment = Payment.objects.create(sprint=sprint, hourly_rate=150, issue_date=date(2026, 10, 14))
+
+    summary = api.get('/api/payments/summary').json()
+
+    assert summary['pending'] == str(payment.total_value)
