@@ -53,3 +53,49 @@ def test_s3_monta_a_url_do_arquivo():
     storages._storages = {}
 
     assert url == 'http://localhost:8333/hubflow/attachments/a.txt'
+
+
+CLOUDINARY = {'CLOUDINARY_URL': 'cloudinary://123456:segredo@hubflow-demo'}
+
+
+def test_cloudinary_le_a_url_de_configuracao():
+    default = storages_for('cloudinary', CLOUDINARY)['default']
+
+    assert default == {
+        'BACKEND': 'hubflow.core.storage.CloudinaryStorage',
+        'OPTIONS': {'cloudinary_url': 'cloudinary://123456:segredo@hubflow-demo'},
+    }
+
+
+def test_cloudinary_sem_url_avisa():
+    with pytest.raises(ImproperlyConfigured, match='CLOUDINARY_URL'):
+        storages_for('cloudinary', {})
+
+
+def test_cloudinary_envia_monta_url_e_apaga(monkeypatch):
+    from django.core.files.base import ContentFile
+
+    from hubflow.core.storage import CloudinaryStorage
+
+    calls = {}
+
+    def upload(file, **options):
+        calls['upload'] = (file.read(), options)
+        return {'public_id': 'attachments/2026/10/print_ab12cd.png'}
+
+    monkeypatch.setattr('cloudinary.uploader.upload', upload)
+    monkeypatch.setattr('cloudinary.uploader.destroy', lambda name, **o: calls.setdefault('destroy', (name, o)))
+    storage = CloudinaryStorage(cloudinary_url=CLOUDINARY['CLOUDINARY_URL'])
+
+    name = storage.save('attachments/2026/10/print.png', ContentFile(b'png'))
+
+    assert name == 'attachments/2026/10/print_ab12cd.png'
+    content, options = calls['upload']
+    assert content == b'png'
+    assert options.items() >= {'folder': 'attachments/2026/10', 'resource_type': 'raw', 'use_filename': True}.items()
+    assert (
+        storage.url(name)
+        == 'https://res.cloudinary.com/hubflow-demo/raw/upload/v1/attachments/2026/10/print_ab12cd.png'
+    )
+    storage.delete(name)
+    assert calls['destroy'] == (name, {'resource_type': 'raw'})

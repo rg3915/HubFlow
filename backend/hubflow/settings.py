@@ -91,9 +91,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-# STORAGE_BACKEND=local (padrão) ou s3; as variáveis AWS_* estão no .env.example.
+# STORAGE_BACKEND=local (padrão), s3 ou cloudinary; as variáveis AWS_* estão no .env.example.
 _S3_VARS = ['AWS_STORAGE_BUCKET_NAME', 'AWS_S3_ENDPOINT_URL', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
-_S3_VARS += ['AWS_S3_REGION_NAME', 'AWS_S3_CUSTOM_DOMAIN', 'AWS_S3_URL_PROTOCOL']
+_S3_VARS += ['AWS_S3_REGION_NAME', 'AWS_S3_CUSTOM_DOMAIN', 'AWS_S3_URL_PROTOCOL', 'CLOUDINARY_URL']
 STORAGES = storages_for(
     config('STORAGE_BACKEND', default='local'), {name: config(name, default='') for name in _S3_VARS}
 )
