@@ -22,7 +22,7 @@ from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
 from hubflow.timetracking.services import project_median_estimate
 
-from .activity import card_activity, record_card_changes, record_labels
+from .activity import card_activity, record, record_card_changes, record_labels
 from .mentions import notify_mentions
 from .models import Attachment, Card, ChecklistItem, Column, Comment, CustomField, Label, Notification
 from .schemas import (
@@ -50,6 +50,7 @@ from .services import (
     card_queryset,
     create_card,
     delete_card,
+    merge_custom_values,
     move_card,
     renumber,
     resolve_assignee,
@@ -73,8 +74,15 @@ def add_card(request, project_id: int, data: CardIn):
     sprint = project_sprint_or_400(project.id, data.sprint_id)
     if isinstance(sprint, Status):
         return sprint
-    fields = data.dict(exclude={'assignee_id', 'sprint_id'}) | {'assignee': resolve_assignee(data.assignee_id)}
-    return Status(201, create_card(project, user=request.user, sprint=sprint, **fields))
+    try:
+        values, _ = merge_custom_values(project, {}, data.fields, creating=True)
+    except ValidationError as error:
+        return Status(400, {'detail': ' '.join(error.messages)})
+    fields = data.dict(exclude={'assignee_id', 'sprint_id', 'fields'}) | {
+        'assignee': resolve_assignee(data.assignee_id)
+    }
+    card = create_card(project, user=request.user, sprint=sprint, custom_values=values, **fields)
+    return Status(201, card)
 
 
 def project_sprint_or_400(project_id, sprint_id):
@@ -135,6 +143,12 @@ def update_card(request, card_id: int, data: CardIn):
     card = visible_card(request, card_id)
     require_card_edit(request.user, card)
     before = {'assignee_id': card.assignee_id, 'due_date': card.due_date}
+    changes = {}
+    if data.fields is not None:
+        try:
+            card.custom_values, changes = merge_custom_values(card.project_id, card.custom_values, data.fields)
+        except ValidationError as error:
+            return Status(400, {'detail': ' '.join(error.messages)})
     card.title, card.description, card.due_date = data.title, data.description, data.due_date
     card.estimate_hours = data.estimate_hours
     card.assignee = resolve_assignee(data.assignee_id)
@@ -143,8 +157,21 @@ def update_card(request, card_id: int, data: CardIn):
         if isinstance(sprint, Status):
             return sprint
         card.sprint = sprint
-    card.save(update_fields=['title', 'description', 'due_date', 'estimate_hours', 'assignee', 'sprint', 'modified'])
+    card.save(
+        update_fields=[
+            'title',
+            'description',
+            'due_date',
+            'estimate_hours',
+            'assignee',
+            'sprint',
+            'custom_values',
+            'modified',
+        ]
+    )
     record_card_changes(card, request.user, before)
+    if changes:
+        record(card, 'fields', request.user, changes=changes)
     sync_issue_fields(card)
     broadcast.card_updated(card, request.user)
     return card

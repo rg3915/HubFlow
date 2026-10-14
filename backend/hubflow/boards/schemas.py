@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from typing import Literal
+from typing import Any, Literal
 from uuid import UUID
 
 from ninja import Field, Schema
@@ -16,6 +16,7 @@ class CardIn(Schema):
     assignee_id: int | None = None
     sprint_id: int | None = None
     estimate_hours: float | None = None
+    fields: dict[str, Any] | None = None  # campos personalizados {id: valor}; omitido = não mexe
 
     @field_validator('estimate_hours')
     @classmethod
@@ -143,6 +144,7 @@ class CardOut(Schema):
     checklist: ChecklistSummary
     attachments_count: int
     sprint: SprintBrief | None
+    custom_values: dict[str, Any]
     estimate_hours: float | None
     issue_number: int | None
     issue_url: str

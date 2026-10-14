@@ -47,6 +47,7 @@ class Card(UuidModel, TimeStampedModel, CreatedByModel):
     sprint = models.ForeignKey(Sprint, null=True, blank=True, on_delete=models.PROTECT, related_name='cards')
     due_date = models.DateField('prazo', null=True, blank=True)
     estimate_hours = models.FloatField('estimativa (horas)', null=True, blank=True)
+    custom_values = models.JSONField('campos personalizados', default=dict, blank=True)  # {id do campo: valor}
     # Issue espelhada no repositório (GitHub: number; GitLab: iid).
     issue_number = models.PositiveIntegerField('número da issue', null=True, blank=True)
     issue_url = models.URLField('URL da issue', blank=True)
@@ -223,6 +224,35 @@ class CustomField(UuidModel, TimeStampedModel):
                 raise ValidationError({'options': 'Há opção repetida.'})
         elif self.options:
             raise ValidationError({'options': 'Opções só valem para o tipo seleção.'})
+
+    def clean_value(self, value):
+        """Valor válido para o tipo do campo (já normalizado) ou ValidationError com o nome do campo."""
+        from datetime import date
+
+        def invalid(what):
+            return ValidationError(f'{self.name}: {what}.')
+
+        if self.kind == 'text':
+            return str(value).strip()
+        if self.kind == 'number':
+            if isinstance(value, bool):
+                raise invalid('informe um número')
+            try:
+                return value if isinstance(value, int | float) else float(str(value).replace(',', '.'))
+            except ValueError:
+                raise invalid('informe um número')
+        if self.kind == 'date':
+            try:
+                return date.fromisoformat(str(value)).isoformat()
+            except ValueError:
+                raise invalid('informe a data como AAAA-MM-DD')
+        if self.kind == 'select':
+            if value not in self.options:
+                raise invalid(f'escolha uma opção ({", ".join(self.options)})')
+            return value
+        if not isinstance(value, bool):
+            raise invalid('informe sim/não (true ou false)')
+        return value
 
     def save(self, *args, **kwargs):
         if self._state.adding and not self.position:

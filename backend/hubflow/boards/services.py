@@ -150,3 +150,32 @@ def archive_project(project, user=None):
         move_card(card, Column.ARCHIVED, user=user)
     project.is_active = False
     project.save(update_fields=['is_active', 'modified'])
+
+
+def merge_custom_values(project, current, incoming, creating=False):
+    """Valores dos campos personalizados após aplicar `incoming` ({id: valor}; vazio apaga).
+
+    Devolve (valores, mudanças por nome do campo); ValidationError se algo não serve (RN-100).
+    """
+    from django.core.exceptions import ValidationError
+
+    from .models import CustomField
+
+    fields = {str(f.id): f for f in CustomField.objects.filter(project=project)}
+    incoming = {str(key): value for key, value in (incoming or {}).items()}
+    unknown = set(incoming) - set(fields)
+    if unknown:
+        raise ValidationError(f'Campo desconhecido neste projeto: {", ".join(sorted(unknown))}.')
+    values = dict(current)
+    for key, raw in incoming.items():
+        if raw is None or raw == '':
+            values.pop(key, None)
+        else:
+            values[key] = fields[key].clean_value(raw)
+    missing = [
+        f.name for key, f in fields.items() if f.required and key not in values and (creating or key in incoming)
+    ]
+    if missing:
+        raise ValidationError(f'Preencha: {", ".join(missing)}.')
+    changes = {fields[k].name: [current.get(k), values.get(k)] for k in incoming if current.get(k) != values.get(k)}
+    return values, changes

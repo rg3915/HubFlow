@@ -11,6 +11,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Model de campo personalizado por projeto: nome (único no projeto), tipo (texto, número, data, seleção, sim/não), opções, obrigatório e ordem. #136
 * Anexos e avatares no Cloudinary (STORAGE_BACKEND=cloudinary e CLOUDINARY_URL) com a lib oficial do Cloudinary. #145
 * API de campos personalizados: listar, criar, editar, excluir e reordenar (projects.change_project para alterar). #137
+* Valores dos campos personalizados no card (`fields` na criação/edição, `custom_values` na resposta): validação por tipo, opção da seleção, obrigatórios ao criar e não podem ser esvaziados; mudanças entram no histórico. #138
 
 ## [0.11.0] - 2026-10-14
 
