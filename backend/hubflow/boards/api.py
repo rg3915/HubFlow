@@ -5,7 +5,13 @@ from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
 from hubflow.accounts.schemas import DetailOut
-from hubflow.permissions.services import visible_projects
+from hubflow.permissions.services import (
+    has_perm,
+    require,
+    require_card_delete,
+    require_card_edit,
+    visible_projects,
+)
 from hubflow.projects.models import Project
 from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
@@ -45,9 +51,16 @@ from .services import (
 router = Router(tags=['boards'])
 
 
+def visible_card(request, card_id, queryset=None):
+    """Card de um projeto que a pessoa pode ver (404 caso contrário)."""
+    cards = (queryset or Card.objects).filter(project__in=visible_projects(request.user))
+    return get_object_or_404(cards, id=card_id)
+
+
 @router.post('/projects/{project_id}/cards', response={201: CardOut, 400: DetailOut})
 def add_card(request, project_id: int, data: CardIn):
-    project = get_object_or_404(Project, id=project_id)
+    require(request.user, 'boards.add_card')
+    project = get_object_or_404(visible_projects(request.user), id=project_id)
     sprint = project_sprint_or_400(project.id, data.sprint_id)
     if isinstance(sprint, Status):
         return sprint
@@ -85,30 +98,33 @@ def board(request, project_id: int, archived: bool = False, sprint: int | None =
 
 @router.post('/cards/{card_id}/move', response=CardOut)
 def move(request, card_id: int, data: MoveIn):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
+    require_card_edit(request.user, card)
     return move_card(card, data.column, data.position, user=request.user)
 
 
 @router.post('/cards/{card_id}/start', response=CardOut)
 def start(request, card_id: int):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
+    require_card_edit(request.user, card)
     return start_card(card, user=request.user)
 
 
 @router.get('/cards/{card_id}/history', response=list[CardMoveOut])
 def history(request, card_id: int):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
     return card.moves.select_related('user')
 
 
 @router.get('/cards/{card_id}', response=CardOut)
 def get_card(request, card_id: int):
-    return get_object_or_404(card_queryset(), id=card_id)
+    return visible_card(request, card_id, card_queryset())
 
 
 @router.put('/cards/{card_id}', response={200: CardOut, 400: DetailOut})
 def update_card(request, card_id: int, data: CardIn):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
+    require_card_edit(request.user, card)
     before = {'assignee_id': card.assignee_id, 'due_date': card.due_date}
     card.title, card.description, card.due_date = data.title, data.description, data.due_date
     card.estimate_hours = data.estimate_hours
@@ -127,33 +143,36 @@ def update_card(request, card_id: int, data: CardIn):
 
 @router.delete('/cards/{card_id}', response={204: None})
 def remove_card(request, card_id: int):
-    delete_card(get_object_or_404(Card, id=card_id), user=request.user)
+    card = visible_card(request, card_id)
+    require_card_delete(request.user, card)
+    delete_card(card, user=request.user)
     return Status(204, None)
 
 
 @router.post('/cards/{card_id}/archive', response=CardOut)
 def archive(request, card_id: int):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
+    require_card_delete(request.user, card)
     return move_card(card, Column.ARCHIVED, user=request.user)
 
 
 @router.get('/cards/{card_id}/comments', response=list[CommentOut])
 def list_comments(request, card_id: int):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
     return card.comments.select_related('author').prefetch_related('mentions')
 
 
 @router.post('/cards/{card_id}/comments', response={201: CommentOut})
 def add_comment(request, card_id: int, data: CommentIn):
-    card = get_object_or_404(Card.objects.select_related('project__client'), id=card_id)
+    card = visible_card(request, card_id, Card.objects.select_related('project__client'))
     comment = Comment.objects.create(card=card, author=request.user, text=data.text)
     notify_mentions(comment)
     return Status(201, comment)
 
 
-def own_comment_or_403(request, comment_id):
+def own_comment_or_403(request, comment_id, allow_perm=None):
     comment = get_object_or_404(Comment.objects.select_related('author'), id=comment_id)
-    if comment.author_id != request.user.id:
+    if comment.author_id != request.user.id and not (allow_perm and has_perm(request.user, allow_perm)):
         raise HttpError(403, 'Só o autor pode alterar este comentário.')
     return comment
 
@@ -169,7 +188,7 @@ def update_comment(request, comment_id: int, data: CommentIn):
 
 @router.delete('/comments/{comment_id}', response={204: None})
 def delete_comment(request, comment_id: int):
-    own_comment_or_403(request, comment_id).delete()
+    own_comment_or_403(request, comment_id, allow_perm='boards.delete_comment').delete()
     return Status(204, None)
 
 
@@ -208,7 +227,8 @@ def delete_label(request, label_id: int):
 
 @router.put('/cards/{card_id}/labels', response={200: CardOut, 400: DetailOut})
 def set_card_labels(request, card_id: int, data: CardLabelsIn):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
+    require_card_edit(request.user, card)
     labels = Label.objects.filter(id__in=data.label_ids)
     if labels.exclude(project_id=card.project_id).exists() or labels.count() != len(set(data.label_ids)):
         return Status(400, {'detail': 'Use só etiquetas deste projeto.'})

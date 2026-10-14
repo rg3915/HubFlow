@@ -76,3 +76,22 @@ def visible_projects(user):
     if has_perm(user, 'clients.view_client'):
         return projects
     return projects.filter(client__memberships__user=user)
+
+
+def is_card_owner(user, card):
+    return user.id in (card.created_by_id, card.assignee_id)
+
+
+def require_card_edit(user, card):
+    """Sem `boards.change_card`, só edita/move os próprios cards (criado por ou responsável)."""
+    if not (has_perm(user, 'boards.change_card') or is_card_owner(user, card)):
+        from ninja.errors import HttpError
+
+        raise HttpError(403, 'Você só pode editar e mover os seus próprios cards.')
+
+
+def require_card_delete(user, card):
+    if not (has_perm(user, 'boards.delete_card') or is_card_owner(user, card)):
+        from ninja.errors import HttpError
+
+        raise HttpError(403, 'Você só pode excluir ou arquivar os seus próprios cards.')
