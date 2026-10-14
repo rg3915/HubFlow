@@ -1,6 +1,6 @@
 import typer
 
-from . import cards, clients, config, payments, projects, sprints, users
+from . import cards, clients, config, fields, payments, projects, sprints, users
 from .cards import board_cards, column_label, local_time
 from .client import fail, format_hours, request
 from .projects import find_project
@@ -9,6 +9,7 @@ app = typer.Typer(help='HubFlow: clientes, projetos e cards por linha de comando
 
 
 app.add_typer(clients.app, name='client')
+projects.app.add_typer(fields.app, name='field')
 app.add_typer(projects.app, name='project')
 app.add_typer(cards.app, name='card')
 app.add_typer(sprints.app, name='sprint')

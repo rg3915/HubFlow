@@ -214,6 +214,11 @@ hubflow payment list [--client ACME] [--status pending|paid] [--year 2026]
 hubflow payment pay 1 / hubflow payment copy 1
 hubflow payment summary [--client ACME] [--year 2026]
 
+hubflow project field add Loja Prioridade --kind select --option Alta --option Baixa [--required]
+hubflow project field list Loja / hubflow project field remove Loja Prioridade
+hubflow card create "Login" --project Loja --field Prioridade=Alta --field Pontos=3
+hubflow card fields 12 --project Loja [--field Prioridade=Baixa]
+
 hubflow user list                                                     # só quem gerencia usuários
 hubflow user invite ana@hubflow.com --name Ana --role Desenvolvedor --client ACME
 hubflow user role ana@hubflow.com --set Gerente [--set Financeiro]

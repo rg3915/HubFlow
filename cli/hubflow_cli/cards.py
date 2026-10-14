@@ -4,6 +4,7 @@ from enum import Enum
 import typer
 
 from .client import fail, format_hours, parse_iso_date, request
+from .fields import parse_field_args, project_fields
 from .projects import find_project
 
 app = typer.Typer(help='Cards do quadro.', no_args_is_help=True)
@@ -82,10 +83,13 @@ def create(
     description: str = typer.Option('', help='Descrição.'),
     sprint: int | None = typer.Option(None, help='Número da sprint. Sem ele, pergunta se quer criar uma nova.'),
     no_input: bool = typer.Option(False, '--no-input', help='Não pergunta nada: usa a última sprint aberta.'),
+    field: list[str] = typer.Option([], help='Campo personalizado Nome=valor (repita para cada um).'),
 ):
     """Cria um card no Backlog do projeto."""
     owner = find_project(project)
     body = {'title': title, 'description': description}
+    if field:
+        body['fields'] = parse_field_args(owner, field)
     sprint_id = choose_sprint(owner, sprint, no_input)
     if sprint_id is not None:
         body['sprint_id'] = sprint_id
@@ -218,6 +222,7 @@ def update_card(card_id, **changes):
         'description': card['description'],
         'due_date': card['due_date'],
         'assignee_id': card['assignee']['id'] if card['assignee'] else None,
+        'estimate_hours': card.get('estimate_hours'),  # sem isto o PUT apagaria a estimativa
     } | changes
     return request('PUT', f'/cards/{card_id}', json=body).json()
 
@@ -293,3 +298,23 @@ def due(
     updated = update_card(card['id'], due_date=due_date)
     shown = datetime.date.fromisoformat(updated['due_date']).strftime('%d/%m/%Y') if updated['due_date'] else 'nenhum'
     typer.echo(f'Prazo do card #{updated["number"]}: {shown}')
+
+
+@app.command()
+def fields(
+    number: int = typer.Argument(..., help='Número do card.'),
+    project: str = typer.Option(..., help='Nome do projeto.'),
+    field: list[str] = typer.Option([], help='Nome=valor para alterar (vazio apaga); sem ele, só mostra.'),
+):
+    """Mostra ou altera os campos personalizados do card."""
+    owner = find_project(project)
+    card = find_card(owner['name'], number)
+    if field:
+        card = update_card(card['id'], fields=parse_field_args(owner, field))
+    else:
+        card = request('GET', f'/cards/{card["id"]}').json()
+    for item in project_fields(owner):
+        value = card['custom_values'].get(str(item['id']))
+        if isinstance(value, bool):
+            value = 'sim' if value else 'não'
+        typer.echo(f'{item["name"]}: {"—" if value is None else value}')
