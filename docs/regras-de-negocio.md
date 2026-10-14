@@ -98,6 +98,10 @@ Numeradas para serem citadas em issues, testes e commits (ex.: `RN-07`).
 - **RN-120** O relatório cobre um cliente ou projeto num período: semana (seg–dom), quinzena (1–15 e 16–fim), mês ou datas livres. Traz horas registradas (por pessoa e por card), cards criados e concluídos, média de dias até concluir, SLAs estourados e, só para quem vê pagamentos, o faturamento pelo dia de emissão. Mostra apenas o que a pessoa pode ver.
 - **RN-121** Relatório agendado (semanal, quinzenal ou mensal) é enviado em PDF quando o período termina, uma vez por período, com as permissões de quem o criou; sem e-mails, vai para os do projeto ou do cliente. Ao criar, o primeiro envio é o do período atual.
 
+## Login social (entregável 18)
+
+- **RN-130** Entrar com Google ou GitHub só funciona para quem já tem conta ativa no HubFlow: a conta social é ligada pelo e-mail verificado no provedor (no GitHub, o principal verificado) e, depois de ligada, vale mesmo se o e-mail mudar no provedor. O login social não cria contas. O retorno do provedor exige o state de uso único, e o token do HubFlow só é entregue em troca de um código de uso único válido por 60 segundos.
+
 ## Versionamento
 
-- **RN-50** O CHANGELOG segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento semântico. Começa em 0.1.0 e cada entregável concluído gera uma versão.
+- **RN-50** O CHANGELOG segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento semântico. Começa em 0.1.0 e cada entregável concluído gera uma versão. A 1.0.0 marca o essencial completo (com o login social); as tags 0.x publicadas não são renumeradas.

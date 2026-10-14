@@ -6,6 +6,18 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-14
+
+Essencial completo: login com Google e GitHub para contas já cadastradas. Com ele, a 1.0.0 reúne tudo o que saiu nas versões 0.x:
+
+| Versões | Entregáveis |
+|---|---|
+| 0.1.0 – 0.4.0 | Base e login por e-mail, clientes e projetos, quadro kanban, notificações por e-mail, colaboração no card, sprints |
+| 0.5.0 – 0.9.0 | Controle de tempo, faturamento, dashboard, sincronização GitHub/GitLab, quadro em tempo real |
+| 0.10.0 – 0.12.0 | Permissões, polimento (busca, sino, S3/Cloudinary), campos personalizados e formulário público |
+| 0.13.0 – 0.15.0 | Automações e SLA, relatórios em PDF, layout responsivo |
+| 1.0.0 | Login social |
+
 ### Adicionado
 
 #### Login social
@@ -13,6 +25,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Login com Google e GitHub (OAuth, authorization code): state de uso único, e-mail verificado do provedor, entra só em conta já cadastrada (sem criar conta nova), vincula a conta social e entrega ao frontend um código de uso único trocado por token (POST /api/auth/social/exchange). #166
 * Botões Entrar com Google/GitHub na tela de login (só os provedores configurados, GET /api/auth/social/providers) e página de retorno /login/social com mensagens para conta não cadastrada, e-mail não verificado, login cancelado ou expirado. #167
 * Contas conectadas no perfil: GET /api/auth/social e DELETE /api/auth/social/{provedor}; seção no perfil com desvincular e conectar. #168
+* CHANGELOG 1.0.0; guia do login social no README (apps OAuth no Google Cloud e no GitHub) e regra RN-130. #169
 
 ## [0.15.0] - 2026-10-14
 
@@ -348,7 +361,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/rg3915/HubFlow/compare/v0.15.0...v1.0.0
 [0.15.0]: https://github.com/rg3915/HubFlow/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/rg3915/HubFlow/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/rg3915/HubFlow/compare/v0.12.0...v0.13.0

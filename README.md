@@ -6,7 +6,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 
 ## O que a aplicação faz
 
-- **Login por e-mail** (sem username), com "esqueci minha senha" por e-mail e troca de senha.
+- **Login por e-mail** (sem username), com "esqueci minha senha" por e-mail e troca de senha, ou **com Google e GitHub** para contas já cadastradas.
 - **Clientes** com lista de e-mails de notificação.
 - **Projetos** ligados a um repositório (`github` ou `gitlab`, `owner/repo`), com e-mails próprios; sem e-mails, valem os do cliente.
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
@@ -72,6 +72,28 @@ O `.env.example` já aponta para os serviços do compose. As variáveis que impo
 ### Agendador
 
 O serviço `scheduler` do compose roda, a cada 15 minutos, `python manage.py check_sla` (automações de SLA estourado e aviso de prazos vencidos) e `python manage.py send_reports` (relatórios agendados dos períodos encerrados). Fora do Docker, agende o mesmo comando (cron, por exemplo).
+
+### Login com Google e GitHub (opcional)
+
+Sua conta pessoal do Google ou do GitHub é a de quem **entra**. O HubFlow precisa de outra coisa: um **app OAuth** registrado no Google e no GitHub. Esse registro dá ao HubFlow um *client id* e um *client secret* e diz para onde o provedor devolve a pessoa depois do login. Cada registro é feito uma vez, com a sua conta, e é de graça.
+
+Só entra quem já tem conta no HubFlow com o **mesmo e-mail** da conta Google/GitHub (cadastro ou convite). O login social não cria contas.
+
+**Google**
+
+1. Abra https://console.cloud.google.com e crie um projeto (ex.: HubFlow).
+2. Em *APIs e serviços › Tela de consentimento OAuth* (ou *Google Auth Platform*), escolha **Externo** e preencha nome do app e e-mail de suporte. Enquanto o app estiver em **Teste**, só entram os e-mails da lista de *usuários de teste*: adicione o seu Gmail.
+3. Em *Credenciais › Criar credenciais › ID do cliente OAuth*, tipo **Aplicativo da Web**. Em *URIs de redirecionamento autorizados*, coloque `http://localhost:8000/api/auth/social/google/callback`.
+4. Copie o ID e a chave secreta para o `.env`: `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET`.
+
+**GitHub**
+
+1. Em https://github.com/settings/developers, abra *OAuth Apps › New OAuth App*.
+2. *Homepage URL*: `http://localhost:5173`. *Authorization callback URL*: `http://localhost:8000/api/auth/social/github/callback`.
+3. Registre, copie o *Client ID* e clique em *Generate a new client secret*.
+4. No `.env`: `GITHUB_CLIENT_ID` e `GITHUB_CLIENT_SECRET`.
+
+Depois, `docker compose restart backend`: os botões aparecem na tela de login. Para entrar, a sua conta no HubFlow precisa ter o mesmo e-mail (o do Gmail, ou o principal verificado do GitHub). Em produção, troque `localhost` pelos endereços reais (com https) nos provedores e em `BACKEND_URL` e `FRONTEND_URL`.
 
 ### Anexos no S3 ou no Cloudinary (opcional)
 
