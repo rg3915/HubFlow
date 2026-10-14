@@ -133,6 +133,7 @@ class CardOut(Schema):
     labels: list[LabelOut]
     due_date: date | None
     assignee: UserOut | None
+    created_by: UserOut | None
     is_overdue: bool
     checklist: ChecklistSummary
     attachments_count: int

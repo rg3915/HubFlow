@@ -87,7 +87,7 @@ def renumber(items):
 def card_queryset():
     """Cards com tudo o que a API devolve, sem consultas extras por card."""
     return (
-        Card.objects.select_related('assignee')
+        Card.objects.select_related('assignee', 'created_by')
         .prefetch_related('labels')
         .annotate(
             checklist_total=Count('checklist_items', distinct=True),
