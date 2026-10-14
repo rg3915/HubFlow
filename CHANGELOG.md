@@ -11,3 +11,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Docker Compose com Postgres 18 e Mailpit. #1
 * Projeto Django 6.1.2 com uv, settings por ambiente e healthcheck. #2
 * Backend no Docker Compose. #3
+* Projeto Vue + Vite + Tailwind 4 no Docker Compose. #4
