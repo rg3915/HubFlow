@@ -1,1 +1,168 @@
 # HubFlow
+
+Gestão de projetos e fluxos de trabalho para quem desenvolve software para vários clientes.
+
+Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **repositório** no GitHub ou no GitLab; o trabalho de cada projeto anda num **quadro kanban** com colunas fixas: Backlog → Sprint → Em desenvolvimento → QA → Concluído → Arquivadas. Tudo o que a interface faz também pode ser feito pela **API** e pela **CLI**.
+
+## O que a aplicação faz
+
+- **Login por e-mail** (sem username), com "esqueci minha senha" por e-mail e troca de senha.
+- **Clientes** com lista de e-mails de notificação.
+- **Projetos** ligados a um repositório (`github` ou `gitlab`, `owner/repo`), com e-mails próprios; sem e-mails, valem os do cliente.
+- **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
+- **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
+- **CLI `hubflow`** para criar clientes, projetos e cards, mover cards e iniciar tarefas por linha de comando.
+- **Tema claro e escuro**.
+
+O que vem a seguir está em [docs/especificacao.md](docs/especificacao.md) (notificações por e-mail, colaboração no card, sincronização GitHub/GitLab, tempo real, campos personalizados, automações, controle de tempo, relatórios).
+
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Backend | Python 3.14, Django 6.1, Django Ninja, Postgres 18 |
+| Frontend | Vue 3, Vite, Vue Router, Pinia, Tailwind 4, SortableJS |
+| CLI | Python, Typer, httpx |
+| E-mail (dev) | Mailpit |
+| Infra | Docker Compose, uv |
+
+## Instalação
+
+Pré-requisitos: Docker e Docker Compose.
+
+```bash
+git clone https://github.com/rg3915/HubFlow.git
+cd HubFlow
+cp .env.example .env
+docker compose up --build
+```
+
+Em outro terminal, crie as tabelas e o primeiro usuário:
+
+```bash
+docker compose exec backend uv run python manage.py migrate
+docker compose exec backend uv run python manage.py createsuperuser
+```
+
+| Serviço | Endereço |
+|---|---|
+| Aplicação | http://localhost:5173 |
+| API e documentação | http://localhost:8000/api/docs |
+| Admin do Django | http://localhost:8000/admin/ |
+| Mailpit (e-mails enviados) | http://localhost:8025 |
+
+O `.env.example` já aponta para os serviços do compose. As variáveis que importam: `SECRET_KEY`, `DEBUG`, `DATABASE_URL`, `EMAIL_HOST`/`EMAIL_PORT`, `FRONTEND_URL` (usado nos links dos e-mails) e `VITE_API_URL`.
+
+### Rodando fora do Docker
+
+Backend (precisa de um Postgres em `localhost:5432`, por exemplo `docker compose up -d db mailpit`):
+
+```bash
+cd backend
+uv sync
+uv run python manage.py migrate
+uv run python manage.py runserver
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Primeiros passos
+
+1. Entre em http://localhost:5173 com o e-mail e a senha do superusuário.
+2. Crie um cliente (barra lateral → **Novo cliente**).
+3. Crie um projeto para o cliente informando provedor, owner e repositório.
+4. Abra o projeto: o quadro aparece com as seis colunas. Use **Novo card** no Backlog e arraste os cards entre as colunas.
+
+## E-mails
+
+Em desenvolvimento, nenhum e-mail sai para a internet: tudo cai no Mailpit (http://localhost:8025). É lá que você abre o link de "esqueci minha senha".
+
+## API
+
+Todas as rotas, exceto login e redefinição de senha, exigem o cabeçalho `Authorization: Bearer <token>`.
+
+```bash
+# login
+curl -X POST localhost:8000/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "voce@exemplo.com", "password": "sua-senha"}'
+# → {"token": "..."}
+
+# clientes e projetos
+curl -H "Authorization: Bearer $TOKEN" localhost:8000/api/clients
+curl -H "Authorization: Bearer $TOKEN" localhost:8000/api/projects?client=1
+
+# quadro e cards
+curl -H "Authorization: Bearer $TOKEN" localhost:8000/api/projects/1/board
+curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  localhost:8000/api/projects/1/cards -d '{"title": "Corrigir login"}'
+curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  localhost:8000/api/cards/1/move -d '{"column": "qa", "position": 0}'
+```
+
+| Rota | O que faz |
+|---|---|
+| `POST /api/auth/login`, `/logout`, `GET /api/auth/me` | Sessão por token |
+| `POST /api/auth/password/forgot`, `/reset`, `/change` | Senha |
+| `GET/POST /api/clients`, `GET/PUT/DELETE /api/clients/{id}` | Clientes |
+| `GET/POST /api/projects`, `GET/PUT/DELETE /api/projects/{id}` | Projetos (`?client=` filtra) |
+| `GET /api/projects/{id}/board` | Quadro (`?archived=true` inclui Arquivadas) |
+| `POST /api/projects/{id}/cards` | Cria card no Backlog |
+| `GET/PUT/DELETE /api/cards/{id}` | Card |
+| `POST /api/cards/{id}/move`, `/start`, `/archive` | Move, inicia (Em desenvolvimento), arquiva |
+| `GET /api/cards/{id}/history` | Movimentações |
+
+A documentação interativa fica em http://localhost:8000/api/docs.
+
+## CLI
+
+Instale a partir da pasta `cli/`:
+
+```bash
+uv tool install ./cli        # ou: pipx install ./cli
+hubflow --help
+```
+
+```bash
+hubflow login                                   # pede e-mail e senha; guarda o token em ~/.config/hubflow/config.toml
+hubflow whoami
+hubflow logout
+
+hubflow client create "ACME" --emails ti@acme.com
+hubflow client list
+
+hubflow project create "Loja" --client ACME --provider github --repo acme/loja
+hubflow project list [--client ACME]
+
+hubflow card create "Corrigir login" --project Loja --description "Erro 500"
+hubflow card list --project Loja [--column doing]
+hubflow card move 3 --project Loja --to qa [--position 0]
+hubflow card start 3 --project Loja              # move para Em desenvolvimento
+```
+
+Variáveis de ambiente: `HUBFLOW_URL` (padrão `http://localhost:8000`) e `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração).
+
+## Testes
+
+Backend (modelos, autenticação e todos os endpoints) e CLI (com a API simulada):
+
+```bash
+docker compose exec backend uv run pytest      # ou: cd backend && uv run pytest
+cd cli && uv run pytest
+```
+
+Os testes do backend usam o Postgres do compose. O frontend ainda não tem testes automatizados.
+
+## Documentação
+
+- [docs/especificacao.md](docs/especificacao.md): conceitos, entregáveis, endpoints e CLI.
+- [docs/regras-de-negocio.md](docs/regras-de-negocio.md): regras numeradas (RN-01…), citadas nos testes.
+- [docs/arquitetura.md](docs/arquitetura.md): estrutura das pastas e decisões.
+- [docs/design.md](docs/design.md): princípios visuais, paleta e tipografia.
+- [CHANGELOG.md](CHANGELOG.md): o que mudou em cada versão.

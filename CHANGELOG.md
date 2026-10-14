@@ -44,3 +44,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Quadro com as seis colunas. #34
 * Arrastar e soltar cards. #35
 * Criar e editar card no quadro. #36
+* README completo. #37
