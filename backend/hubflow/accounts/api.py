@@ -20,3 +20,10 @@ def login(request, data: LoginIn):
 @router.get('/me', response=UserOut)
 def me(request):
     return request.user
+
+
+@router.post('/logout', response={204: None})
+def logout(request):
+    # RN-05: revoga só o token usado nesta requisição.
+    request.token.delete()
+    return 204, None
