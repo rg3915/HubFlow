@@ -1,6 +1,14 @@
 from django.db import transaction
 
 from .models import Card, CardMove, Column
+from .notifications import notify
+
+
+def create_card(project, user=None, **data):
+    """Cria o card no Backlog (RN-31) e avisa os destinatários."""
+    card = Card.objects.create(project=project, created_by=user, **data)
+    notify('created', card)
+    return card
 
 
 def renumber(cards):
@@ -22,13 +30,18 @@ def move_card(card, column, position=None, user=None):
 
     position = len(target) if position is None else max(0, min(position, len(target)))
     target.insert(position, card)
-    if column != card.column:
-        CardMove.objects.create(card=card, from_column=card.column, to_column=column, user=user)
+    from_column = card.column
+    if column != from_column:
+        CardMove.objects.create(card=card, from_column=from_column, to_column=column, user=user)
     card.column = column
     renumber(target)
     if source is not target:
         renumber(source)
     card.save(update_fields=['column', 'modified'])
+    if column == Column.DONE:
+        notify('done', card)
+    elif column not in (from_column, Column.ARCHIVED):
+        notify('moved', card, from_column=from_column, to_column=column)
     return card
 
 

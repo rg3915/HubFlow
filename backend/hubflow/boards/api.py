@@ -5,7 +5,7 @@ from hubflow.projects.models import Project
 
 from .models import Card, Column
 from .schemas import BoardOut, CardIn, CardMoveOut, CardOut, MoveIn
-from .services import delete_card, move_card, start_card
+from .services import create_card, delete_card, move_card, start_card
 
 router = Router(tags=['boards'])
 
@@ -13,8 +13,7 @@ router = Router(tags=['boards'])
 @router.post('/projects/{project_id}/cards', response={201: CardOut})
 def create_card(request, project_id: int, data: CardIn):
     project = get_object_or_404(Project, id=project_id)
-    card = Card.objects.create(project=project, created_by=request.user, **data.dict())
-    return Status(201, card)
+    return Status(201, create_card(project, user=request.user, **data.dict()))
 
 
 @router.get('/projects/{project_id}/board', response=BoardOut)
