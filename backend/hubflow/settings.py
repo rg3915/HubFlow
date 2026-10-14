@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'hubflow.dashboard',
     'hubflow.integrations',
     'hubflow.realtime',
+    'hubflow.permissions',
 ]
 
 MIDDLEWARE = [

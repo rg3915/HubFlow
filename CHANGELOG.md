@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API de busca global: GET /api/search?q= em cards, projetos, clientes, usuários e etiquetas. #110
 * CLI: hubflow search. #112
 * Busca global na barra superior (Ctrl+K ou /), resultados agrupados com navegação por teclado; abre o card pela busca. #111
+* Permissões: catálogo de 13 permissões, papéis padrão (Administrador, Gerente, Desenvolvedor, Financeiro, Cliente, Leitura) e vínculo usuário↔cliente. #118
 
 ## [0.9.0] - 2026-10-14
 
