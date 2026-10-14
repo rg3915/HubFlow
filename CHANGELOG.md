@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Dados do relatório por período (app reports): semana, quinzena ou mês; horas por pessoa e por card, cards criados e concluídos, tempo médio até concluir, SLAs estourados e faturamento, por cliente ou projeto, com consultas agregadas. #157
+
 ## [0.13.0] - 2026-10-14
 
 Automações (gatilho → ação) e SLA por coluna com verificação periódica, avisos de prazo vencido, quadro sem N+1 e schemas da API com ModelSchema.
