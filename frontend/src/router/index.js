@@ -11,6 +11,7 @@ import ProjectFormView from '../views/ProjectFormView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import ProjectsView from '../views/ProjectsView.vue'
 import ResetPasswordView from '../views/ResetPasswordView.vue'
+import SprintsView from '../views/SprintsView.vue'
 
 const auth = { layout: 'auth', public: true }
 
@@ -22,6 +23,7 @@ const routes = [
   { path: '/projects', name: 'projects', component: ProjectsView, meta: { title: 'Projetos' } },
   { path: '/projects/new', name: 'project-new', component: ProjectFormView, meta: { title: 'Novo projeto' } },
   { path: '/projects/:id', name: 'project', component: ProjectView, meta: { title: 'Quadro' } },
+  { path: '/projects/:id/sprints', name: 'project-sprints', component: SprintsView, meta: { title: 'Sprints' } },
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto' } },
   { path: '/settings/password', name: 'change-password', component: ChangePasswordView, meta: { title: 'Trocar senha' } },

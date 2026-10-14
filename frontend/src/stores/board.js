@@ -15,19 +15,24 @@ export const useBoardStore = defineStore('board', {
     checklist: [],
     attachments: [],
     activity: [],
+    sprints: [],
+    sprintId: null,
   }),
   actions: {
-    async load(projectId, { archived = false } = {}) {
+    async load(projectId, { archived = false, sprintId = null } = {}) {
       const token = useAuthStore().token
       this.loading = true
+      this.sprintId = sprintId
       try {
-        const board = await api(`/projects/${projectId}/board?archived=${archived}`, { token })
+        const query = `archived=${archived}` + (sprintId ? `&sprint=${sprintId}` : '')
+        const board = await api(`/projects/${projectId}/board?${query}`, { token })
         this.projectId = projectId
         this.project = board.project
         this.columns = board.columns
-        ;[this.labels, this.users] = await Promise.all([
+        ;[this.labels, this.users, this.sprints] = await Promise.all([
           api(`/projects/${projectId}/labels`, { token }),
           api('/users', { token }),
+          api(`/projects/${projectId}/sprints`, { token }),
         ])
       } finally {
         this.loading = false

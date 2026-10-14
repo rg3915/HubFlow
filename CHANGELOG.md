@@ -21,6 +21,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: sprint create, list e close. #66
 * CLI: escolha da sprint ao criar card (--sprint, pergunta, --no-input). #67
 * Projeto completo em uma chamada: POST /api/projects/full e project create --full. #68
+* Tela de sprints e filtro do quadro por sprint. #69
 
 ## [0.3.0] - 2026-10-13
 
