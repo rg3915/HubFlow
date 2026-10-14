@@ -57,3 +57,10 @@ def format_hours(hours):
     """Horas decimais → "0h 45min", "1h 30min", "2h"."""
     whole, minutes = divmod(round(hours * 60), 60)
     return f'{whole}h {minutes}min' if minutes else f'{whole}h'
+
+
+def format_money(value):
+    """'3000.00' → 'R$ 3.000,00' (sem depender de locale instalado)."""
+    whole, _, cents = f'{float(value):.2f}'.partition('.')
+    whole = f'{int(whole):,}'.replace(',', '.')
+    return f'R$ {whole},{cents}'
