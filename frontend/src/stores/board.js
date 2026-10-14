@@ -19,6 +19,7 @@ export const useBoardStore = defineStore('board', {
     sprintId: null,
     time: { entries: [], total_hours: 0, running: null },
     live: false, // conexão SSE ativa
+    viewers: [], // quem está com o quadro aberto
   }),
   actions: {
     async load(projectId, { archived = false, sprintId = null } = {}) {
@@ -61,12 +62,24 @@ export const useBoardStore = defineStore('board', {
       source.addEventListener('card_updated', (e) => this.onCardUpdated(JSON.parse(e.data).data))
       source.addEventListener('card_moved', (e) => this.onCardMoved(JSON.parse(e.data).data))
       source.addEventListener('card_deleted', (e) => this.onCardDeleted(JSON.parse(e.data).data))
+      source.addEventListener('presence', (e) => (this.viewers = JSON.parse(e.data).data.viewers))
       this._source = source
+      // Presença: heartbeat a cada 10s; a API esquece quem parar de mandar (TTL de 30s).
+      const beat = () => api(`/projects/${projectId}/presence`, { method: 'POST', token }).then((r) => (this.viewers = r.viewers)).catch(() => {})
+      beat()
+      this._heartbeat = setInterval(beat, 10000)
     },
     disconnect() {
       this._source?.close()
       this._source = null
       this.live = false
+      if (this._heartbeat) {
+        clearInterval(this._heartbeat)
+        this._heartbeat = null
+        // Fechar a aba sem avisar não é problema: a presença expira sozinha (TTL).
+        api(`/projects/${this.projectId}/presence`, { method: 'DELETE', token: useAuthStore().token }).catch(() => {})
+      }
+      this.viewers = []
     },
     onCardCreated({ card }) {
       if (card.project_id !== this.projectId || this.findCard(card.id)) return

@@ -14,6 +14,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Banco de teste com nome único por checkout (suítes em paralelo).
 * Avatar no perfil do usuário (upload, remoção, first_name e avatar_url na API). #132
 * Card do quadro com trecho da descrição (2 linhas) e avatar/primeiro nome do dono. #133
+* Presença: quem está com o quadro aberto (heartbeat com TTL no Redis, evento presence, avatares no quadro). #43
 
 ## [0.8.0] - 2026-10-14
 
