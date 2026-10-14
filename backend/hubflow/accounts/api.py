@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from ninja import Router, Status
 from ninja.errors import HttpError
 
 from .models import Token, User
-from .schemas import DetailOut, ForgotPasswordIn, LoginIn, TokenOut, UserOut
-from .services import send_password_reset_email
+from .schemas import DetailOut, ForgotPasswordIn, LoginIn, ResetPasswordIn, TokenOut, UserOut
+from .services import get_user_from_reset_link, send_password_reset_email
 
 router = Router(tags=['auth'])
 
@@ -37,3 +39,17 @@ def password_forgot(request, data: ForgotPasswordIn):
     if user:
         send_password_reset_email(user)
     return {'detail': 'Se o e-mail estiver cadastrado, você receberá as instruções.'}
+
+
+@router.post('/password/reset', response={200: DetailOut, 400: DetailOut}, auth=None)
+def password_reset(request, data: ResetPasswordIn):
+    user = get_user_from_reset_link(data.uid, data.token)
+    if user is None:
+        return Status(400, {'detail': 'Link inválido ou já utilizado.'})
+    try:
+        validate_password(data.password, user)
+    except ValidationError as error:
+        return Status(400, {'detail': ' '.join(error.messages)})
+    user.set_password(data.password)
+    user.save()
+    return {'detail': 'Senha redefinida com sucesso.'}

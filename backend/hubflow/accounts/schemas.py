@@ -22,3 +22,9 @@ class ForgotPasswordIn(Schema):
 
 class DetailOut(Schema):
     detail: str
+
+
+class ResetPasswordIn(Schema):
+    uid: str
+    token: str
+    password: str

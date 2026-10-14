@@ -17,3 +17,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API: autenticação Bearer e GET /api/auth/me. #7
 * API: logout invalida o token. #8
 * API: esqueci minha senha envia e-mail com link. #9
+* API: redefinir senha com token. #10
