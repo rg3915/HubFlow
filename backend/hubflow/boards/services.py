@@ -3,6 +3,7 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 
+from .activity import record
 from .models import Card, CardMove, Column
 from .notifications import notify
 
@@ -10,6 +11,7 @@ from .notifications import notify
 def create_card(project, user=None, **data):
     """Cria o card no Backlog (RN-31) e avisa os destinatários."""
     card = Card.objects.create(project=project, created_by=user, **data)
+    record(card, 'created', user)
     notify('created', card)
     return card
 

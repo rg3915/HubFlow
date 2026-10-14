@@ -175,3 +175,10 @@ class CommentOut(Schema):
     mentions: list[UserOut]
     created: datetime
     modified: datetime
+
+
+class ActivityOut(Schema):
+    kind: str
+    user: UserOut | None
+    data: dict
+    created: datetime

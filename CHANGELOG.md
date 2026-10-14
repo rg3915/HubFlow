@@ -14,6 +14,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Prazo e responsável no card. #53
 * Checklist no card. #54
 * Anexos no card. #55
+* Histórico de atividade do card. #56
 
 ## [0.2.0] - 2026-10-13
 

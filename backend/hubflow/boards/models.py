@@ -150,3 +150,21 @@ class Attachment(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CardEvent(models.Model):
+    """Mudanças no card que não são movimentação, comentário nem anexo (esses têm tabela própria)."""
+
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='events')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
+    )
+    kind = models.CharField(max_length=20)  # created, assignee, due_date, labels
+    data = models.JSONField(default=dict, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-created', '-id')
+
+    def __str__(self):
+        return f'{self.card} {self.kind}'

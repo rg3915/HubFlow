@@ -7,9 +7,11 @@ from ninja.files import UploadedFile
 from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
 
+from .activity import card_activity, record_card_changes, record_labels
 from .mentions import notify_mentions
 from .models import Attachment, Card, ChecklistItem, Column, Comment, Label
 from .schemas import (
+    ActivityOut,
     AttachmentOut,
     BoardOut,
     CardIn,
@@ -79,9 +81,11 @@ def get_card(request, card_id: int):
 @router.put('/cards/{card_id}', response=CardOut)
 def update_card(request, card_id: int, data: CardIn):
     card = get_object_or_404(Card, id=card_id)
+    before = {'assignee_id': card.assignee_id, 'due_date': card.due_date}
     card.title, card.description, card.due_date = data.title, data.description, data.due_date
     card.assignee = resolve_assignee(data.assignee_id)
     card.save(update_fields=['title', 'description', 'due_date', 'assignee', 'modified'])
+    record_card_changes(card, request.user, before)
     return card
 
 
@@ -173,6 +177,7 @@ def set_card_labels(request, card_id: int, data: CardLabelsIn):
     if labels.exclude(project_id=card.project_id).exists() or labels.count() != len(set(data.label_ids)):
         return Status(400, {'detail': 'Use só etiquetas deste projeto.'})
     card.labels.set(labels)
+    record_labels(card, request.user)
     return card
 
 
@@ -240,3 +245,8 @@ def delete_attachment(request, attachment_id: int):
     attachment.file.delete(save=False)
     attachment.delete()
     return Status(204, None)
+
+
+@router.get('/cards/{card_id}/activity', response=list[ActivityOut])
+def activity(request, card_id: int):
+    return card_activity(get_object_or_404(Card, id=card_id))
