@@ -49,3 +49,20 @@ class Token(UuidModel, TimeStampedModel):
 
     def __str__(self):
         return f'{self.user} ({self.key[:6]}…)'
+
+
+class SocialAccount(UuidModel, TimeStampedModel):
+    """Conta do Google/GitHub ligada a um usuário do HubFlow (RN-130)."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_accounts')
+    provider = models.CharField('provedor', max_length=20)
+    uid = models.CharField('id no provedor', max_length=100)
+    email = models.EmailField('e-mail no provedor', blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['provider', 'uid'], name='unique_social_account')]
+        verbose_name = 'conta social'
+        verbose_name_plural = 'contas sociais'
+
+    def __str__(self):
+        return f'{self.provider}: {self.user}'

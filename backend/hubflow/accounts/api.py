@@ -1,12 +1,18 @@
+from urllib.parse import urlencode
+
+import httpx
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from ninja import File, Router, Status
+from django.http import Http404, HttpResponseRedirect
+from ninja import File, Router, Schema, Status
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
 from hubflow.permissions.services import effective_permissions, require
 
+from . import social
 from .models import Token, User
 from .schemas import ChangePasswordIn, DetailOut, ForgotPasswordIn, LoginIn, MeOut, ResetPasswordIn, TokenOut, UserOut
 from .services import get_user_from_reset_link, send_password_reset_email
@@ -116,3 +122,43 @@ users_router = Router(tags=['users'])
 def list_users(request):
     """Usuários ativos, para responsáveis e @menções."""
     return User.objects.filter(is_active=True).order_by('email')
+
+
+class SocialCodeIn(Schema):
+    code: str
+
+
+def back_to_frontend(**query):
+    return HttpResponseRedirect(f'{settings.FRONTEND_URL}/login/social?{urlencode(query)}')
+
+
+@router.get('/social/{provider}/start', auth=None)
+def social_start(request, provider: str):
+    if not social.credentials(provider):
+        raise Http404('Provedor não configurado.')
+    return HttpResponseRedirect(social.authorize_url(provider))
+
+
+@router.get('/social/{provider}/callback', auth=None)
+def social_callback(request, provider: str, code: str = '', state: str = '', error: str = ''):
+    if error:  # a pessoa cancelou no provedor
+        return back_to_frontend(error='access_denied')
+    try:
+        if not social.credentials(provider):
+            raise social.SocialError('provider_error')
+        social.check_state(provider, state)
+        uid, email = social.identity(provider, social.access_token(provider, code))
+        user = social.find_user(provider, uid, email)
+    except social.SocialError as failure:
+        return back_to_frontend(error=failure.code)
+    except httpx.HTTPError:
+        return back_to_frontend(error='provider_error')
+    return back_to_frontend(code=social.login_code(user))
+
+
+@router.post('/social/exchange', response={200: TokenOut, 400: DetailOut}, auth=None)
+def social_exchange(request, data: SocialCodeIn):
+    user = social.user_for_code(data.code)
+    if user is None:
+        return Status(400, {'detail': 'Código inválido ou expirado. Entre de novo.'})
+    return {'token': Token.objects.create(user=user).key}

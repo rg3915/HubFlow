@@ -105,6 +105,19 @@ FORM_SUBMISSIONS_PER_HOUR = config('FORM_SUBMISSIONS_PER_HOUR', default=20, cast
 ATTACHMENT_MAX_BYTES = config('ATTACHMENT_MAX_BYTES', default=10 * 1024 * 1024, cast=int)
 
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
+BACKEND_URL = config('BACKEND_URL', default='http://localhost:8000')  # monta o callback do OAuth
+
+# Login social (RN-130): sem client id/secret, o provedor não aparece. Guia no README.
+SOCIAL_PROVIDERS = {
+    'google': {
+        'client_id': config('GOOGLE_CLIENT_ID', default=''),
+        'secret': config('GOOGLE_CLIENT_SECRET', default=''),
+    },
+    'github': {
+        'client_id': config('GITHUB_CLIENT_ID', default=''),
+        'secret': config('GITHUB_CLIENT_SECRET', default=''),
+    },
+}
 
 # Tempo real: pub/sub dos eventos do quadro.
 REDIS_URL = config('REDIS_URL', default='redis://localhost:6379/0')

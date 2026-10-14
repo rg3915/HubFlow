@@ -6,6 +6,12 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+#### Login social
+
+* Login com Google e GitHub (OAuth, authorization code): state de uso único, e-mail verificado do provedor, entra só em conta já cadastrada (sem criar conta nova), vincula a conta social e entrega ao frontend um código de uso único trocado por token (POST /api/auth/social/exchange). #166
+
 ## [0.15.0] - 2026-10-14
 
 Mobile: layout responsivo do quadro, do painel do card, das listas, do dashboard e da navegação (testado em 360 e 390 px).
