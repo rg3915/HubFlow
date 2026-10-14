@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* API do dashboard: cards por coluna, em desenvolvimento agora, cronômetros abertos e totais. #88
+
 ## [0.6.0] - 2026-10-14
 
 Faturamento: pagamentos por sprint ou por período (mensal), resumo financeiro, CLI e tela com KPIs e gráficos.

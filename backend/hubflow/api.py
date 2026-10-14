@@ -6,6 +6,7 @@ from hubflow.accounts.auth import TokenAuth
 from hubflow.billing.api import router as payments_router
 from hubflow.boards.api import router as boards_router
 from hubflow.clients.api import router as clients_router
+from hubflow.dashboard.api import router as dashboard_router
 from hubflow.projects.api import router as projects_router
 from hubflow.sprints.api import router as sprints_router
 from hubflow.timetracking.api import router as time_router
@@ -20,6 +21,7 @@ api.add_router('', boards_router)
 api.add_router('', sprints_router)
 api.add_router('', time_router)
 api.add_router('/payments', payments_router)
+api.add_router('/dashboard', dashboard_router)
 
 
 @api.get('/health', auth=None)
