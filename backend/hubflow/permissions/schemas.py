@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from ninja import Schema
 
@@ -11,6 +12,7 @@ class ClientBriefOut(Schema):
 class UserAccessOut(Schema):
     # Dicionário montado por describe_user (sem resolvers de UserOut, que leem o objeto).
     id: int
+    uuid: UUID
     email: str
     name: str
     first_name: str
@@ -63,6 +65,7 @@ class CatalogOut(Schema):
 
 class PermissionChangeOut(Schema):
     id: int
+    uuid: UUID
     created: datetime
     user: str
     changed_by: str | None

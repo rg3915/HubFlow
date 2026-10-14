@@ -35,6 +35,7 @@ def describe_user(user):
     effective = set(ALL) if user.is_superuser else (from_roles | set(extra)) & set(ALL)
     return {
         'id': user.id,
+        'uuid': user.uuid,
         'email': user.email,
         'name': user.name,
         'first_name': user.first_name,

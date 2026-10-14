@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Max
 
-from hubflow.core.models import CreatedByModel, CreatedModel, TimeStampedModel
+from hubflow.core.models import CreatedByModel, TimeStampedModel, UuidModel
 from hubflow.projects.models import Project
 from hubflow.sprints.models import Sprint
 
@@ -19,7 +19,7 @@ class Column(models.TextChoices):
     ARCHIVED = 'archived', 'Arquivadas'
 
 
-class Label(models.Model):
+class Label(UuidModel, TimeStampedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='labels', verbose_name='projeto')
     name = models.CharField('nome', max_length=40)
     color = models.CharField('cor', max_length=7, default='#64748b')  # hex #rrggbb
@@ -33,7 +33,7 @@ class Label(models.Model):
         return self.name
 
 
-class Card(TimeStampedModel, CreatedByModel):
+class Card(UuidModel, TimeStampedModel, CreatedByModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='cards', verbose_name='projeto')
     number = models.PositiveIntegerField('número', editable=False)  # RN-32
     title = models.CharField('título', max_length=200)  # RN-38
@@ -89,7 +89,7 @@ class Card(TimeStampedModel, CreatedByModel):
         super().save(*args, **kwargs)
 
 
-class CardMove(CreatedModel):
+class CardMove(UuidModel, TimeStampedModel):
     # RN-35: histórico de movimentações entre colunas.
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='moves')
     from_column = models.CharField(max_length=10, choices=Column.choices)
@@ -105,7 +105,7 @@ class CardMove(CreatedModel):
         return f'{self.card} {self.from_column} → {self.to_column}'
 
 
-class Comment(TimeStampedModel):
+class Comment(UuidModel, TimeStampedModel):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField('texto')
@@ -120,7 +120,7 @@ class Comment(TimeStampedModel):
         return f'{self.author} em {self.card}: {self.text[:40]}'
 
 
-class ChecklistItem(models.Model):
+class ChecklistItem(UuidModel, TimeStampedModel):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='checklist_items')
     text = models.CharField('texto', max_length=200)
     done = models.BooleanField('feito', default=False)
@@ -135,7 +135,7 @@ class ChecklistItem(models.Model):
         return self.text
 
 
-class Attachment(CreatedModel):
+class Attachment(UuidModel, TimeStampedModel):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField('arquivo', upload_to='attachments/%Y/%m/')
     name = models.CharField('nome', max_length=255)
@@ -151,7 +151,7 @@ class Attachment(CreatedModel):
         return self.name
 
 
-class CardEvent(CreatedModel):
+class CardEvent(UuidModel, TimeStampedModel):
     """Mudanças no card que não são movimentação, comentário nem anexo (esses têm tabela própria)."""
 
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='events')

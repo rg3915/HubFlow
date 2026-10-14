@@ -31,6 +31,7 @@ def test_define_prazo_e_responsavel(api, card, bob):
     assert data['due_date'] == '2026-10-20'
     assert data['assignee'] == {
         'id': bob.id,
+        'uuid': str(bob.uuid),
         'email': 'bob@example.com',
         'name': 'Bob',
         'first_name': 'Bob',

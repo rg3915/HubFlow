@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from ninja import Schema
@@ -23,6 +25,7 @@ class ClientIn(Schema):
 
 class ClientOut(Schema):
     id: int
+    uuid: UUID
     name: str
     emails: list[str]
     is_active: bool

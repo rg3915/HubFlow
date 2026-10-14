@@ -2,6 +2,7 @@ import re
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Literal
+from uuid import UUID
 
 from ninja import Schema
 from pydantic import field_validator
@@ -40,6 +41,7 @@ class PaymentIn(Schema):
 
 class PaymentOut(Schema):
     id: int
+    uuid: UUID
     sprint_id: int | None
     sprint_number: int | None
     period_start: date | None

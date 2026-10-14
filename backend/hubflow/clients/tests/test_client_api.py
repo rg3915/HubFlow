@@ -15,7 +15,14 @@ def test_lista_clientes_em_ordem_alfabetica(api):
     assert response.status_code == 200
     data = response.json()
     assert [c['name'] for c in data] == ['Alfa', 'Zeta']
-    assert data[0] == {'id': data[0]['id'], 'name': 'Alfa', 'emails': ['x@alfa.com'], 'is_active': True}
+    alfa = Client.objects.get(id=data[0]['id'])
+    assert data[0] == {
+        'id': alfa.id,
+        'uuid': str(alfa.uuid),
+        'name': 'Alfa',
+        'emails': ['x@alfa.com'],
+        'is_active': True,
+    }
 
 
 def test_cria_cliente(api):

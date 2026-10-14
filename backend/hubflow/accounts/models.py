@@ -3,18 +3,17 @@ import secrets
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
-from hubflow.core.models import CreatedModel
+from hubflow.core.models import TimeStampedModel, UuidModel
 
 from .managers import UserManager
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(UuidModel, TimeStampedModel, AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('e-mail', unique=True)
     name = models.CharField('nome', max_length=150, blank=True)
     avatar = models.ImageField('avatar', upload_to='avatars/%Y/%m/', blank=True)
     is_active = models.BooleanField('ativo', default=True)
     is_staff = models.BooleanField('equipe', default=False)
-    date_joined = models.DateTimeField('cadastrado em', auto_now_add=True)
 
     objects = UserManager()
 
@@ -42,7 +41,7 @@ def generate_key():
     return secrets.token_hex(20)
 
 
-class Token(CreatedModel):
+class Token(UuidModel, TimeStampedModel):
     # RN-05: um token por dispositivo/CLI; o logout revoga só o token usado.
     key = models.CharField(max_length=40, unique=True, default=generate_key)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tokens')

@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Alterado
+
+* Refactor: UuidModel (uuid7, campo `uuid` único além do id) em todos os models e só TimeStampedModel (created/modified) no lugar de CreatedModel; User.date_joined vira created; a API expõe o uuid. #134
+
 ## [0.10.0] - 2026-10-14
 
 Permissões: papéis padrão, permissões por pessoa, escopo por cliente, uso da CLI, visibilidade de pagamentos, convite por e-mail, histórico e tela de gestão de usuários. Também busca global e backup .sql.

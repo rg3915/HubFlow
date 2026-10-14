@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from uuid import UUID
 
 from ninja import Schema
 from pydantic import field_validator
@@ -8,6 +9,7 @@ from hubflow.accounts.schemas import UserOut
 
 class TimeEntryOut(Schema):
     id: int
+    uuid: UUID
     card_id: int
     user: UserOut
     started_at: datetime

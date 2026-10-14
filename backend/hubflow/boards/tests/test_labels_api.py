@@ -16,7 +16,14 @@ def test_cria_etiqueta_no_projeto(api, loja):
     response = post_label(api, loja, 'bug', '#a33a2e')
 
     assert response.status_code == 201
-    assert response.json() == {'id': response.json()['id'], 'project_id': loja.id, 'name': 'bug', 'color': '#a33a2e'}
+    label = Label.objects.get(id=response.json()['id'])
+    assert response.json() == {
+        'id': label.id,
+        'uuid': str(label.uuid),
+        'project_id': loja.id,
+        'name': 'bug',
+        'color': '#a33a2e',
+    }
 
 
 def test_nome_unico_no_projeto(api, loja):
@@ -75,7 +82,8 @@ def test_quadro_traz_as_etiquetas_dos_cards(api, loja, card):
 
     board = api.get(f'/api/projects/{loja.id}/board').json()
 
-    expected = [{'id': bug, 'project_id': loja.id, 'name': 'bug', 'color': '#a33a2e'}]
+    uuid = str(Label.objects.get(id=bug).uuid)
+    expected = [{'id': bug, 'uuid': uuid, 'project_id': loja.id, 'name': 'bug', 'color': '#a33a2e'}]
     assert board['columns'][0]['cards'][0]['labels'] == expected
 
 

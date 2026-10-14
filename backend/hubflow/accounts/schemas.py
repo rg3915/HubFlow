@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from ninja import Schema
 
 
@@ -12,6 +14,7 @@ class TokenOut(Schema):
 
 class UserOut(Schema):
     id: int
+    uuid: UUID
     email: str
     name: str
     first_name: str
@@ -45,6 +48,7 @@ class MeOut(Schema):
     """Montado a partir de um dicionário (sem os resolvers do UserOut)."""
 
     id: int
+    uuid: UUID
     email: str
     name: str
     first_name: str

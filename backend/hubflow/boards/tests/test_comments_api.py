@@ -20,6 +20,7 @@ def test_cria_comentario(api, card, user):
     assert data['text'] == 'Reproduzi o erro no Safari.'
     assert data['author'] == {
         'id': user.id,
+        'uuid': str(user.uuid),
         'email': 'ana@example.com',
         'name': 'Ana',
         'first_name': 'Ana',

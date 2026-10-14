@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from uuid import UUID
 
 from ninja import Schema
 from pydantic import field_validator
@@ -18,6 +19,7 @@ class MilestoneIn(Schema):
 
 class MilestoneOut(Schema):
     id: int
+    uuid: UUID
     project_id: int
     title: str
     external_number: int | None
@@ -33,6 +35,7 @@ class SprintIn(Schema):
 
 class SprintOut(Schema):
     id: int
+    uuid: UUID
     project_id: int
     number: int
     name: str

@@ -1,10 +1,10 @@
 from django.db import models
 
 from hubflow.clients.models import Client, validate_email_list
-from hubflow.core.models import ActiveModel, TimeStampedModel
+from hubflow.core.models import ActiveModel, TimeStampedModel, UuidModel
 
 
-class Project(TimeStampedModel, ActiveModel):
+class Project(UuidModel, TimeStampedModel, ActiveModel):
     class Provider(models.TextChoices):
         GITHUB = 'github', 'GitHub'
         GITLAB = 'gitlab', 'GitLab'

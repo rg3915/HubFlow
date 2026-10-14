@@ -1,4 +1,5 @@
 from typing import Literal
+from uuid import UUID
 
 from ninja import Schema
 from pydantic import field_validator
@@ -24,6 +25,7 @@ class ProjectIn(Schema):
 
 class ProjectOut(Schema):
     id: int
+    uuid: UUID
     client_id: int
     client_name: str
     name: str

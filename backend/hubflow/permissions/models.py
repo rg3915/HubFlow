@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 from hubflow.clients.models import Client
-from hubflow.core.models import CreatedByModel, TimeStampedModel
+from hubflow.core.models import CreatedByModel, TimeStampedModel, UuidModel
 
 from .catalog import CUSTOM_PERMISSIONS
 
@@ -16,7 +16,7 @@ class Access(models.Model):
         permissions = [(codename, label) for codename, label in CUSTOM_PERMISSIONS.items()]
 
 
-class Membership(TimeStampedModel):
+class Membership(UuidModel, TimeStampedModel):
     """Pessoa vinculada a um cliente: define o que é "seu" para quem não vê todos os clientes."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='memberships')
@@ -32,7 +32,7 @@ class Membership(TimeStampedModel):
         return f'{self.user} em {self.client}'
 
 
-class PermissionChange(TimeStampedModel, CreatedByModel):
+class PermissionChange(UuidModel, TimeStampedModel, CreatedByModel):
     """Registro de mudança de papel, permissão, vínculo, situação ou convite: quem fez (created_by), quando e o quê."""
 
     ACTIONS = {

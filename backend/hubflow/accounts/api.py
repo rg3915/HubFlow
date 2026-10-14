@@ -31,6 +31,7 @@ def me(request):
     user = request.user
     return {
         'id': user.id,
+        'uuid': user.uuid,
         'email': user.email,
         'name': user.name,
         'first_name': user.first_name,

@@ -13,7 +13,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Dados', {'fields': ('name',)}),
         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Datas', {'fields': ('last_login', 'date_joined')}),
+        ('Datas', {'fields': ('last_login', 'created', 'modified')}),
     )
     add_fieldsets = ((None, {'classes': ('wide',), 'fields': ('email', 'password1', 'password2')}),)
-    readonly_fields = ('date_joined',)
+    readonly_fields = ('created', 'modified')

@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import F, Sum
 
-from hubflow.core.models import TimeStampedModel
+from hubflow.core.models import TimeStampedModel, UuidModel
 from hubflow.projects.models import Project
 from hubflow.sprints.models import Sprint
 from hubflow.timetracking.models import TimeEntry
@@ -14,7 +14,7 @@ from hubflow.timetracking.models import TimeEntry
 CENTS = Decimal('0.01')
 
 
-class Payment(TimeStampedModel):
+class Payment(UuidModel, TimeStampedModel):
     """Faturamento por sprint (RN-80, RN-81)."""
 
     class Status(models.TextChoices):

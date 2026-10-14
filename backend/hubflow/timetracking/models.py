@@ -3,12 +3,12 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from hubflow.boards.models import Card
-from hubflow.core.models import CreatedModel
+from hubflow.core.models import TimeStampedModel, UuidModel
 
 from .managers import TimeEntryManager
 
 
-class TimeEntry(CreatedModel):
+class TimeEntry(UuidModel, TimeStampedModel):
     """Tempo gasto num card: cronômetro (aberto até ended_at) ou lançamento manual."""
 
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='time_entries')

@@ -2,13 +2,13 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
 
-from hubflow.core.models import CreatedModel
+from hubflow.core.models import TimeStampedModel, UuidModel
 from hubflow.projects.models import Project
 
 from .managers import SprintManager
 
 
-class Milestone(CreatedModel):
+class Milestone(UuidModel, TimeStampedModel):
     """Marco opcional do projeto; pode espelhar um milestone do repositório (RN-60)."""
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='milestones', verbose_name='projeto')
@@ -32,7 +32,7 @@ class Milestone(CreatedModel):
         return self.title
 
 
-class Sprint(CreatedModel):
+class Sprint(UuidModel, TimeStampedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='sprints', verbose_name='projeto')
     number = models.PositiveIntegerField('número', editable=False)  # RN-60
     name = models.CharField('nome', max_length=120, blank=True)

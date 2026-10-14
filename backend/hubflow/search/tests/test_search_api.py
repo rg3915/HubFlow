@@ -85,7 +85,7 @@ def test_etiqueta(api, loja):
     label = Label.objects.create(project=loja, name='Bug', color='#a33a2e')
 
     assert search(api, 'bug').json()['labels'] == [
-        {'id': label.id, 'name': 'Bug', 'color': '#a33a2e', 'project_id': loja.id}
+        {'id': label.id, 'uuid': str(label.uuid), 'name': 'Bug', 'color': '#a33a2e', 'project_id': loja.id}
     ]
 
 

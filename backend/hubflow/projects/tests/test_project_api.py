@@ -28,6 +28,7 @@ def test_lista_projetos(api, loja):
     assert response.json() == [
         {
             'id': loja.id,
+            'uuid': str(loja.uuid),
             'client_id': loja.client_id,
             'client_name': 'ACME',
             'name': 'Loja',

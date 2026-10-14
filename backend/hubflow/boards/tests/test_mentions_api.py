@@ -40,7 +40,14 @@ def test_mencao_por_email_avisa_o_mencionado(api, card, bob, settings):
     response = post_comment(api, card, 'Olha isso, @bob@example.com')
 
     assert response.json()['mentions'] == [
-        {'id': bob.id, 'email': 'bob@example.com', 'name': 'Bob Silva', 'first_name': 'Bob', 'avatar_url': None}
+        {
+            'id': bob.id,
+            'uuid': str(bob.uuid),
+            'email': 'bob@example.com',
+            'name': 'Bob Silva',
+            'first_name': 'Bob',
+            'avatar_url': None,
+        }
     ]
     assert len(mail.outbox) == 1
     message = mail.outbox[0]

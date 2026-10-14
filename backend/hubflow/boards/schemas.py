@@ -1,6 +1,7 @@
 import re
 from datetime import date, datetime
 from typing import Literal
+from uuid import UUID
 
 from ninja import Schema
 from pydantic import field_validator
@@ -52,6 +53,7 @@ class LabelIn(Schema):
 
 class LabelOut(Schema):
     id: int
+    uuid: UUID
     project_id: int
     name: str
     color: str
@@ -75,6 +77,7 @@ class ChecklistItemIn(Schema):
 
 class ChecklistItemOut(Schema):
     id: int
+    uuid: UUID
     card_id: int
     text: str
     done: bool
@@ -92,6 +95,7 @@ class ChecklistSummary(Schema):
 
 class AttachmentOut(Schema):
     id: int
+    uuid: UUID
     card_id: int
     name: str
     size: int
@@ -124,6 +128,7 @@ class ProgressOut(Schema):
 
 class CardOut(Schema):
     id: int
+    uuid: UUID
     project_id: int
     number: int
     title: str
@@ -229,6 +234,7 @@ class CommentIn(Schema):
 
 class CommentOut(Schema):
     id: int
+    uuid: UUID
     card_id: int
     author: UserOut
     text: str
