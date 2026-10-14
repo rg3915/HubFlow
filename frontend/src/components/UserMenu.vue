@@ -36,6 +36,9 @@ async function logout() {
 
     <div v-if="open" role="menu" class="panel absolute right-0 z-30 mt-1 w-56 p-1 shadow-sm">
       <p v-if="auth.user?.name" class="truncate px-2 pb-1 pt-1.5 text-muted">{{ auth.user.email }}</p>
+      <RouterLink to="/settings/profile" role="menuitem" class="block rounded-[var(--radius-control)] px-2 py-1.5 hover:bg-surface-2" @click="open = false">
+        Perfil
+      </RouterLink>
       <RouterLink to="/settings/password" role="menuitem" class="block rounded-[var(--radius-control)] px-2 py-1.5 hover:bg-surface-2" @click="open = false">
         Trocar senha
       </RouterLink>

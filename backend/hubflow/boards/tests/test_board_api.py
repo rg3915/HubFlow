@@ -70,3 +70,14 @@ def test_quadro_traz_dados_do_projeto(api, loja):
     board = api.get(f'/api/projects/{loja.id}/board').json()
 
     assert board['project'] == {'id': loja.id, 'name': 'Loja', 'client_name': 'ACME'}
+
+
+def test_quadro_traz_o_criador_do_card(api, loja, user):
+    api.post(f'/api/projects/{loja.id}/cards', {'title': 'Com dono'}, content_type='application/json')
+    Card.objects.create(project=loja, title='Sem dono')
+
+    cards = api.get(f'/api/projects/{loja.id}/board').json()['columns'][0]['cards']
+
+    assert cards[0]['created_by']['id'] == user.id
+    assert cards[0]['created_by']['first_name'] == 'Ana'
+    assert cards[1]['created_by'] is None

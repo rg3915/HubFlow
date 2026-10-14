@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { BASE_URL } from '../api'
 import { useBoardStore } from '../stores/board'
 
 const props = defineProps({ card: { type: Object, required: true } })
@@ -14,17 +15,9 @@ const due = computed(() => {
 const progress = computed(() => props.card.progress)
 const barWidth = computed(() => `${Math.min(100, progress.value?.percent ?? 0)}%`)
 
-const initials = computed(() => {
-  const who = props.card.assignee
-  if (!who) return null
-  const source = who.name || who.email
-  return source
-    .split(/[\s@.]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0].toUpperCase())
-    .join('')
-})
+// Dono do card: o responsável ou, sem ele, quem criou.
+const owner = computed(() => props.card.assignee || props.card.created_by || null)
+const ownerAvatar = computed(() => (owner.value?.avatar_url ? BASE_URL + owner.value.avatar_url : null))
 </script>
 
 <template>
@@ -47,6 +40,7 @@ const initials = computed(() => {
       </span>
     </div>
     <p class="leading-snug">{{ card.title }}</p>
+    <p v-if="card.description" class="mt-0.5 line-clamp-2 text-[13px] text-muted">{{ card.description }}</p>
     <div
       v-if="progress?.percent !== null && progress?.percent !== undefined"
       class="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface-2"
@@ -71,12 +65,19 @@ const initials = computed(() => {
       <span v-if="card.time?.hours || card.time?.running" :class="card.time.running ? 'text-accent' : ''" :title="card.time.running ? 'Cronômetro rodando' : 'Horas registradas'">
         ⏱ {{ card.time.running ? 'rodando' : `${card.time.hours}h` }}
       </span>
+      <img
+        v-if="ownerAvatar"
+        :src="ownerAvatar"
+        alt=""
+        class="ml-auto h-[22px] w-[22px] rounded-full object-cover"
+        :title="owner.name || owner.email"
+      />
       <span
-        v-if="initials"
-        class="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-surface-2 text-[11px] font-medium text-text"
-        :title="card.assignee.name || card.assignee.email"
+        v-else-if="owner"
+        class="ml-auto inline-flex h-[22px] max-w-24 items-center rounded-full bg-surface-2 px-2 text-[11px] font-medium leading-none text-text"
+        :title="owner.name || owner.email"
       >
-        {{ initials }}
+        <span class="truncate">{{ owner.first_name }}</span>
       </span>
     </div>
   </article>
