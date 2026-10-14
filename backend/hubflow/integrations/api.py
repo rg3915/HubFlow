@@ -21,9 +21,11 @@ def update_repo_settings(request, project_id: int, data: RepoSettingsIn):
     project = get_object_or_404(Project, id=project_id)
     if data.token is not None:
         project.repo_token = data.token
+    if data.webhook_secret is not None:
+        project.webhook_secret = data.webhook_secret
     project.gitlab_project_id = data.gitlab_project_id
     project.create_issues = data.create_issues
-    project.save(update_fields=['repo_token', 'gitlab_project_id', 'create_issues', 'modified'])
+    project.save(update_fields=['repo_token', 'gitlab_project_id', 'create_issues', 'webhook_secret', 'modified'])
     return project
 
 

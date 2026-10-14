@@ -95,7 +95,7 @@ def card_queryset():
 
 
 @transaction.atomic
-def move_card(card, column, position=None, user=None):
+def move_card(card, column, position=None, user=None, sync=True):
     """Move o card para a coluna/posição e reordena origem e destino (RN-33, RN-34).
 
     É o único caminho para mudar a coluna de um card: API, CLI e automações passam por aqui.
@@ -114,7 +114,8 @@ def move_card(card, column, position=None, user=None):
     if source is not target:
         renumber(source)
     card.save(update_fields=['column', 'modified'])
-    sync_issue_state(card, from_column, column)
+    if sync:
+        sync_issue_state(card, from_column, column)
     if column == Column.DONE:
         notify('done', card)
     elif column not in (from_column, Column.ARCHIVED):

@@ -27,6 +27,7 @@ class Project(TimeStampedModel, ActiveModel):
     repo_token = models.CharField('token do repositório', max_length=200, blank=True)
     gitlab_project_id = models.PositiveIntegerField('id do projeto no GitLab', null=True, blank=True)
     create_issues = models.BooleanField('criar issue no repositório ao criar card', default=False)
+    webhook_secret = models.CharField('segredo do webhook', max_length=100, blank=True)
     # RN-32: contador dos números de card; nunca volta, mesmo quando um card é excluído.
     last_card_number = models.PositiveIntegerField(default=0, editable=False)
     # RN-60: contador das sprints, nunca volta.

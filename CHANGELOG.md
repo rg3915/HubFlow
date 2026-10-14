@@ -13,6 +13,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Editar card atualiza a issue; Concluído/Arquivadas fecha e sair delas reabre. #96
 * Importar issues do repositório como cards (sem duplicar, PRs de fora, fechadas em Concluído). #97
 * Sprint nova pareada com o último milestone aberto do repositório (milestone segue opcional). #98
+* Webhooks do GitHub (assinatura HMAC) e do GitLab (token): commit ou PR/MR mesclado com close/fixes/resolves #N conclui o card. #99
 
 ## [0.7.0] - 2026-10-14
 
