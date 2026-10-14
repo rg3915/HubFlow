@@ -18,7 +18,13 @@ def test_cria_comentario(api, card, user):
     assert response.status_code == 201
     data = response.json()
     assert data['text'] == 'Reproduzi o erro no Safari.'
-    assert data['author'] == {'id': user.id, 'email': 'ana@example.com', 'name': 'Ana'}
+    assert data['author'] == {
+        'id': user.id,
+        'email': 'ana@example.com',
+        'name': 'Ana',
+        'first_name': 'Ana',
+        'avatar_url': None,
+    }
     assert Comment.objects.get(id=data['id']).card == card
 
 

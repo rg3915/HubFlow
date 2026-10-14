@@ -29,7 +29,13 @@ def test_define_prazo_e_responsavel(api, card, bob):
     assert response.status_code == 200
     data = response.json()
     assert data['due_date'] == '2026-10-20'
-    assert data['assignee'] == {'id': bob.id, 'email': 'bob@example.com', 'name': 'Bob'}
+    assert data['assignee'] == {
+        'id': bob.id,
+        'email': 'bob@example.com',
+        'name': 'Bob',
+        'first_name': 'Bob',
+        'avatar_url': None,
+    }
 
 
 def test_limpa_prazo_e_responsavel(api, card, bob):

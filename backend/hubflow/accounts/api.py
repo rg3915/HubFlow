@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from ninja import Router, Status
+from ninja import File, Router, Status
 from ninja.errors import HttpError
+from ninja.files import UploadedFile
 
 from .models import Token, User
 from .schemas import ChangePasswordIn, DetailOut, ForgotPasswordIn, LoginIn, ResetPasswordIn, TokenOut, UserOut
@@ -23,6 +24,29 @@ def login(request, data: LoginIn):
 @router.get('/me', response=UserOut)
 def me(request):
     return request.user
+
+
+AVATAR_MAX_BYTES = 2 * 1024 * 1024
+AVATAR_TYPES = {'image/png', 'image/jpeg', 'image/webp'}
+
+
+@router.post('/me/avatar', response={200: UserOut, 400: DetailOut})
+def upload_avatar(request, file: UploadedFile = File(...)):
+    if file.content_type not in AVATAR_TYPES:
+        return Status(400, {'detail': 'Envie uma imagem PNG, JPG ou WebP.'})
+    if file.size > AVATAR_MAX_BYTES:
+        return Status(400, {'detail': 'Imagem grande demais. O tamanho máximo é 2 MB.'})
+    user = request.user
+    user.avatar.delete(save=False)  # substitui: o arquivo antigo não fica órfão
+    user.avatar.save(file.name, file, save=True)
+    return user
+
+
+@router.delete('/me/avatar', response={204: None})
+def delete_avatar(request):
+    user = request.user
+    user.avatar.delete(save=True)
+    return Status(204, None)
 
 
 @router.post('/logout', response={204: None})

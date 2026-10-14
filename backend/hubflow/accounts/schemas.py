@@ -14,6 +14,12 @@ class UserOut(Schema):
     id: int
     email: str
     name: str
+    first_name: str
+    avatar_url: str | None
+
+    @staticmethod
+    def resolve_avatar_url(user):
+        return user.avatar.url if user.avatar else None
 
 
 class ForgotPasswordIn(Schema):

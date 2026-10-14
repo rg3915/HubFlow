@@ -11,6 +11,7 @@ from .managers import UserManager
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('e-mail', unique=True)
     name = models.CharField('nome', max_length=150, blank=True)
+    avatar = models.ImageField('avatar', upload_to='avatars/%Y/%m/', blank=True)
     is_active = models.BooleanField('ativo', default=True)
     is_staff = models.BooleanField('equipe', default=False)
     date_joined = models.DateTimeField('cadastrado em', auto_now_add=True)
@@ -26,6 +27,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    @property
+    def first_name(self):
+        return self.name.split()[0] if self.name.strip() else self.email.split('@')[0]
 
     def save(self, *args, **kwargs):
         # RN-01: e-mail guardado em minúsculas, o que torna o unique case-insensitive.
