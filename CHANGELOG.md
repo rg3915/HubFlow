@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Model TimeEntry: cronômetro por card e lançamento manual. #71
+
 ## [0.4.0] - 2026-10-14
 
 Sprints numeradas por projeto, milestone opcional, projeto completo em uma chamada e polimento (menu recolhível, breadcrumb, refactor dos models).
