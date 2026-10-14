@@ -58,3 +58,14 @@ def test_logout_com_token_ja_invalido_limpa_a_configuracao_mesmo_assim(run):
 
     assert result.exit_code == 0, result.output
     assert 'token' not in load_config()
+
+
+@respx.mock
+def test_toda_chamada_se_identifica_como_cli(run, config_dir):
+    (config_dir / 'config.toml').write_text('url = "http://api.test"\ntoken = "abc123"\n')
+    me = Response(200, json={'email': 'a@b.c', 'name': ''})
+    route = respx.get('http://api.test/api/auth/me').mock(return_value=me)
+
+    run('whoami')
+
+    assert route.calls.last.request.headers['X-HubFlow-Client'] == 'cli'

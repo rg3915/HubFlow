@@ -56,3 +56,24 @@ def test_login_sem_api_no_ar_mostra_erro_amigavel(run):
 
     assert result.exit_code == 1
     assert 'http://api.test' in result.output
+
+
+@respx.mock
+def test_login_se_identifica_como_cli(run):
+    route = respx.post('http://api.test/api/auth/login').mock(return_value=Response(200, json={'token': 't'}))
+
+    run('login', '--email', 'ana@example.com', '--password', 'segredo123')
+
+    assert route.calls.last.request.headers['X-HubFlow-Client'] == 'cli'
+
+
+@respx.mock
+def test_login_sem_permissao_de_cli_mostra_o_motivo(run):
+    error = Response(403, json={'detail': 'Você não tem permissão para isto (Usar a CLI).'})
+    respx.post('http://api.test/api/auth/login').mock(return_value=error)
+
+    result = run('login', '--email', 'ana@example.com', '--password', 'segredo123')
+
+    assert result.exit_code == 1
+    assert 'Usar a CLI' in result.output
+    assert 'token' not in load_config()

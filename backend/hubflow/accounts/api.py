@@ -5,6 +5,8 @@ from ninja import File, Router, Status
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
+from hubflow.permissions.services import effective_permissions, require
+
 from .models import Token, User
 from .schemas import ChangePasswordIn, DetailOut, ForgotPasswordIn, LoginIn, MeOut, ResetPasswordIn, TokenOut, UserOut
 from .services import get_user_from_reset_link, send_password_reset_email
@@ -17,14 +19,15 @@ def login(request, data: LoginIn):
     user = authenticate(request, email=data.email, password=data.password)
     if user is None:
         raise HttpError(401, 'E-mail ou senha inválidos.')
-    token = Token.objects.create(user=user)
+    is_cli = request.headers.get('X-HubFlow-Client') == 'cli'
+    if is_cli:
+        require(user, 'permissions.use_cli')
+    token = Token.objects.create(user=user, is_cli=is_cli)
     return {'token': token.key}
 
 
 @router.get('/me', response=MeOut)
 def me(request):
-    from hubflow.permissions.services import effective_permissions
-
     user = request.user
     return {
         'id': user.id,

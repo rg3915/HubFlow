@@ -17,6 +17,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Permissões em clientes e projetos: sem clients.view_client só vê os clientes de que é membro; criar/editar/excluir exige as permissões padrão (403 com a permissão nomeada). #120
 * Permissões em cards e comentários: add_card para criar; sem change_card/delete_card só edita, move, exclui e arquiva os próprios (criado por ou responsável); delete_comment para apagar comentários de outros. #121
 * Permissões em sprints, milestones, etiquetas e anexos: add/change/delete de sprint, milestone e etiqueta exigem as permissões padrão; sprint/etiqueta de cliente de fora dá 404; anexar e excluir anexo seguem a regra do card (quem enviou ou quem pode editar o card). #122
+* Permissão de uso da CLI: a CLI se identifica com X-HubFlow-Client: cli; o login pela CLI exige permissions.use_cli (403 com o motivo) e marca o token (is_cli), que deixa de valer se a permissão for retirada. #123
 
 ## [0.9.0] - 2026-10-14
 

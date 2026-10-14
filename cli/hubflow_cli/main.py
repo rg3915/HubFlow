@@ -1,4 +1,3 @@
-import httpx
 import typer
 
 from . import cards, clients, config, payments, projects, sprints
@@ -43,9 +42,8 @@ def whoami():
 @app.command()
 def logout():
     """Invalida o token e apaga a configuração local."""
-    key = config.token()
-    if key:
-        httpx.post(f'{config.api_url()}/api/auth/logout', headers={'Authorization': f'Bearer {key}'})
+    if config.token():
+        request('POST', '/auth/logout', allow=(401, 403))
     config.save_config({'url': config.api_url()})
     typer.echo('Sessão encerrada.')
 

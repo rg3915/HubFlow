@@ -12,7 +12,7 @@ def fail(message):
 def request(method, path, *, auth=True, allow=(), **kwargs):
     """Chama a API. Erros 4xx encerram com a mensagem, exceto os códigos em `allow` (devolvidos ao chamador)."""
     url = config.api_url()
-    headers = {}
+    headers = {'X-HubFlow-Client': 'cli'}
     if auth:
         key = config.token()
         if not key:

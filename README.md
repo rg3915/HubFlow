@@ -156,6 +156,8 @@ uv tool install ./cli        # ou: pipx install ./cli
 hubflow --help
 ```
 
+Só quem tem a permissão **Usar a CLI** (papéis Administrador, Gerente e Desenvolvedor por padrão) consegue entrar pela CLI.
+
 ```bash
 hubflow login                                   # pede e-mail e senha; guarda o token em ~/.config/hubflow/config.toml
 hubflow whoami

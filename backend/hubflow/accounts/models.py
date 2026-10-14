@@ -46,6 +46,7 @@ class Token(CreatedModel):
     # RN-05: um token por dispositivo/CLI; o logout revoga só o token usado.
     key = models.CharField(max_length=40, unique=True, default=generate_key)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tokens')
+    is_cli = models.BooleanField(default=False)  # token aberto pela CLI (exige permissions.use_cli)
 
     def __str__(self):
         return f'{self.user} ({self.key[:6]}…)'
