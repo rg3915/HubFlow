@@ -13,6 +13,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API de campos personalizados: listar, criar, editar, excluir e reordenar (projects.change_project para alterar). #137
 * Valores dos campos personalizados no card (`fields` na criação/edição, `custom_values` na resposta): validação por tipo, opção da seleção, obrigatórios ao criar e não podem ser esvaziados; mudanças entram no histórico. #138
 * CLI: hubflow project field list/add/remove, card create --field Nome=valor e card fields (mostra/altera). #139
+* Tela de campos do projeto (Quadro › Campos): criar, editar tipo/opções/obrigatório, reordenar e excluir. #140
 
 ### Corrigido
 

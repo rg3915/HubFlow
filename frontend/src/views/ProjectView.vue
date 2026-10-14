@@ -55,6 +55,7 @@ const visibleColumns = computed(() =>
       </select>
       <RouterLink :to="`/projects/${projectId}/sprints`" class="text-muted hover:text-text">Sprints</RouterLink>
       <RouterLink :to="`/projects/${projectId}/labels`" class="text-muted hover:text-text">Etiquetas</RouterLink>
+      <RouterLink v-if="auth.can('projects.change_project')" :to="`/projects/${projectId}/fields`" class="text-muted hover:text-text">Campos</RouterLink>
       <RouterLink v-if="auth.can('projects.change_project')" :to="`/projects/${projectId}/integration`" class="text-muted hover:text-text">Integração</RouterLink>
       <RouterLink v-if="auth.can('projects.change_project')" :to="`/projects/${projectId}/edit`" class="text-muted hover:text-text">Configurar</RouterLink>
       <span v-if="board.viewers.length" class="ml-auto flex items-center -space-x-1" :title="`Vendo agora: ${board.viewers.map((v) => v.first_name).join(', ')}`">
