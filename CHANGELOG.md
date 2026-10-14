@@ -25,3 +25,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Tela de login. #15
 * Tela esqueci minha senha. #16
 * Tela redefinir senha. #17
+* Guarda de rotas e menu do usuário com logout. #18

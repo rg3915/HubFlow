@@ -1,9 +1,26 @@
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import UserMenu from '../components/UserMenu.vue'
+import { useAuthStore } from '../stores/auth'
 
 const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+
+onMounted(async () => {
+  if (auth.user || !auth.token) return
+  try {
+    await auth.fetchUser()
+  } catch (e) {
+    // Token revogado ou expirado: volta para o login.
+    if (e.status === 401) {
+      await auth.logout()
+      router.push({ name: 'login', query: { redirect: route.fullPath } })
+    }
+  }
+})
 const sidebarOpen = ref(false)
 
 // Clientes e projetos entram com a API (#25, #26). Até lá, a lista fica vazia.
@@ -61,7 +78,7 @@ const clients = ref([])
         <h1 class="truncate text-xl font-semibold">{{ route.meta.title }}</h1>
         <div class="ml-auto flex items-center gap-2">
           <ThemeToggle />
-          <!-- Menu do usuário entra na #18 -->
+          <UserMenu />
         </div>
       </header>
 
