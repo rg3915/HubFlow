@@ -95,7 +95,7 @@ def close_sprint(request, sprint_id: int):
 @router.delete('/sprints/{sprint_id}', response={204: None, 400: DetailOut})
 def delete_sprint(request, sprint_id: int):
     sprint = get_object_or_404(Sprint, id=sprint_id)
-    if sprint.cards.exists():
-        return Status(400, {'detail': 'A sprint tem cards. Feche-a em vez de excluir.'})
+    if sprint.cards.exists() or sprint.payments.exists():
+        return Status(400, {'detail': 'A sprint tem cards ou pagamentos. Feche-a em vez de excluir.'})
     sprint.delete()
     return Status(204, None)

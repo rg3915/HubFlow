@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Model Payment ligado à sprint (valor/hora, estimativas, tempo gasto, valor total, NF, datas, status, pagar e copiar). #82
+* API CRUD de pagamentos com filtros (cliente, status, ano), pagar e copiar. #83
 
 ## [0.5.0] - 2026-10-14
 
