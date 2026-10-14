@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { mediaUrl } from '../api'
 import { useAuthStore } from '../stores/auth'
-import { useBoardStore } from '../stores/board'
+import { fieldText, useBoardStore } from '../stores/board'
 
 const props = defineProps({ card: { type: Object, required: true } })
 const auth = useAuthStore()
@@ -18,6 +18,8 @@ const progress = computed(() => props.card.progress)
 const barWidth = computed(() => `${Math.min(100, progress.value?.percent ?? 0)}%`)
 
 // Dono do card: o responsável ou, sem ele, quem criou.
+// Até dois campos preenchidos, na ordem do projeto.
+const shownFields = computed(() => board.fields.filter((f) => (props.card.custom_values?.[f.id] ?? '') !== '').slice(0, 2))
 const owner = computed(() => props.card.assignee || props.card.created_by || null)
 const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
 </script>
@@ -43,6 +45,9 @@ const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
     </div>
     <p class="leading-snug">{{ card.title }}</p>
     <p v-if="card.description" class="mt-0.5 line-clamp-2 text-[13px] text-muted">{{ card.description }}</p>
+    <p v-if="shownFields.length" class="mt-1 flex flex-wrap gap-x-2 text-[13px] text-muted">
+      <span v-for="field in shownFields" :key="field.id">{{ field.name }}: <span class="text-text">{{ fieldText(card.custom_values[field.id]) }}</span></span>
+    </p>
     <div
       v-if="progress?.percent !== null && progress?.percent !== undefined"
       class="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface-2"

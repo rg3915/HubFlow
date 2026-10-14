@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia'
 import { BASE_URL, api } from '../api'
+
+// Valor de campo personalizado para exibir (card, histórico).
+export function fieldText(value) {
+  if (value === null || value === undefined || value === '') return '—'
+  if (typeof value === 'boolean') return value ? 'Sim' : 'Não'
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T00:00`).toLocaleDateString('pt-BR')
+  return String(value)
+}
 import { useAuthStore } from './auth'
 
 export const useBoardStore = defineStore('board', {
@@ -10,6 +18,7 @@ export const useBoardStore = defineStore('board', {
     loading: false,
     selected: null,
     labels: [],
+    fields: [], // campos personalizados do projeto, na ordem
     users: [],
     comments: [],
     checklist: [],
@@ -32,10 +41,11 @@ export const useBoardStore = defineStore('board', {
         this.projectId = projectId
         this.project = board.project
         this.columns = board.columns
-        ;[this.labels, this.users, this.sprints] = await Promise.all([
+        ;[this.labels, this.users, this.sprints, this.fields] = await Promise.all([
           api(`/projects/${projectId}/labels`, { token }),
           api('/users', { token }),
           api(`/projects/${projectId}/sprints`, { token }),
+          api(`/projects/${projectId}/fields`, { token }),
         ])
       } finally {
         this.loading = false
@@ -104,9 +114,9 @@ export const useBoardStore = defineStore('board', {
       if (found) found.column.cards.splice(found.column.cards.indexOf(found.card), 1)
       if (this.selected?.id === card_id) this.selected = null
     },
-    async createCard(title) {
+    async createCard(title, fields = {}) {
       const token = useAuthStore().token
-      const card = await api(`/projects/${this.projectId}/cards`, { method: 'POST', body: { title }, token })
+      const card = await api(`/projects/${this.projectId}/cards`, { method: 'POST', body: { title, fields }, token })
       this.column('backlog').cards.push(card)
       return card
     },
@@ -193,6 +203,7 @@ export const useBoardStore = defineStore('board', {
         description: card.description,
         due_date: card.due_date,
         assignee_id: card.assignee?.id ?? null,
+        estimate_hours: card.estimate_hours ?? null, // sem isto o PUT apagaria a estimativa
         ...data,
       }
       const saved = await api(`/cards/${card.id}`, { method: 'PUT', body, token })

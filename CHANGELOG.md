@@ -14,10 +14,12 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Valores dos campos personalizados no card (`fields` na criação/edição, `custom_values` na resposta): validação por tipo, opção da seleção, obrigatórios ao criar e não podem ser esvaziados; mudanças entram no histórico. #138
 * CLI: hubflow project field list/add/remove, card create --field Nome=valor e card fields (mostra/altera). #139
 * Tela de campos do projeto (Quadro › Campos): criar, editar tipo/opções/obrigatório, reordenar e excluir. #140
+* Campos no painel do card (entrada conforme o tipo, obrigatórios marcados, salva só o que mudou), obrigatórios pedidos no "Novo card", até dois valores no card do quadro e mudanças de campos no histórico. #141
 
 ### Corrigido
 
 * CLI: card label/assign/due não apagam mais a estimativa do card. #139
+* Quadro: mudar etiquetas/responsável pelo painel não apaga mais a estimativa do card. #141
 
 ## [0.11.0] - 2026-10-14
 

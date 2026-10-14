@@ -6,6 +6,7 @@ import ActivityList from './ActivityList.vue'
 import AttachmentsBox from './AttachmentsBox.vue'
 import ChecklistBox from './ChecklistBox.vue'
 import CommentBox from './CommentBox.vue'
+import FieldInput from './FieldInput.vue'
 import LabelPicker from './LabelPicker.vue'
 import TimeBox from './TimeBox.vue'
 
@@ -16,6 +17,7 @@ const description = ref('')
 const dueDate = ref('')
 const assigneeId = ref('')
 const estimate = ref('')
+const values = ref({}) // campos personalizados {id: valor}
 const error = ref('')
 const saved = ref(false)
 
@@ -29,18 +31,25 @@ const labels = {
 }
 
 watch(
-  () => board.selected,
-  (card) => {
+  () => [board.selected, board.fields], // os campos podem chegar depois do card aberto pela URL
+  ([card]) => {
     title.value = card?.title || ''
     description.value = card?.description || ''
     dueDate.value = card?.due_date || ''
     assigneeId.value = card?.assignee?.id || ''
     estimate.value = card?.estimate_hours ?? ''
+    values.value = Object.fromEntries(board.fields.map((f) => [f.id, card?.custom_values?.[f.id] ?? '']))
     error.value = ''
     saved.value = false
   },
   { immediate: true },
 )
+
+// Só o que mudou: card antigo não precisa preencher obrigatório criado depois para editar o título.
+function changedFields() {
+  const current = board.selected.custom_values || {}
+  return Object.fromEntries(Object.entries(values.value).filter(([id, value]) => value !== (current[id] ?? '')))
+}
 
 async function save() {
   error.value = ''
@@ -51,6 +60,7 @@ async function save() {
       due_date: dueDate.value || null,
       assignee_id: assigneeId.value || null,
       estimate_hours: estimate.value === '' ? null : Number(estimate.value),
+      fields: changedFields(),
     })
     saved.value = true
   } catch (e) {
@@ -99,6 +109,12 @@ async function remove() {
           <div>
             <label class="label" for="card-estimate">Estimativa (h)</label>
             <input id="card-estimate" v-model="estimate" class="field" type="number" min="0" step="0.5" placeholder="auto" />
+          </div>
+        </div>
+        <div v-if="board.fields.length" class="grid grid-cols-2 gap-3">
+          <div v-for="field in board.fields" :key="field.id">
+            <label class="label" :for="`card-field-${field.id}`">{{ field.name }}<span v-if="field.required" class="text-danger"> *</span></label>
+            <FieldInput v-model="values[field.id]" :field="field" :id="`card-field-${field.id}`" />
           </div>
         </div>
         <p v-if="board.selected.progress?.estimate_hours" class="-mt-2 text-[13px] text-muted">

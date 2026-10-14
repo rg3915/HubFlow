@@ -1,5 +1,5 @@
 <script setup>
-import { useBoardStore } from '../stores/board'
+import { fieldText, useBoardStore } from '../stores/board'
 
 const board = useBoardStore()
 
@@ -14,6 +14,7 @@ function describe(item) {
     case 'attachment': return `anexou ${d.name}`
     case 'assignee': return d.assignee ? `definiu ${d.assignee} como responsável` : 'tirou o responsável'
     case 'due_date': return d.due_date ? `definiu o prazo para ${new Date(d.due_date + 'T00:00').toLocaleDateString('pt-BR')}` : 'tirou o prazo'
+    case 'fields': return Object.entries(d.changes).map(([name, [before, after]]) => `${name}: ${fieldText(before)} → ${fieldText(after)}`).join('; ')
     case 'labels': return d.labels.length ? `etiquetas: ${d.labels.join(', ')}` : 'tirou as etiquetas'
     default: return item.kind
   }
