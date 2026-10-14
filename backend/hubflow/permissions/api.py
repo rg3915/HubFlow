@@ -11,8 +11,17 @@ from hubflow.accounts.services import send_invite_email
 from hubflow.clients.models import Client
 
 from .catalog import ALL, LABELS, ROLES
-from .models import Membership
-from .schemas import ActiveIn, CatalogOut, ClientsIn, InviteIn, PermissionsIn, RolesIn, UserAccessOut
+from .models import Membership, PermissionChange
+from .schemas import (
+    ActiveIn,
+    CatalogOut,
+    ClientsIn,
+    InviteIn,
+    PermissionChangeOut,
+    PermissionsIn,
+    RolesIn,
+    UserAccessOut,
+)
 from .services import describe_user, require, users_with_access
 
 router = Router(tags=['users'])
@@ -24,6 +33,11 @@ def managed_user(request, user_id):
     return get_object_or_404(users_with_access(), id=user_id)
 
 
+def log_change(request, user, action, before, after):
+    if before != after:
+        PermissionChange.objects.create(user=user, action=action, before=before, after=after, created_by=request.user)
+
+
 def fresh(user_id):
     return describe_user(users_with_access().get(id=user_id))
 
@@ -32,6 +46,13 @@ def fresh(user_id):
 def list_users_access(request):
     require(request.user, MANAGE)
     return [describe_user(user) for user in users_with_access()]
+
+
+@router.get('/users/changes', response=list[PermissionChangeOut])
+def list_changes(request, user: int | None = None):
+    require(request.user, MANAGE)
+    changes = PermissionChange.objects.select_related('user', 'created_by')
+    return (changes.filter(user_id=user) if user else changes)[:200]
 
 
 @router.get('/users/catalog', response=CatalogOut)
@@ -73,6 +94,7 @@ def invite(request, data: InviteIn):
         user = User.objects.create_user(email=email, name=data.name)  # sem senha até aceitar o convite
         user.groups.set(Group.objects.filter(name__in=data.roles))
         link_clients(user, data.client_ids)
+        log_change(request, user, 'invite', [], sorted(data.roles))
     send_invite_email(user, request.user)
     return Status(201, fresh(user.id))
 
@@ -82,8 +104,11 @@ def set_roles(request, user_id: int, data: RolesIn):
     user = managed_user(request, user_id)
     if error := unknown_roles(data.roles):
         return error
+    before = describe_user(user)['roles']
     user.groups.set(Group.objects.filter(name__in=data.roles))
-    return fresh(user.id)
+    after = fresh(user.id)
+    log_change(request, user, 'roles', before, after['roles'])
+    return after
 
 
 @router.put('/users/{user_id}/permissions', response={200: UserAccessOut, 400: DetailOut})
@@ -96,15 +121,21 @@ def set_permissions(request, user_id: int, data: PermissionsIn):
         Permission.objects.get(content_type__app_label=app, codename=name)
         for app, name in (c.split('.') for c in data.permissions)
     ]
+    before = describe_user(user)['extra_permissions']
     user.user_permissions.set(wanted)
-    return fresh(user.id)
+    after = fresh(user.id)
+    log_change(request, user, 'permissions', before, after['extra_permissions'])
+    return after
 
 
 @router.put('/users/{user_id}/clients', response=UserAccessOut)
 def set_clients(request, user_id: int, data: ClientsIn):
     user = managed_user(request, user_id)
+    before = [c['name'] for c in describe_user(user)['clients']]
     link_clients(user, data.client_ids)
-    return fresh(user.id)
+    after = fresh(user.id)
+    log_change(request, user, 'clients', before, [c['name'] for c in after['clients']])
+    return after
 
 
 @router.put('/users/{user_id}/active', response={200: UserAccessOut, 400: DetailOut})
@@ -112,6 +143,7 @@ def set_active(request, user_id: int, data: ActiveIn):
     user = managed_user(request, user_id)
     if user.id == request.user.id and not data.is_active:
         return Status(400, {'detail': 'Você não pode desativar a própria conta.'})
+    log_change(request, user, 'active', [user.is_active], [data.is_active])
     user.is_active = data.is_active
     user.save(update_fields=['is_active'])
     return fresh(user.id)

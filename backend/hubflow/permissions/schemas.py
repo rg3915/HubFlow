@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ninja import Schema
 
 
@@ -57,3 +59,26 @@ class PermissionOut(Schema):
 class CatalogOut(Schema):
     roles: list[RoleOut]
     permissions: list[PermissionOut]
+
+
+class PermissionChangeOut(Schema):
+    id: int
+    created: datetime
+    user: str
+    changed_by: str | None
+    action: str
+    action_label: str
+    before: list
+    after: list
+
+    @staticmethod
+    def resolve_user(obj):
+        return obj.user.email
+
+    @staticmethod
+    def resolve_changed_by(obj):
+        return obj.created_by.email if obj.created_by else None
+
+    @staticmethod
+    def resolve_action_label(obj):
+        return obj.get_action_display()
