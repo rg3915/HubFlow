@@ -41,3 +41,8 @@ class SprintOut(Schema):
     end_date: date | None
     is_open: bool
     closed_at: datetime | None
+    cards_count: int = 0
+
+    @staticmethod
+    def resolve_cards_count(sprint):
+        return getattr(sprint, 'cards_count', None) or sprint.cards.count()
