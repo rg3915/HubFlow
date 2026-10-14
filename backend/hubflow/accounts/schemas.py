@@ -14,3 +14,11 @@ class UserOut(Schema):
     id: int
     email: str
     name: str
+
+
+class ForgotPasswordIn(Schema):
+    email: str
+
+
+class DetailOut(Schema):
+    detail: str
