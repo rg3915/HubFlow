@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Serviço de notificação por e-mail. #45
 * Disparo nos eventos card criado, movido e concluído. #46
 * CLI: project notify e project emails. #47
+* Tela: notificações do projeto. #48
 
 ## [0.1.0] - 2026-10-13
 

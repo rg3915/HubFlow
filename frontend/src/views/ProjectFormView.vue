@@ -17,7 +17,16 @@ const form = ref({
   description: '',
   emails: '',
   is_active: true,
+  notify_on_created: true,
+  notify_on_moved: true,
+  notify_on_done: true,
 })
+
+const events = [
+  ['notify_on_created', 'Card criado'],
+  ['notify_on_moved', 'Card movido de coluna'],
+  ['notify_on_done', 'Card concluído'],
+]
 const error = ref('')
 const loading = ref(false)
 
@@ -83,11 +92,21 @@ async function submit() {
         <label class="label" for="description">Descrição</label>
         <textarea id="description" v-model="form.description" class="field h-20 py-2" rows="2"></textarea>
       </div>
-      <div>
-        <label class="label" for="emails">E-mails de notificação</label>
-        <input id="emails" v-model="form.emails" class="field" type="text" placeholder="dev@empresa.com" />
-        <p class="mt-1 text-muted">Opcional. Vazio = usa os e-mails do cliente.</p>
-      </div>
+      <fieldset class="rounded-[var(--radius-panel)] border border-border p-4">
+        <legend class="px-1 font-medium">Avisos por e-mail</legend>
+        <div>
+          <label class="label" for="emails">Quem recebe</label>
+          <input id="emails" v-model="form.emails" class="field" type="text" placeholder="dev@empresa.com, gerente@empresa.com" />
+          <p class="mt-1 text-muted">Opcional. Vazio = usa os e-mails do cliente.</p>
+        </div>
+        <div class="mt-3 space-y-1.5">
+          <p class="label mb-1">Quando avisar</p>
+          <label v-for="[key, label] in events" :key="key" class="flex items-center gap-2">
+            <input v-model="form[key]" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
+            {{ label }}
+          </label>
+        </div>
+      </fieldset>
       <label v-if="id" class="flex items-center gap-2">
         <input v-model="form.is_active" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
         Projeto ativo
