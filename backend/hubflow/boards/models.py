@@ -118,3 +118,18 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.author} em {self.card}: {self.text[:40]}'
+
+
+class ChecklistItem(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='checklist_items')
+    text = models.CharField('texto', max_length=200)
+    done = models.BooleanField('feito', default=False)
+    position = models.PositiveIntegerField('posição', default=0)
+
+    class Meta:
+        ordering = ('position', 'id')
+        verbose_name = 'item de checklist'
+        verbose_name_plural = 'itens de checklist'
+
+    def __str__(self):
+        return self.text

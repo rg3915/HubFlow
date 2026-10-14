@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * @menções em comentários e GET /api/users. #51
 * Etiquetas por projeto. #52
 * Prazo e responsável no card. #53
+* Checklist no card. #54
 
 ## [0.2.0] - 2026-10-13
 

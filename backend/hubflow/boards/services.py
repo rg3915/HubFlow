@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 
 from .models import Card, CardMove, Column
@@ -20,11 +21,24 @@ def resolve_assignee(assignee_id):
     return get_object_or_404(get_user_model(), id=assignee_id, is_active=True)
 
 
-def renumber(cards):
-    """Deixa as posições consecutivas a partir de 0, na ordem recebida (RN-33)."""
-    for index, card in enumerate(cards):
-        card.position = index
-    Card.objects.bulk_update(cards, ['position'])
+def renumber(items):
+    """Deixa as posições consecutivas a partir de 0, na ordem recebida (RN-33). Serve a cards e itens de checklist."""
+    for index, item in enumerate(items):
+        item.position = index
+    if items:
+        type(items[0]).objects.bulk_update(items, ['position'])
+
+
+def card_queryset():
+    """Cards com tudo o que a API devolve, sem consultas extras por card."""
+    return (
+        Card.objects.select_related('assignee')
+        .prefetch_related('labels')
+        .annotate(
+            checklist_total=Count('checklist_items'),
+            checklist_done=Count('checklist_items', filter=Q(checklist_items__done=True)),
+        )
+    )
 
 
 @transaction.atomic

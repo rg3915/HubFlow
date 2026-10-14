@@ -6,20 +6,23 @@ from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
 
 from .mentions import notify_mentions
-from .models import Card, Column, Comment, Label
+from .models import Card, ChecklistItem, Column, Comment, Label
 from .schemas import (
     BoardOut,
     CardIn,
     CardLabelsIn,
     CardMoveOut,
     CardOut,
+    ChecklistItemIn,
+    ChecklistItemOut,
+    ChecklistOrderIn,
     CommentIn,
     CommentOut,
     LabelIn,
     LabelOut,
     MoveIn,
 )
-from .services import create_card, delete_card, move_card, resolve_assignee, start_card
+from .services import card_queryset, create_card, delete_card, move_card, renumber, resolve_assignee, start_card
 
 router = Router(tags=['boards'])
 
@@ -34,7 +37,7 @@ def add_card(request, project_id: int, data: CardIn):
 @router.get('/projects/{project_id}/board', response=BoardOut)
 def board(request, project_id: int, archived: bool = False):
     project = get_object_or_404(Project.objects.select_related('client'), id=project_id)
-    cards = project.cards.select_related('assignee').prefetch_related('labels').order_by('position', 'id')
+    cards = card_queryset().filter(project=project).order_by('position', 'id')
     if not archived:  # RN-37
         cards = cards.exclude(column=Column.ARCHIVED)
     # Uma consulta só; o agrupamento por coluna é feito em memória.
@@ -67,7 +70,7 @@ def history(request, card_id: int):
 
 @router.get('/cards/{card_id}', response=CardOut)
 def get_card(request, card_id: int):
-    return get_object_or_404(Card, id=card_id)
+    return get_object_or_404(card_queryset(), id=card_id)
 
 
 @router.put('/cards/{card_id}', response=CardOut)
@@ -168,3 +171,43 @@ def set_card_labels(request, card_id: int, data: CardLabelsIn):
         return Status(400, {'detail': 'Use só etiquetas deste projeto.'})
     card.labels.set(labels)
     return card
+
+
+@router.get('/cards/{card_id}/checklist', response=list[ChecklistItemOut])
+def list_checklist(request, card_id: int):
+    return get_object_or_404(Card, id=card_id).checklist_items.all()
+
+
+@router.post('/cards/{card_id}/checklist', response={201: ChecklistItemOut})
+def add_checklist_item(request, card_id: int, data: ChecklistItemIn):
+    card = get_object_or_404(Card, id=card_id)
+    position = card.checklist_items.count()
+    return Status(201, ChecklistItem.objects.create(card=card, position=position, **data.dict()))
+
+
+@router.put('/checklist/{item_id}', response=ChecklistItemOut)
+def update_checklist_item(request, item_id: int, data: ChecklistItemIn):
+    item = get_object_or_404(ChecklistItem, id=item_id)
+    item.text, item.done = data.text, data.done
+    item.save(update_fields=['text', 'done'])
+    return item
+
+
+@router.delete('/checklist/{item_id}', response={204: None})
+def delete_checklist_item(request, item_id: int):
+    item = get_object_or_404(ChecklistItem, id=item_id)
+    card_id = item.card_id
+    item.delete()
+    renumber(list(ChecklistItem.objects.filter(card_id=card_id)))
+    return Status(204, None)
+
+
+@router.put('/cards/{card_id}/checklist/order', response={200: list[ChecklistItemOut], 400: DetailOut})
+def reorder_checklist(request, card_id: int, data: ChecklistOrderIn):
+    card = get_object_or_404(Card, id=card_id)
+    items = {item.id: item for item in card.checklist_items.all()}
+    if set(data.item_ids) != set(items) or len(data.item_ids) != len(items):
+        return Status(400, {'detail': 'Informe todos os itens deste card, uma vez cada.'})
+    ordered = [items[item_id] for item_id in data.item_ids]
+    renumber(ordered)
+    return ordered

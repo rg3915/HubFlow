@@ -52,6 +52,35 @@ class CardLabelsIn(Schema):
     label_ids: list[int]
 
 
+class ChecklistItemIn(Schema):
+    text: str
+    done: bool = False
+
+    @field_validator('text')
+    @classmethod
+    def texto_obrigatorio(cls, value):
+        if not value.strip():
+            raise ValueError('O texto é obrigatório.')
+        return value.strip()
+
+
+class ChecklistItemOut(Schema):
+    id: int
+    card_id: int
+    text: str
+    done: bool
+    position: int
+
+
+class ChecklistOrderIn(Schema):
+    item_ids: list[int]
+
+
+class ChecklistSummary(Schema):
+    done: int
+    total: int
+
+
 class CardOut(Schema):
     id: int
     project_id: int
@@ -64,6 +93,15 @@ class CardOut(Schema):
     due_date: date | None
     assignee: UserOut | None
     is_overdue: bool
+    checklist: ChecklistSummary
+
+    @staticmethod
+    def resolve_checklist(card):
+        # Vem das anotações de card_queryset(); fora delas, conta no banco (um card só).
+        if hasattr(card, 'checklist_total'):
+            return {'done': card.checklist_done, 'total': card.checklist_total}
+        items = list(card.checklist_items.values_list('done', flat=True))
+        return {'done': sum(items), 'total': len(items)}
 
 
 class ColumnOut(Schema):
