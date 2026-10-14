@@ -6,6 +6,12 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Backup .sql do banco (comando backup_db, POST/GET /api/backups para superusuários, hubflow backup). #103
+* API de busca global: GET /api/search?q= em cards, projetos, clientes, usuários e etiquetas. #110
+* CLI: hubflow search. #112
+
 ## [0.9.0] - 2026-10-14
 
 Quadro em tempo real (SSE + Redis), presença, avatar no perfil e card com trecho da descrição.

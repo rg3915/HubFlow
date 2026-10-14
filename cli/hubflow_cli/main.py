@@ -2,8 +2,8 @@ import httpx
 import typer
 
 from . import cards, clients, config, payments, projects, sprints
-from .cards import board_cards, local_time
-from .client import format_hours, request
+from .cards import board_cards, column_label, local_time
+from .client import fail, format_hours, request
 from .projects import find_project
 
 app = typer.Typer(help='HubFlow: clientes, projetos e cards por linha de comando.', no_args_is_help=True)
@@ -48,6 +48,51 @@ def logout():
         httpx.post(f'{config.api_url()}/api/auth/logout', headers={'Authorization': f'Bearer {key}'})
     config.save_config({'url': config.api_url()})
     typer.echo('Sessão encerrada.')
+
+
+@app.command()
+def backup(list_only: bool = typer.Option(False, '--list', help='Só lista os backups já gerados.')):
+    """Gera um backup .sql do banco no servidor (só superusuário)."""
+    if list_only:
+        backups = request('GET', '/backups').json()
+        if not backups:
+            typer.echo('Nenhum backup gerado. Gere um com: hubflow backup')
+        for item in backups:
+            typer.echo(f'{item["filename"]}  {item["size"]} bytes')
+        return
+    item = request('POST', '/backups').json()
+    typer.echo(f'Backup gerado: {item["filename"]} ({item["size"]} bytes)')
+
+
+SEARCH_GROUPS = (
+    (
+        'cards',
+        'Cards',
+        lambda c: (
+            f'#{c["number"]} {c["title"]}  {c["client_name"]} / {c["project_name"]}  [{column_label(c["column"])}]'
+        ),
+    ),
+    ('projects', 'Projetos', lambda p: f'#{p["id"]} {p["client_name"]} / {p["name"]}'),
+    ('clients', 'Clientes', lambda c: f'#{c["id"]} {c["name"]}'),
+    ('users', 'Usuários', lambda u: f'{u["email"]}' + (f' ({u["name"]})' if u['name'] else '')),
+    ('labels', 'Etiquetas', lambda l: f'{l["name"]}  {l["color"]}  projeto #{l["project_id"]}'),  # noqa: E741
+)
+
+
+@app.command()
+def search(text: str = typer.Argument(..., help='Texto a procurar (mínimo 2 caracteres).')):
+    """Procura cards, projetos, clientes, usuários e etiquetas."""
+    if len(text) < 2:
+        fail('Digite pelo menos 2 caracteres.')
+    found = request('GET', '/search', params={'q': text}).json()
+    if not any(found.values()):
+        typer.echo(f"Nada encontrado para '{text}'.")
+        return
+    for key, title, line in SEARCH_GROUPS:
+        if found[key]:
+            typer.echo(f'{title} ({len(found[key])})')
+            for item in found[key]:
+                typer.echo(f'  {line(item)}')
 
 
 @app.command()
