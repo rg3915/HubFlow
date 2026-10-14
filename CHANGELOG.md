@@ -10,6 +10,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Menu lateral recolhível. #108
 * Breadcrumb no cabeçalho. #109
+* Model Sprint numerada por projeto (e Milestone opcional). #62
 
 ## [0.3.0] - 2026-10-13
 

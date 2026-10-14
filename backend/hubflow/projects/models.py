@@ -25,6 +25,8 @@ class Project(models.Model):
     notify_on_done = models.BooleanField('avisar card concluído', default=True)
     # RN-32: contador dos números de card; nunca volta, mesmo quando um card é excluído.
     last_card_number = models.PositiveIntegerField(default=0, editable=False)
+    # RN-60: contador das sprints, nunca volta.
+    last_sprint_number = models.PositiveIntegerField(default=0, editable=False)
     created = models.DateTimeField('criado em', auto_now_add=True)
     modified = models.DateTimeField('modificado em', auto_now=True)
 
