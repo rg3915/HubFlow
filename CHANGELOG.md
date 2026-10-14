@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Comentários no card. #50
+
 ## [0.2.0] - 2026-10-13
 
 Notificações por e-mail para uma ou mais pessoas, configuráveis por cliente e por projeto.

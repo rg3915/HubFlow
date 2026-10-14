@@ -69,3 +69,19 @@ class CardMove(models.Model):
 
     def __str__(self):
         return f'{self.card} {self.from_column} → {self.to_column}'
+
+
+class Comment(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField('texto')
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('created', 'id')
+        verbose_name = 'comentário'
+        verbose_name_plural = 'comentários'
+
+    def __str__(self):
+        return f'{self.author} em {self.card}: {self.text[:40]}'

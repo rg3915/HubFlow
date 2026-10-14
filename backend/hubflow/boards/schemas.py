@@ -4,6 +4,8 @@ from typing import Literal
 from ninja import Schema
 from pydantic import field_validator
 
+from hubflow.accounts.schemas import UserOut
+
 
 class CardIn(Schema):
     title: str
@@ -58,3 +60,23 @@ class CardMoveOut(Schema):
     @staticmethod
     def resolve_user_email(obj):
         return obj.user.email if obj.user else None
+
+
+class CommentIn(Schema):
+    text: str
+
+    @field_validator('text')
+    @classmethod
+    def texto_obrigatorio(cls, value):
+        if not value.strip():
+            raise ValueError('O comentário não pode ficar vazio.')
+        return value.strip()
+
+
+class CommentOut(Schema):
+    id: int
+    card_id: int
+    author: UserOut
+    text: str
+    created: datetime
+    modified: datetime

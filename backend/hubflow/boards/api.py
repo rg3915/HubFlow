@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from ninja import Router, Status
+from ninja.errors import HttpError
 
 from hubflow.projects.models import Project
 
-from .models import Card, Column
-from .schemas import BoardOut, CardIn, CardMoveOut, CardOut, MoveIn
+from .models import Card, Column, Comment
+from .schemas import BoardOut, CardIn, CardMoveOut, CardOut, CommentIn, CommentOut, MoveIn
 from .services import create_card, delete_card, move_card, start_card
 
 router = Router(tags=['boards'])
@@ -73,3 +74,36 @@ def remove_card(request, card_id: int):
 def archive(request, card_id: int):
     card = get_object_or_404(Card, id=card_id)
     return move_card(card, Column.ARCHIVED, user=request.user)
+
+
+@router.get('/cards/{card_id}/comments', response=list[CommentOut])
+def list_comments(request, card_id: int):
+    card = get_object_or_404(Card, id=card_id)
+    return card.comments.select_related('author')
+
+
+@router.post('/cards/{card_id}/comments', response={201: CommentOut})
+def add_comment(request, card_id: int, data: CommentIn):
+    card = get_object_or_404(Card, id=card_id)
+    return Status(201, Comment.objects.create(card=card, author=request.user, text=data.text))
+
+
+def own_comment_or_403(request, comment_id):
+    comment = get_object_or_404(Comment.objects.select_related('author'), id=comment_id)
+    if comment.author_id != request.user.id:
+        raise HttpError(403, 'Só o autor pode alterar este comentário.')
+    return comment
+
+
+@router.put('/comments/{comment_id}', response=CommentOut)
+def update_comment(request, comment_id: int, data: CommentIn):
+    comment = own_comment_or_403(request, comment_id)
+    comment.text = data.text
+    comment.save(update_fields=['text', 'modified'])
+    return comment
+
+
+@router.delete('/comments/{comment_id}', response={204: None})
+def delete_comment(request, comment_id: int):
+    own_comment_or_403(request, comment_id).delete()
+    return Status(204, None)
