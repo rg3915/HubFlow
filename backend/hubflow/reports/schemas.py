@@ -1,3 +1,4 @@
+import datetime as dt
 from datetime import date
 from decimal import Decimal
 
@@ -52,3 +53,17 @@ class ReportOut(Schema):
     cards: CardsOut
     sla_breached: int
     billing: BillingOut | None
+
+
+class ReportSendIn(Schema):
+    client: int | None = None
+    project: int | None = None
+    period: str | None = None
+    date: dt.date | None = None  # o campo se chama date: o tipo vem do módulo para não ser sombreado
+    start: dt.date | None = None
+    end: dt.date | None = None
+    emails: list[str] = []  # vazio = e-mails do projeto ou do cliente
+
+
+class SentOut(Schema):
+    sent_to: list[str]

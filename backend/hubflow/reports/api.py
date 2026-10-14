@@ -1,14 +1,18 @@
 from datetime import date
 
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from ninja import Router
+from ninja import Router, Status
 from ninja.errors import HttpError
 
+from hubflow.accounts.schemas import DetailOut
 from hubflow.permissions.services import has_perm, visible_clients, visible_payments, visible_projects
 
+from .mail import send_report_email
 from .pdf import file_name, render_report_pdf
-from .schemas import ReportOut
+from .schemas import ReportOut, ReportSendIn, SentOut
 from .services import PERIODS, build_report, period_bounds
 
 router = Router(tags=['reports'])
@@ -74,3 +78,26 @@ def get_report_pdf(
     response = HttpResponse(render_report_pdf(report), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{file_name(report)}"'
     return response
+
+
+def default_recipients(user, client, project):
+    if project:
+        return get_object_or_404(visible_projects(user), id=project).notification_emails
+    if client:
+        return get_object_or_404(visible_clients(user), id=client).emails
+    return []
+
+
+@router.post('/send', response={200: SentOut, 400: DetailOut})
+def send_report(request, data: ReportSendIn):
+    recipients = data.emails or default_recipients(request.user, data.client, data.project)
+    if not recipients:
+        return Status(400, {'detail': 'Informe os e-mails ou cadastre e-mails no projeto ou no cliente.'})
+    for email in recipients:
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Status(400, {'detail': f'E-mail inválido: {email}'})
+    report = report_for(request.user, data.client, data.project, data.period, data.date, data.start, data.end)
+    send_report_email(report, recipients)
+    return {'sent_to': recipients}
