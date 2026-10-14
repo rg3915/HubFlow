@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'hubflow.core',
     'hubflow.accounts',
+    'hubflow.clients',
 ]
 
 MIDDLEWARE = [
