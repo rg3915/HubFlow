@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'hubflow.boards',
     'hubflow.sprints',
     'hubflow.timetracking',
+    'hubflow.billing',
 ]
 
 MIDDLEWARE = [

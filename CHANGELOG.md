@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Model Payment ligado à sprint (valor/hora, estimativas, tempo gasto, valor total, NF, datas, status, pagar e copiar). #82
+
 ## [0.5.0] - 2026-10-14
 
 Controle de tempo: cronômetro por card, lançamento manual de horas, estimativa e progresso, exportação xlsx, na API, na CLI e no quadro.
