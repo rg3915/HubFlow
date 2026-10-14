@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Token e identificação do repositório por projeto (token nunca exposto), opção de criar issues e teste de conexão com GitHub/GitLab. #94
+
 ## [0.7.0] - 2026-10-14
 
 Dashboard: visão geral de todos os projetos, cronômetros, prazos, atividade recente, heatmap de horas e faturamento do mês.

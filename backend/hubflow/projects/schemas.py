@@ -37,10 +37,17 @@ class ProjectOut(Schema):
     notify_on_created: bool
     notify_on_moved: bool
     notify_on_done: bool
+    has_token: bool
+    gitlab_project_id: int | None
+    create_issues: bool
 
     @staticmethod
     def resolve_client_name(obj):
         return obj.client.name
+
+    @staticmethod
+    def resolve_has_token(obj):
+        return bool(obj.repo_token)
 
 
 class ProjectFullIn(Schema):

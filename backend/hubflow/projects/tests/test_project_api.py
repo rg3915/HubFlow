@@ -41,6 +41,9 @@ def test_lista_projetos(api, loja):
             'notify_on_created': True,
             'notify_on_moved': True,
             'notify_on_done': True,
+            'has_token': False,
+            'gitlab_project_id': None,
+            'create_issues': False,
         }
     ]
 

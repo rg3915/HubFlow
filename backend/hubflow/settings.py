@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'hubflow.timetracking',
     'hubflow.billing',
     'hubflow.dashboard',
+    'hubflow.integrations',
 ]
 
 MIDDLEWARE = [
