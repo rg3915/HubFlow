@@ -14,22 +14,28 @@ HubFlow é um gestor de projetos e fluxos de trabalho para quem desenvolve softw
 
 ## Entregáveis
 
-Cada entregável é um milestone no GitHub. A versão do CHANGELOG avança a cada entregável concluído, de 0.1.0 até 0.9.0.
+Cada entregável é um milestone no GitHub. A versão do CHANGELOG avança a cada entregável concluído. As trilhas 1.0 (essencial) e 2.0 (integrações e automação) foram propostas em 13/10/26; a numeração 0.x segue até fechar o essencial.
 
-| # | Entregável | Versão |
-|---|---|---|
-| 1 | Base e login por e-mail | 0.1.0 |
-| 2 | Clientes e projetos | 0.1.0 |
-| 3 | Quadro kanban | 0.1.0 |
-| 4 | Notificações por e-mail | 0.2.0 |
-| 5 | Colaboração no card | 0.3.0 |
-| 6 | Sincronização GitHub/GitLab | 0.4.0 |
-| 7 | Quadro em tempo real | 0.5.0 |
-| 8 | Campos personalizados e formulários | 0.6.0 |
-| 9 | Automações e SLA | 0.7.0 |
-| 10 | Controle de tempo | 0.8.0 |
-| 11 | Relatórios e métricas | 0.9.0 |
-| 12 | Polimento: papéis, busca e atalhos | 0.9.0 |
+| # | Entregável | Versão | Situação |
+|---|---|---|---|
+| 1 | Base e login por e-mail | 0.1.0 | concluído |
+| 2 | Clientes e projetos | 0.1.0 | concluído |
+| 3 | Quadro kanban | 0.1.0 | concluído |
+| 4 | Notificações por e-mail | 0.2.0 | concluído |
+| 5 | Colaboração no card | 0.3.0 | em andamento |
+| 13 | Sprints e milestones | 0.4.0 | |
+| 9 | Controle de tempo (cronômetro, horas manuais, estimativa, xlsx) | 0.5.0 | |
+| 14 | Faturamento por sprint | 0.6.0 | |
+| 15 | Dashboard | 0.7.0 | |
+| 6 | Sincronização GitHub/GitLab (tokens por projeto, issues, importação, milestones, webhooks) | 0.8.0 | |
+| 12 | Quadro em tempo real | 0.9.0 | |
+| 7 | Campos personalizados e formulários | 1.x | |
+| 8 | Automações e SLA | 1.x | |
+| 10 | Relatórios e métricas (PDF por período, envio por e-mail) | 1.x | a definir |
+| 11 | Polimento: papéis, busca, atalhos e backup .sql | 1.x | |
+| 16 | Mobile (2.5): layout responsivo | 2.5 | extra no final |
+
+Fora do escopo (decidido em 13/10/26): Pipefy, GitHub Projects v2, Bitbucket, prefixo de título por projeto, geração de tarefas.txt/commit/changelog a partir do card, app de barra de menu, matriz de horas e heatmap fora do dashboard.
 
 ## Stack
 

@@ -43,6 +43,34 @@ Numeradas para serem citadas em issues, testes e commits (ex.: `RN-07`).
 - **RN-41** Eventos que notificam: card criado, card movido, card concluído. Cada um pode ser ligado/desligado por projeto.
 - **RN-42** O e-mail traz o nome do cliente, do projeto, o número e título do card e o link para ele.
 
+## Comentários, etiquetas e anexos (entregável 5)
+
+- **RN-43** Só o autor edita ou exclui o próprio comentário; só quem enviou exclui o próprio anexo.
+- **RN-44** `@email` ou `@nome` de usuário ativo no comentário vira menção e avisa o mencionado por e-mail; o autor não é avisado de si mesmo.
+- **RN-45** Nome de etiqueta é único por projeto (sem diferenciar maiúsculas); um card só recebe etiquetas do próprio projeto.
+- **RN-46** Card vencido = prazo no passado e coluna diferente de Concluído e Arquivadas.
+- **RN-47** Anexo tem tamanho máximo configurável (padrão 10 MB).
+
+## Sprints e milestones (entregável 13)
+
+- **RN-60** Sprint tem número sequencial por projeto; milestone é opcional.
+- **RN-61** Todo card pertence a uma sprint. Sprint informada → usa; não informada → última sprint aberta; nenhuma → cria a sprint 1. Na CLI, sem `--sprint`, pergunta se quer criar uma nova.
+- **RN-62** Fechar uma sprint não move cards; eles seguem no quadro.
+
+## Controle de tempo (entregável 9)
+
+- **RN-70** Um cronômetro aberto por card. Cronômetros abertos em cards diferentes são permitidos, sem confirmação.
+- **RN-71** Iniciar um cronômetro no mesmo projeto menos de 15 minutos depois do último parar faz o novo começar onde o anterior terminou.
+- **RN-72** Horas podem ser lançadas manualmente por card (quantidade, data, nota).
+- **RN-73** Só o dono de uma entrada de tempo (cronômetro ou manual) pode excluí-la.
+- **RN-74** `card start` move para Em desenvolvimento e abre o cronômetro; `card stop` só fecha o cronômetro.
+- **RN-75** Sem estimativa no card, o progresso usa a mediana das últimas tarefas concluídas do projeto.
+
+## Faturamento (entregável 14)
+
+- **RN-80** Pagamento pertence a uma sprint. Tempo gasto = soma das entradas de tempo dos cards da sprint.
+- **RN-81** Status `pendente` por padrão; "pagar" marca `pago` com a data de hoje; "copiar" duplica como pendente.
+
 ## Versionamento
 
 - **RN-50** O CHANGELOG segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento semântico. Começa em 0.1.0 e cada entregável concluído gera uma versão.
