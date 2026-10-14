@@ -38,3 +38,15 @@ def find_by_name(path, name, label, hint):
         if item['name'].lower() == name.lower():
             return item
     fail(f'{label} "{name}" não encontrado. Veja os nomes com: {hint}')
+
+
+def parse_iso_date(value):
+    """AAAA-MM-DD → string ISO; None quando vazio. Erro de uso amigável para o resto."""
+    import datetime
+
+    if not value:
+        return None
+    try:
+        return datetime.date.fromisoformat(value).isoformat()
+    except ValueError:
+        raise typer.BadParameter(f'Use o formato AAAA-MM-DD, por exemplo {datetime.date.today().isoformat()}.')

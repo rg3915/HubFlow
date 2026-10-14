@@ -3,7 +3,7 @@ from enum import Enum
 
 import typer
 
-from .client import fail, request
+from .client import fail, parse_iso_date, request
 from .projects import find_project
 
 app = typer.Typer(help='Cards do quadro.', no_args_is_help=True)
@@ -177,13 +177,7 @@ def due(
     project: str = typer.Option(..., help='Nome do projeto.'),
 ):
     """Define o prazo do card."""
-    if date.lower() in ('nenhum', 'none', '-'):
-        due_date = None
-    else:
-        try:
-            due_date = datetime.date.fromisoformat(date).isoformat()
-        except ValueError:
-            raise typer.BadParameter('Use o formato AAAA-MM-DD, por exemplo 2026-10-20.')
+    due_date = None if date.lower() in ('nenhum', 'none', '-') else parse_iso_date(date)
     card = find_card(project, number)
     updated = update_card(card['id'], due_date=due_date)
     shown = datetime.date.fromisoformat(updated['due_date']).strftime('%d/%m/%Y') if updated['due_date'] else 'nenhum'
