@@ -10,6 +10,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Comentários no card. #50
 * @menções em comentários e GET /api/users. #51
+* Etiquetas por projeto. #52
 
 ## [0.2.0] - 2026-10-13
 

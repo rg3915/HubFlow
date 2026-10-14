@@ -15,6 +15,20 @@ class Column(models.TextChoices):
     ARCHIVED = 'archived', 'Arquivadas'
 
 
+class Label(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='labels', verbose_name='projeto')
+    name = models.CharField('nome', max_length=40)
+    color = models.CharField('cor', max_length=7, default='#64748b')  # hex #rrggbb
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'etiqueta'
+        verbose_name_plural = 'etiquetas'
+
+    def __str__(self):
+        return self.name
+
+
 class Card(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='cards', verbose_name='projeto')
     number = models.PositiveIntegerField('número', editable=False)  # RN-32
@@ -22,6 +36,7 @@ class Card(models.Model):
     description = models.TextField('descrição', blank=True)
     column = models.CharField('coluna', max_length=10, choices=Column.choices, default=Column.BACKLOG)
     position = models.PositiveIntegerField('posição', default=0)  # RN-33
+    labels = models.ManyToManyField(Label, blank=True, related_name='cards', verbose_name='etiquetas')
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
     )

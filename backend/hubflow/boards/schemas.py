@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import Literal
 
@@ -19,6 +20,36 @@ class CardIn(Schema):
         return value.strip()
 
 
+class LabelIn(Schema):
+    name: str
+    color: str
+
+    @field_validator('name')
+    @classmethod
+    def nome_obrigatorio(cls, value):
+        if not value.strip():
+            raise ValueError('O nome é obrigatório.')
+        return value.strip()
+
+    @field_validator('color')
+    @classmethod
+    def cor_hex(cls, value):
+        if not re.fullmatch(r'#[0-9a-fA-F]{6}', value):
+            raise ValueError('Use uma cor no formato #rrggbb.')
+        return value.lower()
+
+
+class LabelOut(Schema):
+    id: int
+    project_id: int
+    name: str
+    color: str
+
+
+class CardLabelsIn(Schema):
+    label_ids: list[int]
+
+
 class CardOut(Schema):
     id: int
     project_id: int
@@ -27,6 +58,7 @@ class CardOut(Schema):
     description: str
     column: str
     position: int
+    labels: list[LabelOut]
 
 
 class ColumnOut(Schema):

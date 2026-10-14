@@ -2,11 +2,23 @@ from django.shortcuts import get_object_or_404
 from ninja import Router, Status
 from ninja.errors import HttpError
 
+from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
 
 from .mentions import notify_mentions
-from .models import Card, Column, Comment
-from .schemas import BoardOut, CardIn, CardMoveOut, CardOut, CommentIn, CommentOut, MoveIn
+from .models import Card, Column, Comment, Label
+from .schemas import (
+    BoardOut,
+    CardIn,
+    CardLabelsIn,
+    CardMoveOut,
+    CardOut,
+    CommentIn,
+    CommentOut,
+    LabelIn,
+    LabelOut,
+    MoveIn,
+)
 from .services import create_card, delete_card, move_card, start_card
 
 router = Router(tags=['boards'])
@@ -21,7 +33,7 @@ def add_card(request, project_id: int, data: CardIn):
 @router.get('/projects/{project_id}/board', response=BoardOut)
 def board(request, project_id: int, archived: bool = False):
     project = get_object_or_404(Project.objects.select_related('client'), id=project_id)
-    cards = project.cards.order_by('position', 'id')
+    cards = project.cards.prefetch_related('labels').order_by('position', 'id')
     if not archived:  # RN-37
         cards = cards.exclude(column=Column.ARCHIVED)
     # Uma consulta só; o agrupamento por coluna é feito em memória.
@@ -111,3 +123,46 @@ def update_comment(request, comment_id: int, data: CommentIn):
 def delete_comment(request, comment_id: int):
     own_comment_or_403(request, comment_id).delete()
     return Status(204, None)
+
+
+def label_name_taken(project_id, name, exclude_id=None):
+    return Label.objects.filter(project_id=project_id, name__iexact=name).exclude(id=exclude_id).exists()
+
+
+@router.get('/projects/{project_id}/labels', response=list[LabelOut])
+def list_labels(request, project_id: int):
+    return get_object_or_404(Project, id=project_id).labels.all()
+
+
+@router.post('/projects/{project_id}/labels', response={201: LabelOut, 400: DetailOut})
+def add_label(request, project_id: int, data: LabelIn):
+    project = get_object_or_404(Project, id=project_id)
+    if label_name_taken(project.id, data.name):
+        return Status(400, {'detail': 'Já existe uma etiqueta com este nome no projeto.'})
+    return Status(201, Label.objects.create(project=project, **data.dict()))
+
+
+@router.put('/labels/{label_id}', response={200: LabelOut, 400: DetailOut})
+def update_label(request, label_id: int, data: LabelIn):
+    label = get_object_or_404(Label, id=label_id)
+    if label_name_taken(label.project_id, data.name, exclude_id=label.id):
+        return Status(400, {'detail': 'Já existe uma etiqueta com este nome no projeto.'})
+    label.name, label.color = data.name, data.color
+    label.save()
+    return label
+
+
+@router.delete('/labels/{label_id}', response={204: None})
+def delete_label(request, label_id: int):
+    get_object_or_404(Label, id=label_id).delete()
+    return Status(204, None)
+
+
+@router.put('/cards/{card_id}/labels', response={200: CardOut, 400: DetailOut})
+def set_card_labels(request, card_id: int, data: CardLabelsIn):
+    card = get_object_or_404(Card, id=card_id)
+    labels = Label.objects.filter(id__in=data.label_ids)
+    if labels.exclude(project_id=card.project_id).exists() or labels.count() != len(set(data.label_ids)):
+        return Status(400, {'detail': 'Use só etiquetas deste projeto.'})
+    card.labels.set(labels)
+    return card
