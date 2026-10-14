@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from .models import Card, Column
+from .models import Card, CardMove, Column
 
 
 def renumber(cards):
@@ -22,6 +22,8 @@ def move_card(card, column, position=None, user=None):
 
     position = len(target) if position is None else max(0, min(position, len(target)))
     target.insert(position, card)
+    if column != card.column:
+        CardMove.objects.create(card=card, from_column=card.column, to_column=column, user=user)
     card.column = column
     renumber(target)
     if source is not target:

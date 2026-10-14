@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 
 from ninja import Schema
@@ -46,3 +47,14 @@ class BoardOut(Schema):
 class MoveIn(Schema):
     column: Literal['backlog', 'sprint', 'doing', 'qa', 'done', 'archived']
     position: int | None = None
+
+
+class CardMoveOut(Schema):
+    from_column: str
+    to_column: str
+    user_email: str | None
+    created: datetime
+
+    @staticmethod
+    def resolve_user_email(obj):
+        return obj.user.email if obj.user else None

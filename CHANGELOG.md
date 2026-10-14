@@ -37,3 +37,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Model Card com colunas, número sequencial e posição. #27
 * API: criar card e listar o quadro. #28
 * API: mover card entre colunas com reordenação. #29
+* API: iniciar card e histórico de movimentações. #30

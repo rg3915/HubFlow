@@ -52,3 +52,20 @@ class Card(models.Model):
                 self.position = 0 if last is None else last + 1
                 return super().save(*args, **kwargs)
         super().save(*args, **kwargs)
+
+
+class CardMove(models.Model):
+    # RN-35: histórico de movimentações entre colunas.
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='moves')
+    from_column = models.CharField(max_length=10, choices=Column.choices)
+    to_column = models.CharField(max_length=10, choices=Column.choices)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-created', '-id')
+
+    def __str__(self):
+        return f'{self.card} {self.from_column} → {self.to_column}'
