@@ -10,6 +10,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Clientes** com lista de e-mails de notificação.
 - **Projetos** ligados a um repositório (`github` ou `gitlab`, `owner/repo`), com e-mails próprios; sem e-mails, valem os do cliente.
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
+- **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
 - **CLI `hubflow`** para criar clientes, projetos e cards, mover cards e iniciar tarefas por linha de comando.
 - **Tema claro e escuro**.
@@ -139,6 +140,8 @@ hubflow client list
 
 hubflow project create "Loja" --client ACME --provider github --repo acme/loja
 hubflow project list [--client ACME]
+hubflow project notify Loja --off moved         # liga/desliga os avisos: created, moved, done
+hubflow project emails Loja --set dev@acme.com  # quem recebe; vazio = e-mails do cliente
 
 hubflow card create "Corrigir login" --project Loja --description "Erro 500"
 hubflow card list --project Loja [--column doing]
