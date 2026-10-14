@@ -30,3 +30,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API CRUD de clientes. #20
 * Model Projeto com provedor GitHub/GitLab. #21
 * API CRUD de projetos. #22
+* CLI: client create e client list. #23

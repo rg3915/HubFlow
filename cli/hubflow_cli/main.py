@@ -1,10 +1,13 @@
 import httpx
 import typer
 
-from . import config
+from . import clients, config
 from .client import request
 
 app = typer.Typer(help='HubFlow: clientes, projetos e cards por linha de comando.', no_args_is_help=True)
+
+
+app.add_typer(clients.app, name='client')
 
 
 @app.callback()
