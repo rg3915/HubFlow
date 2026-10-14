@@ -10,9 +10,10 @@ from hubflow.permissions.services import (
     require,
     require_card_delete,
     require_card_edit,
+    visible_in_project_or_404,
+    visible_project_or_404,
     visible_projects,
 )
-from hubflow.projects.models import Project
 from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
 from hubflow.timetracking.services import project_median_estimate
@@ -198,12 +199,13 @@ def label_name_taken(project_id, name, exclude_id=None):
 
 @router.get('/projects/{project_id}/labels', response=list[LabelOut])
 def list_labels(request, project_id: int):
-    return get_object_or_404(Project, id=project_id).labels.all()
+    return visible_project_or_404(request.user, project_id).labels.all()
 
 
 @router.post('/projects/{project_id}/labels', response={201: LabelOut, 400: DetailOut})
 def add_label(request, project_id: int, data: LabelIn):
-    project = get_object_or_404(Project, id=project_id)
+    require(request.user, 'boards.add_label')
+    project = visible_project_or_404(request.user, project_id)
     if label_name_taken(project.id, data.name):
         return Status(400, {'detail': 'Já existe uma etiqueta com este nome no projeto.'})
     return Status(201, Label.objects.create(project=project, **data.dict()))
@@ -211,7 +213,8 @@ def add_label(request, project_id: int, data: LabelIn):
 
 @router.put('/labels/{label_id}', response={200: LabelOut, 400: DetailOut})
 def update_label(request, label_id: int, data: LabelIn):
-    label = get_object_or_404(Label, id=label_id)
+    label = visible_in_project_or_404(request.user, Label.objects, id=label_id)
+    require(request.user, 'boards.change_label')
     if label_name_taken(label.project_id, data.name, exclude_id=label.id):
         return Status(400, {'detail': 'Já existe uma etiqueta com este nome no projeto.'})
     label.name, label.color = data.name, data.color
@@ -221,7 +224,9 @@ def update_label(request, label_id: int, data: LabelIn):
 
 @router.delete('/labels/{label_id}', response={204: None})
 def delete_label(request, label_id: int):
-    get_object_or_404(Label, id=label_id).delete()
+    label = visible_in_project_or_404(request.user, Label.objects, id=label_id)
+    require(request.user, 'boards.delete_label')
+    label.delete()
     return Status(204, None)
 
 
@@ -284,12 +289,13 @@ def reorder_checklist(request, card_id: int, data: ChecklistOrderIn):
 
 @router.get('/cards/{card_id}/attachments', response=list[AttachmentOut])
 def list_attachments(request, card_id: int):
-    return get_object_or_404(Card, id=card_id).attachments.select_related('uploaded_by')
+    return visible_card(request, card_id).attachments.select_related('uploaded_by')
 
 
 @router.post('/cards/{card_id}/attachments', response={201: AttachmentOut, 400: DetailOut})
 def add_attachment(request, card_id: int, file: UploadedFile = File(...)):
-    card = get_object_or_404(Card, id=card_id)
+    card = visible_card(request, card_id)
+    require_card_edit(request.user, card)  # anexo segue a regra do card
     limit = settings.ATTACHMENT_MAX_BYTES
     if file.size > limit:
         return Status(400, {'detail': f'Arquivo grande demais. O tamanho máximo é {limit / 1024 / 1024:.0f} MB.'})
@@ -301,10 +307,13 @@ def add_attachment(request, card_id: int, file: UploadedFile = File(...)):
 
 @router.delete('/attachments/{attachment_id}', response={204: None})
 def delete_attachment(request, attachment_id: int):
-    attachment = get_object_or_404(Attachment, id=attachment_id)
-    if attachment.uploaded_by_id != request.user.id:
-        raise HttpError(403, 'Só quem enviou o anexo pode excluí-lo.')
+    attachment = get_object_or_404(
+        Attachment.objects.select_related('card').filter(card__project__in=visible_projects(request.user)),
+        id=attachment_id,
+    )
     card = attachment.card
+    if attachment.uploaded_by_id != request.user.id:
+        require_card_edit(request.user, card)  # quem enviou, ou quem pode editar o card
     attachment.file.delete(save=False)
     attachment.delete()
     broadcast.card_updated(card, request.user)

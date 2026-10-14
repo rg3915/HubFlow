@@ -1,10 +1,12 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client as HttpClient
 
 from hubflow.accounts.models import Token
 from hubflow.boards.models import Attachment
+from hubflow.permissions.models import Membership
 
 pytestmark = pytest.mark.django_db
 
@@ -64,7 +66,9 @@ def test_quem_enviou_exclui(api, card):
 
 def test_outro_usuario_nao_exclui(api, card):
     attachment_id = upload(api, card).json()['id']
-    other = get_user_model().objects.create_user(email='bob@example.com', password='segredo123')
+    other = get_user_model().objects.create_user(email='bob@hubflow.com', password='segredo123')
+    other.groups.add(Group.objects.get(name='Desenvolvedor'))  # vê o card, mas não é dono nem tem change_card
+    Membership.objects.create(user=other, client=card.project.client)
     other_api = HttpClient(headers={'Authorization': f'Bearer {Token.objects.create(user=other).key}'})
 
     assert other_api.delete(f'/api/attachments/{attachment_id}').status_code == 403

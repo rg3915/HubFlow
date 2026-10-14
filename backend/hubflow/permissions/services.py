@@ -78,6 +78,19 @@ def visible_projects(user):
     return projects.filter(client__memberships__user=user)
 
 
+def visible_project_or_404(user, project_id):
+    from django.shortcuts import get_object_or_404
+
+    return get_object_or_404(visible_projects(user), id=project_id)
+
+
+def visible_in_project_or_404(user, queryset, **lookup):
+    """Objeto de um projeto que a pessoa enxerga (sprint, etiqueta, milestone...); 404 se for de cliente de fora."""
+    from django.shortcuts import get_object_or_404
+
+    return get_object_or_404(queryset.filter(project__in=visible_projects(user)), **lookup)
+
+
 def is_card_owner(user, card):
     return user.id in (card.created_by_id, card.assignee_id)
 
