@@ -197,6 +197,11 @@ hubflow payment list [--client ACME] [--status pending|paid] [--year 2026]
 hubflow payment pay 1 / hubflow payment copy 1
 hubflow payment summary [--client ACME] [--year 2026]
 
+hubflow user list                                                     # só quem gerencia usuários
+hubflow user invite ana@hubflow.com --name Ana --role Desenvolvedor --client ACME
+hubflow user role ana@hubflow.com --set Gerente [--set Financeiro]
+hubflow user grant ana@hubflow.com --perm billing.view_payment [--revoke]
+
 hubflow project repo Loja --token ghp_xxx --create-issues --webhook-secret abc   # integração com o repositório
 hubflow project repo-check Loja
 hubflow project import-issues Loja [--include-closed]

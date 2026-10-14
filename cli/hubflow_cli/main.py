@@ -1,6 +1,6 @@
 import typer
 
-from . import cards, clients, config, payments, projects, sprints
+from . import cards, clients, config, payments, projects, sprints, users
 from .cards import board_cards, column_label, local_time
 from .client import fail, format_hours, request
 from .projects import find_project
@@ -12,6 +12,7 @@ app.add_typer(clients.app, name='client')
 app.add_typer(projects.app, name='project')
 app.add_typer(cards.app, name='card')
 app.add_typer(sprints.app, name='sprint')
+app.add_typer(users.app, name='user')
 app.add_typer(payments.app, name='payment')
 
 
