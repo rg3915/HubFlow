@@ -36,7 +36,8 @@ def test_project_create_resolve_o_cliente_pelo_nome(run):
 
     assert result.exit_code == 0, result.output
     body = json.loads(route.calls.last.request.read())
-    assert body == {'client_id': 1, 'name': 'Loja', 'provider': 'github', 'owner': 'acme', 'repo': 'loja', 'emails': []}
+    expected = {'client_id': 1, 'name': 'Loja', 'provider': 'github', 'owner': 'acme', 'repo': 'loja', 'emails': []}
+    assert body == expected
     assert 'Loja' in result.output and '#5' in result.output
 
 
