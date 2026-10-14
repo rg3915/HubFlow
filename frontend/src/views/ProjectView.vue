@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BoardColumn from '../components/BoardColumn.vue'
+import CardPanel from '../components/CardPanel.vue'
 import { useBoardStore } from '../stores/board'
 
 const route = useRoute()
@@ -26,8 +27,11 @@ const visibleColumns = computed(() =>
         Mostrar arquivadas
       </label>
     </div>
-    <div class="flex flex-1 gap-3 overflow-x-auto p-4">
-      <BoardColumn v-for="column in visibleColumns" :key="column.key" :column="column" />
+    <div class="flex min-h-0 flex-1">
+      <div class="flex flex-1 gap-3 overflow-x-auto p-4">
+        <BoardColumn v-for="column in visibleColumns" :key="column.key" :column="column" />
+      </div>
+      <CardPanel />
     </div>
   </div>
 </template>

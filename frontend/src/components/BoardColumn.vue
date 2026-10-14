@@ -3,6 +3,7 @@ import Sortable from 'sortablejs'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useBoardStore } from '../stores/board'
 import BoardCard from './BoardCard.vue'
+import QuickAdd from './QuickAdd.vue'
 
 const props = defineProps({ column: { type: Object, required: true } })
 const board = useBoardStore()
@@ -52,5 +53,6 @@ onBeforeUnmount(() => sortable?.destroy())
     <div ref="list" :data-column="column.key" class="flex min-h-16 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
       <BoardCard v-for="card in column.cards" :key="card.id" :card="card" :data-id="card.id" />
     </div>
+    <QuickAdd v-if="column.key === 'backlog'" />
   </section>
 </template>
