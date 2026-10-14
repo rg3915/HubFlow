@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Model de automação por projeto (app automations): gatilho (card criado, entrou na coluna, SLA estourado) → ação (mover, definir responsável, adicionar etiqueta, avisar), com validação e descrição em linguagem simples. #148
+* Motor das automações: roda as regras ligadas ao criar e ao mover card (API, CLI, webhooks), sem laço (ação de automação não dispara outra), registra no histórico e avisa no sino. #149
 
 ### Alterado
 

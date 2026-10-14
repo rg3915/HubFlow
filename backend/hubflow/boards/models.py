@@ -174,7 +174,7 @@ class CardEvent(UuidModel, TimeStampedModel):
 class Notification(UuidModel, TimeStampedModel):
     """Aviso no app (sino): menção, comentário em card seu ou de que é responsável, card seu movido."""
 
-    KINDS = {'mention': 'Menção', 'comment': 'Comentário', 'moved': 'Card movido'}
+    KINDS = {'mention': 'Menção', 'comment': 'Comentário', 'moved': 'Card movido', 'automation': 'Automação'}
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
     actor = models.ForeignKey(

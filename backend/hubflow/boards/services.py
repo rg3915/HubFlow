@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 
+from hubflow.automations import engine as automations
 from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
 
@@ -29,6 +30,7 @@ def create_card(project, user=None, **data):
     data['sprint'] = resolve_sprint(project, data.get('sprint'))
     card = Card.objects.create(project=project, created_by=user, **data)
     record(card, 'created', user)
+    automations.run('created', card)
     if project.create_issues:
         mirror_issue(card)
     notify('created', card)
@@ -119,6 +121,8 @@ def move_card(card, column, position=None, user=None, sync=True):
     if sync:
         sync_issue_state(card, from_column, column)
     broadcast.card_moved(card, from_column, column, user)
+    if column != from_column:
+        automations.run('entered_column', card, column)
     if column != from_column:
         text = f'{actor_name(user)} moveu #{card.number} {card.title} para {Column(column).label}'
         notify_in_app(card_owners(card), 'moved', card, text, user)
