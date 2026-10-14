@@ -76,6 +76,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Anexos dos cards: tamanho máximo por arquivo.
+ATTACHMENT_MAX_BYTES = config('ATTACHMENT_MAX_BYTES', default=10 * 1024 * 1024, cast=int)
 
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
 CORS_ALLOWED_ORIGINS = [FRONTEND_URL]

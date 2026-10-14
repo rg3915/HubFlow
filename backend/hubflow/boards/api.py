@@ -1,13 +1,16 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404
-from ninja import Router, Status
+from ninja import File, Router, Status
 from ninja.errors import HttpError
+from ninja.files import UploadedFile
 
 from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
 
 from .mentions import notify_mentions
-from .models import Card, ChecklistItem, Column, Comment, Label
+from .models import Attachment, Card, ChecklistItem, Column, Comment, Label
 from .schemas import (
+    AttachmentOut,
     BoardOut,
     CardIn,
     CardLabelsIn,
@@ -211,3 +214,29 @@ def reorder_checklist(request, card_id: int, data: ChecklistOrderIn):
     ordered = [items[item_id] for item_id in data.item_ids]
     renumber(ordered)
     return ordered
+
+
+@router.get('/cards/{card_id}/attachments', response=list[AttachmentOut])
+def list_attachments(request, card_id: int):
+    return get_object_or_404(Card, id=card_id).attachments.select_related('uploaded_by')
+
+
+@router.post('/cards/{card_id}/attachments', response={201: AttachmentOut, 400: DetailOut})
+def add_attachment(request, card_id: int, file: UploadedFile = File(...)):
+    card = get_object_or_404(Card, id=card_id)
+    limit = settings.ATTACHMENT_MAX_BYTES
+    if file.size > limit:
+        return Status(400, {'detail': f'Arquivo grande demais. O tamanho máximo é {limit / 1024 / 1024:.0f} MB.'})
+    attachment = Attachment(card=card, name=file.name, size=file.size, uploaded_by=request.user)
+    attachment.file.save(file.name, file, save=True)
+    return Status(201, attachment)
+
+
+@router.delete('/attachments/{attachment_id}', response={204: None})
+def delete_attachment(request, attachment_id: int):
+    attachment = get_object_or_404(Attachment, id=attachment_id)
+    if attachment.uploaded_by_id != request.user.id:
+        raise HttpError(403, 'Só quem enviou o anexo pode excluí-lo.')
+    attachment.file.delete(save=False)
+    attachment.delete()
+    return Status(204, None)

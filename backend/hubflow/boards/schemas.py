@@ -81,6 +81,20 @@ class ChecklistSummary(Schema):
     total: int
 
 
+class AttachmentOut(Schema):
+    id: int
+    card_id: int
+    name: str
+    size: int
+    url: str
+    uploaded_by: UserOut
+    created: datetime
+
+    @staticmethod
+    def resolve_url(attachment):
+        return attachment.file.url
+
+
 class CardOut(Schema):
     id: int
     project_id: int
@@ -94,6 +108,11 @@ class CardOut(Schema):
     assignee: UserOut | None
     is_overdue: bool
     checklist: ChecklistSummary
+    attachments_count: int
+
+    @staticmethod
+    def resolve_attachments_count(card):
+        return card.attachments_count if hasattr(card, 'attachments_count') else card.attachments.count()
 
     @staticmethod
     def resolve_checklist(card):

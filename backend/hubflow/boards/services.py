@@ -35,8 +35,8 @@ def card_queryset():
         Card.objects.select_related('assignee')
         .prefetch_related('labels')
         .annotate(
-            checklist_total=Count('checklist_items'),
-            checklist_done=Count('checklist_items', filter=Q(checklist_items__done=True)),
+            checklist_total=Count('checklist_items', distinct=True),
+            checklist_done=Count('checklist_items', filter=Q(checklist_items__done=True), distinct=True),
         )
     )
 

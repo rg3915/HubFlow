@@ -133,3 +133,20 @@ class ChecklistItem(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Attachment(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField('arquivo', upload_to='attachments/%Y/%m/')
+    name = models.CharField('nome', max_length=255)
+    size = models.PositiveIntegerField('tamanho em bytes')
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='+')
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('created', 'id')
+        verbose_name = 'anexo'
+        verbose_name_plural = 'anexos'
+
+    def __str__(self):
+        return self.name
