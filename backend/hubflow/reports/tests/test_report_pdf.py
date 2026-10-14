@@ -36,6 +36,8 @@ def test_pdf_respeita_as_mesmas_validacoes(api):
 
 
 def test_navegador_le_o_nome_do_arquivo(api, loja, settings):
-    response = api.get('/api/reports/pdf', PARAMS | {'client': loja.client_id}, headers={'Origin': settings.FRONTEND_URL})
+    response = api.get(
+        '/api/reports/pdf', PARAMS | {'client': loja.client_id}, headers={'Origin': settings.FRONTEND_URL}
+    )
 
     assert response['Access-Control-Expose-Headers'] == 'Content-Disposition'
