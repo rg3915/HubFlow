@@ -27,7 +27,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Anexos** no disco ou num bucket S3 (AWS ou compatível).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
 - **CLI `hubflow`** para criar clientes, projetos e cards, mover cards e iniciar tarefas por linha de comando.
-- **Tema claro e escuro**.
+- **Tema claro e escuro** e **layout responsivo** (quadro, painel do card, listas e dashboard no celular).
 
 O que vem a seguir está em [docs/especificacao.md](docs/especificacao.md) (notificações por e-mail, colaboração no card, sincronização GitHub/GitLab, tempo real, campos personalizados, automações, controle de tempo, relatórios).
 

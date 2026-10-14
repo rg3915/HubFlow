@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-14
+
+Mobile: layout responsivo do quadro, do painel do card, das listas, do dashboard e da navegação (testado em 360 e 390 px).
+
 ### Adicionado
 
 #### Mobile
@@ -336,7 +340,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/rg3915/HubFlow/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/rg3915/HubFlow/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/rg3915/HubFlow/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/rg3915/HubFlow/compare/v0.11.0...v0.12.0
