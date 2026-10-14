@@ -21,6 +21,8 @@ def request(method, path, *, auth=True, **kwargs):
         response = httpx.request(method, f'{url}/api{path}', headers=headers, **kwargs)
     except httpx.HTTPError, ConnectionError:
         fail(f'Não foi possível conectar à API em {url}.')
+    if response.status_code >= 500:
+        fail(f'Erro interno da API ({response.status_code}).')
     if response.status_code >= 400:
         try:
             detail = response.json().get('detail', response.text)
