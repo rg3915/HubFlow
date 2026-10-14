@@ -5,6 +5,7 @@ from hubflow.accounts.api import users_router
 from hubflow.accounts.auth import TokenAuth
 from hubflow.billing.api import router as payments_router
 from hubflow.boards.api import router as boards_router
+from hubflow.boards.form_api import router as form_router
 from hubflow.clients.api import router as clients_router
 from hubflow.core.api import router as backups_router
 from hubflow.dashboard.api import router as dashboard_router
@@ -23,6 +24,7 @@ api.add_router('/users', users_router)
 api.add_router('/clients', clients_router)
 api.add_router('/projects', projects_router)
 api.add_router('', boards_router)
+api.add_router('', form_router)
 api.add_router('', sprints_router)
 api.add_router('', time_router)
 api.add_router('/payments', payments_router)

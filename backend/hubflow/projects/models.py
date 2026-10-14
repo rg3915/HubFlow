@@ -28,6 +28,9 @@ class Project(UuidModel, TimeStampedModel, ActiveModel):
     gitlab_project_id = models.PositiveIntegerField('id do projeto no GitLab', null=True, blank=True)
     create_issues = models.BooleanField('criar issue no repositório ao criar card', default=False)
     webhook_secret = models.CharField('segredo do webhook', max_length=100, blank=True)
+    # Formulário público: quem tem o link cria card no Backlog sem login.
+    form_enabled = models.BooleanField('formulário público ligado', default=False)
+    form_token = models.CharField('token do formulário', max_length=40, blank=True, db_index=True)
     # RN-32: contador dos números de card; nunca volta, mesmo quando um card é excluído.
     last_card_number = models.PositiveIntegerField(default=0, editable=False)
     # RN-60: contador das sprints, nunca volta.

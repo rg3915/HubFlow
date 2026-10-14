@@ -99,6 +99,7 @@ STORAGES = storages_for(
 )
 
 # Anexos dos cards: tamanho máximo por arquivo.
+FORM_SUBMISSIONS_PER_HOUR = config('FORM_SUBMISSIONS_PER_HOUR', default=20, cast=int)  # por IP, formulário público
 ATTACHMENT_MAX_BYTES = config('ATTACHMENT_MAX_BYTES', default=10 * 1024 * 1024, cast=int)
 
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
