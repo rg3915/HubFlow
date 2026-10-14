@@ -35,3 +35,20 @@ def move_card(card, column, position=None, user=None):
 def start_card(card, user=None):
     # RN-36
     return move_card(card, Column.DOING, user=user)
+
+
+@transaction.atomic
+def delete_card(card):
+    """Exclui o card e fecha o buraco na coluna (RN-33)."""
+    column, project_id = card.column, card.project_id
+    card.delete()
+    renumber(list(Card.objects.filter(project_id=project_id, column=column).order_by('position', 'id')))
+
+
+@transaction.atomic
+def archive_project(project, user=None):
+    """RN-24: excluir um projeto arquiva os cards e desativa o projeto, sem apagar nada."""
+    for card in project.cards.exclude(column=Column.ARCHIVED).order_by('column', 'position'):
+        move_card(card, Column.ARCHIVED, user=user)
+    project.is_active = False
+    project.save(update_fields=['is_active', 'modified'])

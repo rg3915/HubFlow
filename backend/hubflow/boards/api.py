@@ -5,7 +5,7 @@ from hubflow.projects.models import Project
 
 from .models import Card, Column
 from .schemas import BoardOut, CardIn, CardMoveOut, CardOut, MoveIn
-from .services import move_card, start_card
+from .services import delete_card, move_card, start_card
 
 router = Router(tags=['boards'])
 
@@ -49,3 +49,28 @@ def start(request, card_id: int):
 def history(request, card_id: int):
     card = get_object_or_404(Card, id=card_id)
     return card.moves.select_related('user')
+
+
+@router.get('/cards/{card_id}', response=CardOut)
+def get_card(request, card_id: int):
+    return get_object_or_404(Card, id=card_id)
+
+
+@router.put('/cards/{card_id}', response=CardOut)
+def update_card(request, card_id: int, data: CardIn):
+    card = get_object_or_404(Card, id=card_id)
+    card.title, card.description = data.title, data.description
+    card.save(update_fields=['title', 'description', 'modified'])
+    return card
+
+
+@router.delete('/cards/{card_id}', response={204: None})
+def remove_card(request, card_id: int):
+    delete_card(get_object_or_404(Card, id=card_id))
+    return Status(204, None)
+
+
+@router.post('/cards/{card_id}/archive', response=CardOut)
+def archive(request, card_id: int):
+    card = get_object_or_404(Card, id=card_id)
+    return move_card(card, Column.ARCHIVED, user=request.user)

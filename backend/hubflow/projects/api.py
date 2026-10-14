@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from ninja import Router, Status
 
 from hubflow.accounts.schemas import DetailOut
+from hubflow.boards.services import archive_project
 from hubflow.clients.models import Client
 
 from .models import Project
@@ -55,6 +56,6 @@ def update_project(request, project_id: int, data: ProjectIn):
 
 @router.delete('/{project_id}', response={204: None})
 def delete_project(request, project_id: int):
-    project = get_object_or_404(Project, id=project_id)
-    project.delete()
+    # RN-24: arquiva os cards e desativa o projeto.
+    archive_project(get_object_or_404(Project, id=project_id), user=request.user)
     return Status(204, None)

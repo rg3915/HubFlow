@@ -106,11 +106,13 @@ def test_edita_projeto(api, acme, loja):
     assert (loja.name, loja.description) == ('Loja Nova', 'Loja virtual')
 
 
-def test_exclui_projeto(api, loja):
+def test_excluir_projeto_o_desativa_sem_apagar(api, loja):
+    # RN-24
     response = api.delete(f'/api/projects/{loja.id}')
 
     assert response.status_code == 204
-    assert not Project.objects.filter(id=loja.id).exists()
+    loja.refresh_from_db()
+    assert loja.is_active is False
 
 
 def test_cliente_com_projetos_nao_pode_ser_excluido(api, acme, loja):
