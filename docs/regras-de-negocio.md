@@ -87,6 +87,12 @@ Numeradas para serem citadas em issues, testes e commits (ex.: `RN-07`).
 - **RN-100** Cada projeto define seus campos (texto, número, data, seleção, sim/não), com nome único no projeto e ordem. O valor é validado pelo tipo; na seleção, só as opções do campo. Obrigatórios são exigidos ao criar o card e não podem ser esvaziados depois; ao editar, só os campos enviados são checados. Mudanças de valores entram no histórico.
 - **RN-101** O formulário público do projeto, quando ligado, cria card no Backlog sem login a partir de um link com token. Gerar outro link invalida o anterior. Os envios têm limite por IP e hora (`FORM_SUBMISSIONS_PER_HOUR`).
 
+## Automações e SLA (entregável 8)
+
+- **RN-110** Automação do projeto = gatilho (card criado, card entrou na coluna X, SLA estourado em uma coluna ou em qualquer) → ação (mover para coluna, definir responsável, adicionar etiqueta do projeto, avisar quem criou e o responsável). Só as ligadas rodam; uma ação de automação não dispara outra automação. Cada execução entra no histórico do card.
+- **RN-111** SLA por coluna = horas máximas que o card pode ficar nela, contadas a partir de quando entrou na coluna. O estouro é verificado a cada 15 minutos (`check_sla`), dispara as automações de SLA uma vez por card e coluna e volta a contar se o card sair e voltar.
+- **RN-112** Card com prazo vencido, fora de Concluído e Arquivadas, avisa o responsável no sino uma vez por prazo (de novo se o prazo mudar).
+
 ## Versionamento
 
 - **RN-50** O CHANGELOG segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento semântico. Começa em 0.1.0 e cada entregável concluído gera uma versão.

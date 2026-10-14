@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-14
+
+Automações (gatilho → ação) e SLA por coluna com verificação periódica, avisos de prazo vencido, quadro sem N+1 e schemas da API com ModelSchema.
+
 ### Adicionado
 
 * Model de automação por projeto (app automations): gatilho (card criado, entrou na coluna, SLA estourado) → ação (mover, definir responsável, adicionar etiqueta, avisar), com validação e descrição em linguagem simples. #148
@@ -15,6 +19,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Verificação periódica (comando check_sla e serviço scheduler no compose, a cada 15 min): SLA estourado dispara o gatilho das automações uma vez por card/coluna e entra no histórico; prazo vencido avisa o responsável no sino uma vez por prazo. #152
 * CLI: hubflow automation list/add/toggle/remove (--when created|entered:COLUNA|sla[:COLUNA], --then move:COLUNA|assign:EMAIL|label:NOME|notify) e hubflow project sla. #153
 * Tela de automações do projeto (Quadro › Automações): lista com ligar/desligar e excluir, criação no formato "Quando … → …"; histórico do card mostra automações e SLA estourado. #154
+* SLA no quadro: horas por coluna configuradas na tela de automações, SLA no cabeçalho da coluna e tempo restante (ou "SLA estourado", em vermelho) no card. #155
+* CHANGELOG 0.13.0; README e regras RN-110 a RN-112. #156
 
 ### Alterado
 
@@ -305,7 +311,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/rg3915/HubFlow/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/rg3915/HubFlow/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/rg3915/HubFlow/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/rg3915/HubFlow/compare/v0.9.0...v0.10.0

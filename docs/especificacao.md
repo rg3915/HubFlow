@@ -30,7 +30,7 @@ Cada entregável é um milestone no GitHub. A versão do CHANGELOG avança a cad
 | 6 | Sincronização GitHub/GitLab (tokens por projeto, issues, importação, milestones, webhooks) | 0.8.0 | |
 | 12 | Quadro em tempo real | 0.9.0 | |
 | 7 | Campos personalizados e formulários | 0.12.0 | concluído |
-| 8 | Automações e SLA | 1.x | |
+| 8 | Automações e SLA | 0.13.0 | concluído |
 | 10 | Relatórios e métricas (PDF por período, envio por e-mail) | 1.x | a definir |
 | 17 | Permissões (papéis, permissões por pessoa, clientes vinculados, CLI, pagamentos, tela de gestão) | 0.10.0 | concluído |
 | 11 | Polimento: busca global, notificações no app, backup .sql, S3, taskipy | 0.10.0 / 0.11.0 | concluído |
