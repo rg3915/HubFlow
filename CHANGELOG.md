@@ -28,3 +28,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Guarda de rotas e menu do usuário com logout. #18
 * Model Cliente. #19
 * API CRUD de clientes. #20
+* Model Projeto com provedor GitHub/GitLab. #21

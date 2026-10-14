@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'hubflow.core',
     'hubflow.accounts',
     'hubflow.clients',
+    'hubflow.projects',
 ]
 
 MIDDLEWARE = [
