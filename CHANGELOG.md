@@ -13,6 +13,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Resumo financeiro em SQL: recebido, pendente, por cliente, por mês e anos. #84
 * CLI: payment create, list, pay, copy e summary. #85
 * Pagamento pertence ao projeto; sprint opcional; pagamento por período (mensal) com --month; copiar avança o mês. #131
+* Tela de pagamentos: KPIs, gráficos por mês e por cliente, filtros, formulário e ações (editar, copiar, pagar, excluir). #86
 
 ## [0.5.0] - 2026-10-14
 

@@ -13,6 +13,9 @@
   --accent: #245e7d;
   --accent-text: #ffffff;
   --danger: #a33a2e;
+  /* gráficos: recebido / pendente (validados com o validador do dataviz) */
+  --chart-1: #1f6f9c;
+  --chart-2: #b7791f;
 }
 
 .dark {
@@ -25,6 +28,8 @@
   --accent: #6fb1d1;
   --accent-text: #0f1a22;
   --danger: #e08a7f;
+  --chart-1: #3d8cbb;
+  --chart-2: #b8862a;
 }
 
 @theme inline {

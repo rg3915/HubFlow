@@ -7,6 +7,7 @@ import ForgotPasswordView from '../views/ForgotPasswordView.vue'
 import HomeView from '../views/HomeView.vue'
 import LabelsView from '../views/LabelsView.vue'
 import LoginView from '../views/LoginView.vue'
+import PaymentsView from '../views/PaymentsView.vue'
 import ProjectFormView from '../views/ProjectFormView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import ProjectsView from '../views/ProjectsView.vue'
@@ -26,6 +27,7 @@ const routes = [
   { path: '/projects/:id/sprints', name: 'project-sprints', component: SprintsView, meta: { title: 'Sprints' } },
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto' } },
+  { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos' } },
   { path: '/settings/password', name: 'change-password', component: ChangePasswordView, meta: { title: 'Trocar senha' } },
   { path: '/login', name: 'login', component: LoginView, meta: { ...auth, title: 'Entrar' } },
   {
