@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.conf import settings
 from django.db import models, transaction
 from django.db.models import Max
@@ -37,6 +39,15 @@ class Card(models.Model):
     column = models.CharField('coluna', max_length=10, choices=Column.choices, default=Column.BACKLOG)
     position = models.PositiveIntegerField('posição', default=0)  # RN-33
     labels = models.ManyToManyField(Label, blank=True, related_name='cards', verbose_name='etiquetas')
+    due_date = models.DateField('prazo', null=True, blank=True)
+    assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='assigned_cards',
+        verbose_name='responsável',
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
     )
@@ -51,6 +62,12 @@ class Card(models.Model):
 
     def __str__(self):
         return f'#{self.number} {self.title}'
+
+    @property
+    def is_overdue(self):
+        # Vencido = prazo no passado e ainda não concluído/arquivado.
+        open_columns = (Column.DONE, Column.ARCHIVED)
+        return bool(self.due_date and self.due_date < date.today() and self.column not in open_columns)
 
     def save(self, *args, **kwargs):
         if self._state.adding:

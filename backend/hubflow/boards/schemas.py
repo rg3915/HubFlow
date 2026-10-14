@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
 
 from ninja import Schema
@@ -11,6 +11,8 @@ from hubflow.accounts.schemas import UserOut
 class CardIn(Schema):
     title: str
     description: str = ''
+    due_date: date | None = None
+    assignee_id: int | None = None
 
     @field_validator('title')
     @classmethod
@@ -59,6 +61,9 @@ class CardOut(Schema):
     column: str
     position: int
     labels: list[LabelOut]
+    due_date: date | None
+    assignee: UserOut | None
+    is_overdue: bool
 
 
 class ColumnOut(Schema):

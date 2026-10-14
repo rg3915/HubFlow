@@ -19,7 +19,7 @@ from .schemas import (
     LabelOut,
     MoveIn,
 )
-from .services import create_card, delete_card, move_card, start_card
+from .services import create_card, delete_card, move_card, resolve_assignee, start_card
 
 router = Router(tags=['boards'])
 
@@ -27,13 +27,14 @@ router = Router(tags=['boards'])
 @router.post('/projects/{project_id}/cards', response={201: CardOut})
 def add_card(request, project_id: int, data: CardIn):
     project = get_object_or_404(Project, id=project_id)
-    return Status(201, create_card(project, user=request.user, **data.dict()))
+    fields = data.dict(exclude={'assignee_id'}) | {'assignee': resolve_assignee(data.assignee_id)}
+    return Status(201, create_card(project, user=request.user, **fields))
 
 
 @router.get('/projects/{project_id}/board', response=BoardOut)
 def board(request, project_id: int, archived: bool = False):
     project = get_object_or_404(Project.objects.select_related('client'), id=project_id)
-    cards = project.cards.prefetch_related('labels').order_by('position', 'id')
+    cards = project.cards.select_related('assignee').prefetch_related('labels').order_by('position', 'id')
     if not archived:  # RN-37
         cards = cards.exclude(column=Column.ARCHIVED)
     # Uma consulta só; o agrupamento por coluna é feito em memória.
@@ -72,8 +73,9 @@ def get_card(request, card_id: int):
 @router.put('/cards/{card_id}', response=CardOut)
 def update_card(request, card_id: int, data: CardIn):
     card = get_object_or_404(Card, id=card_id)
-    card.title, card.description = data.title, data.description
-    card.save(update_fields=['title', 'description', 'modified'])
+    card.title, card.description, card.due_date = data.title, data.description, data.due_date
+    card.assignee = resolve_assignee(data.assignee_id)
+    card.save(update_fields=['title', 'description', 'due_date', 'assignee', 'modified'])
     return card
 
 

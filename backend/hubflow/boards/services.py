@@ -1,4 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 from .models import Card, CardMove, Column
 from .notifications import notify
@@ -9,6 +11,13 @@ def create_card(project, user=None, **data):
     card = Card.objects.create(project=project, created_by=user, **data)
     notify('created', card)
     return card
+
+
+def resolve_assignee(assignee_id):
+    """Devolve o usuário responsável ou 404; None quando o card fica sem responsável."""
+    if assignee_id is None:
+        return None
+    return get_object_or_404(get_user_model(), id=assignee_id, is_active=True)
 
 
 def renumber(cards):
