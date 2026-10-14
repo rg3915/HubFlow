@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Model TimeEntry: cronômetro por card e lançamento manual. #71
+* Regra dos 15 minutos ao iniciar o cronômetro. #72
 
 ## [0.4.0] - 2026-10-14
 
