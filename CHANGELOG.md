@@ -16,6 +16,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Tela de campos do projeto (Quadro › Campos): criar, editar tipo/opções/obrigatório, reordenar e excluir. #140
 * Campos no painel do card (entrada conforme o tipo, obrigatórios marcados, salva só o que mudou), obrigatórios pedidos no "Novo card", até dois valores no card do quadro e mudanças de campos no histórico. #141
 * Formulário público do projeto: link com token (ligar/desligar, gerar outro) que cria card no Backlog sem login, com título, descrição, contato e campos; limite de envios por IP (FORM_SUBMISSIONS_PER_HOUR). #142
+* Tela do formulário público (/form/TOKEN, sem login, com confirmação do card criado) e configuração na tela de campos: ligar, copiar, abrir e gerar outro link. #143
 
 ### Corrigido
 

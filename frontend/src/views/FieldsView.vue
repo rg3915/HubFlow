@@ -16,6 +16,9 @@ const project = computed(() => clients.projects.find((p) => p.id === projectId.v
 const fields = ref([])
 const form = reactive({ name: '', kind: 'text', options: '', required: false })
 const error = ref('')
+const publicForm = ref(null) // {enabled, token, path}
+const formLink = computed(() => (publicForm.value?.token ? `${location.origin}${publicForm.value.path}` : ''))
+const copied = ref(false)
 
 const call = (path, options = {}) => api(path, { token: auth.token, ...options })
 // Opções editadas como texto separado por vírgula.
@@ -24,7 +27,10 @@ const toBody = (f, options) => ({ name: f.name, kind: f.kind, required: f.requir
 
 async function load() {
   if (!clients.loaded) await clients.load()
-  fields.value = (await call(`/projects/${projectId.value}/fields`)).map(withText)
+  ;[fields.value, publicForm.value] = await Promise.all([
+    call(`/projects/${projectId.value}/fields`).then((list) => list.map(withText)),
+    call(`/projects/${projectId.value}/form`),
+  ])
 }
 onMounted(load)
 
@@ -55,6 +61,24 @@ async function remove(field) {
     await call(`/fields/${field.id}`, { method: 'DELETE' })
     await load()
   })
+}
+
+const setForm = (enabled) =>
+  attempt(async () => {
+    publicForm.value = await call(`/projects/${projectId.value}/form`, { method: 'PUT', body: { enabled } })
+  })
+
+async function regenerate() {
+  if (!confirm('Gerar outro link? O atual para de funcionar.')) return
+  await attempt(async () => {
+    publicForm.value = await call(`/projects/${projectId.value}/form/regenerate`, { method: 'POST' })
+  })
+}
+
+async function copyLink() {
+  await navigator.clipboard.writeText(formLink.value)
+  copied.value = true
+  setTimeout(() => (copied.value = false), 1500)
 }
 
 const move = (index, step) =>
@@ -119,5 +143,24 @@ const move = (index, step) =>
       <button type="submit" class="btn btn-primary h-9">Criar campo</button>
     </form>
     <p v-if="error" class="mt-2 text-danger" role="alert">{{ error }}</p>
+
+    <section v-if="publicForm" class="panel mt-6 space-y-3 p-4">
+      <div class="flex items-center gap-3">
+        <div>
+          <h2 class="font-medium">Formulário público</h2>
+          <p class="text-[13px] text-muted">Quem tiver o link abre um card no Backlog sem precisar de conta, com título, descrição e estes campos.</p>
+        </div>
+        <label class="ml-auto flex shrink-0 items-center gap-2 text-sm">
+          <input type="checkbox" class="h-4 w-4 accent-[var(--accent)]" :checked="publicForm.enabled" @change="setForm($event.target.checked)" />
+          Ligado
+        </label>
+      </div>
+      <div v-if="publicForm.enabled" class="flex flex-wrap items-center gap-2">
+        <input class="field h-9 min-w-64 flex-1 text-sm" type="text" readonly :value="formLink" aria-label="Link do formulário" @focus="$event.target.select()" />
+        <button type="button" class="btn h-9" @click="copyLink">{{ copied ? 'Copiado' : 'Copiar' }}</button>
+        <a :href="formLink" target="_blank" rel="noopener" class="btn h-9">Abrir</a>
+        <button type="button" class="btn btn-ghost h-9 text-muted" @click="regenerate">Gerar outro link</button>
+      </div>
+    </section>
   </div>
 </template>
