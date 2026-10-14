@@ -20,7 +20,7 @@ const routes = [
   { path: '/clients/:id/edit', name: 'client-edit', component: ClientFormView, meta: { title: 'Editar cliente' } },
   { path: '/projects', name: 'projects', component: ProjectsView, meta: { title: 'Projetos' } },
   { path: '/projects/new', name: 'project-new', component: ProjectFormView, meta: { title: 'Novo projeto' } },
-  { path: '/projects/:id', name: 'project', component: ProjectView, meta: { title: 'Projeto' } },
+  { path: '/projects/:id', name: 'project', component: ProjectView, meta: { title: 'Quadro' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto' } },
   { path: '/settings/password', name: 'change-password', component: ChangePasswordView, meta: { title: 'Trocar senha' } },
   { path: '/login', name: 'login', component: LoginView, meta: { ...auth, title: 'Entrar' } },

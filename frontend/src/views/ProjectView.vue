@@ -1,20 +1,33 @@
 <script setup>
-// Quadro do projeto entra na #34. Por ora, só os dados do projeto.
-import { computed, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useClientsStore } from '../stores/clients'
+import BoardColumn from '../components/BoardColumn.vue'
+import { useBoardStore } from '../stores/board'
 
 const route = useRoute()
-const store = useClientsStore()
-onMounted(() => store.loaded || store.load())
-const project = computed(() => store.projects.find((p) => p.id === Number(route.params.id)))
+const board = useBoardStore()
+const showArchived = ref(false)
+
+const projectId = computed(() => Number(route.params.id))
+watch([projectId, showArchived], () => board.load(projectId.value, { archived: showArchived.value }), { immediate: true })
+
+const visibleColumns = computed(() =>
+  board.columns.filter((c) => c.key !== 'archived' || showArchived.value),
+)
 </script>
 
 <template>
-  <section v-if="project" class="panel max-w-lg p-6">
-    <h2 class="text-xl font-semibold">{{ project.client_name }} / {{ project.name }}</h2>
-    <a :href="project.repository_url" target="_blank" rel="noopener" class="text-accent hover:underline">{{ project.repository_url }}</a>
-    <p v-if="project.description" class="mt-2 text-muted">{{ project.description }}</p>
-    <p class="mt-4 text-muted">O quadro deste projeto chega em breve.</p>
-  </section>
+  <div v-if="board.project && board.projectId === projectId" class="-m-6 flex h-[calc(100vh-3rem)] flex-col">
+    <div class="flex items-center gap-3 border-b border-border bg-surface px-6 py-2">
+      <p class="text-muted">{{ board.project.client_name }}</p>
+      <h2 class="font-semibold">{{ board.project.name }}</h2>
+      <label class="ml-auto flex items-center gap-2 text-muted">
+        <input v-model="showArchived" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
+        Mostrar arquivadas
+      </label>
+    </div>
+    <div class="flex flex-1 gap-3 overflow-x-auto p-4">
+      <BoardColumn v-for="column in visibleColumns" :key="column.key" :column="column" />
+    </div>
+  </div>
 </template>
