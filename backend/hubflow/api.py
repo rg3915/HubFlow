@@ -2,10 +2,12 @@ from ninja import NinjaAPI
 
 from hubflow.accounts.api import router as accounts_router
 from hubflow.accounts.auth import TokenAuth
+from hubflow.clients.api import router as clients_router
 
 api = NinjaAPI(title='HubFlow API', version='0.1.0', auth=TokenAuth())
 
 api.add_router('/auth', accounts_router)
+api.add_router('/clients', clients_router)
 
 
 @api.get('/health', auth=None)
