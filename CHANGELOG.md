@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Dados do relatório por período (app reports): semana, quinzena ou mês; horas por pessoa e por card, cards criados e concluídos, tempo médio até concluir, SLAs estourados e faturamento, por cliente ou projeto, com consultas agregadas. #157
+* API de relatórios: GET /api/reports com cliente/projeto e period (week, fortnight, month) + date ou start/end; respeita clientes visíveis e só traz faturamento para quem vê pagamentos. #158
 
 ## [0.13.0] - 2026-10-14
 

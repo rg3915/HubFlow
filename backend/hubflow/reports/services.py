@@ -31,8 +31,8 @@ def hours(duration):
     return round(duration.total_seconds() / 3600, 2) if duration else 0.0
 
 
-def scoped_projects(client_id=None, project_id=None):
-    projects = Project.objects.all()
+def scoped_projects(projects=None, client_id=None, project_id=None):
+    projects = Project.objects.all() if projects is None else projects
     if client_id:
         projects = projects.filter(client_id=client_id)
     if project_id:
@@ -79,14 +79,15 @@ def cards_section(projects, start, end):
     return {'created': created, 'done': done['total'], 'avg_days_to_done': lead}
 
 
-def billing_section(projects, start, end):
-    payments = valued_payments().filter(project__in=projects, issue_date__gte=start, issue_date__lte=end)
+def billing_section(projects, start, end, payments=None):
+    payments = valued_payments(payments).filter(project__in=projects, issue_date__gte=start, issue_date__lte=end)
     totals = payments.aggregate(**split_totals(payments))
     return {'received': money(totals['received']), 'pending': money(totals['pending'])}
 
 
-def build_report(start, end, client_id=None, project_id=None, with_billing=True):
-    projects = scoped_projects(client_id, project_id)
+def build_report(start, end, client_id=None, project_id=None, with_billing=True, projects=None, payments=None):
+    """`projects`/`payments` limitam ao que a pessoa enxerga (a API passa os visíveis)."""
+    projects = scoped_projects(projects, client_id, project_id)
     sla = CardEvent.objects.filter(
         card__project__in=projects, kind='sla_breached', created__date__gte=start, created__date__lte=end
     ).count()
@@ -95,5 +96,5 @@ def build_report(start, end, client_id=None, project_id=None, with_billing=True)
         'hours': hours_section(projects, start, end),
         'cards': cards_section(projects, start, end),
         'sla_breached': sla,
-        'billing': billing_section(projects, start, end) if with_billing else None,
+        'billing': billing_section(projects, start, end, payments) if with_billing else None,
     }
