@@ -1,6 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { api, mediaUrl } from '../api'
+import { computed, onMounted, ref } from 'vue'
+import { BASE_URL, api, mediaUrl } from '../api'
 import { useAuthStore } from '../stores/auth'
 
 const auth = useAuthStore()
@@ -9,6 +9,20 @@ const loading = ref(false)
 const input = ref(null)
 
 const avatarUrl = computed(() => mediaUrl(auth.user?.avatar_url))
+
+// Contas do Google/GitHub ligadas; "Conectar" refaz o login pelo provedor (liga quando o e-mail é o mesmo).
+const linked = ref([])
+const providers = ref([])
+const unlinked = computed(() => providers.value.filter((p) => !linked.value.some((a) => a.provider === p.id)))
+async function loadSocial() {
+  ;[linked.value, providers.value] = await Promise.all([api('/auth/social', { token: auth.token }), api('/auth/social/providers')])
+}
+onMounted(() => loadSocial().catch(() => {}))
+async function unlink(account) {
+  if (!confirm(`Desvincular ${account.name}? Você continua entrando com e-mail e senha.`)) return
+  await send(() => api(`/auth/social/${account.provider}`, { method: 'DELETE', token: auth.token }))
+  await loadSocial()
+}
 
 async function send(request) {
   error.value = ''
@@ -60,5 +74,22 @@ function remove() {
     <p class="mt-2 text-[13px] text-muted">PNG, JPG ou WebP de até 2 MB.</p>
 
     <p v-if="error" class="mt-4 rounded-[var(--radius-control)] border border-danger/40 px-3 py-2 text-danger" role="alert">{{ error }}</p>
+  </section>
+
+  <section v-if="providers.length || linked.length" class="panel mt-4 max-w-md p-6">
+    <h2 class="font-medium">Contas conectadas</h2>
+    <p class="mt-1 text-[13px] text-muted">Entre com Google ou GitHub usando o mesmo e-mail da sua conta no HubFlow.</p>
+    <ul class="mt-3 divide-y divide-border">
+      <li v-for="account in linked" :key="account.provider" class="flex items-center gap-2 py-2">
+        <span class="font-medium">{{ account.name }}</span>
+        <span class="truncate text-[13px] text-muted">{{ account.email }}</span>
+        <button type="button" class="btn btn-ghost ml-auto h-8 text-danger" :disabled="loading" @click="unlink(account)">Desvincular</button>
+      </li>
+      <li v-for="provider in unlinked" :key="provider.id" class="flex items-center gap-2 py-2">
+        <span class="font-medium">{{ provider.name }}</span>
+        <span class="text-[13px] text-muted">não conectado</span>
+        <a :href="`${BASE_URL}/api/auth/social/${provider.id}/start`" class="btn ml-auto h-8">Conectar</a>
+      </li>
+    </ul>
   </section>
 </template>

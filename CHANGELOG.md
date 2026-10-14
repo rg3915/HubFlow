@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 * Login com Google e GitHub (OAuth, authorization code): state de uso único, e-mail verificado do provedor, entra só em conta já cadastrada (sem criar conta nova), vincula a conta social e entrega ao frontend um código de uso único trocado por token (POST /api/auth/social/exchange). #166
 * Botões Entrar com Google/GitHub na tela de login (só os provedores configurados, GET /api/auth/social/providers) e página de retorno /login/social com mensagens para conta não cadastrada, e-mail não verificado, login cancelado ou expirado. #167
+* Contas conectadas no perfil: GET /api/auth/social e DELETE /api/auth/social/{provedor}; seção no perfil com desvincular e conectar. #168
 
 ## [0.15.0] - 2026-10-14
 

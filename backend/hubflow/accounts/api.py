@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import urlencode
 
 import httpx
@@ -173,3 +174,27 @@ def social_exchange(request, data: SocialCodeIn):
     if user is None:
         return Status(400, {'detail': 'Código inválido ou expirado. Entre de novo.'})
     return {'token': Token.objects.create(user=user).key}
+
+
+class SocialAccountOut(Schema):
+    provider: str
+    name: str
+    email: str
+    created: datetime
+
+
+@router.get('/social', response=list[SocialAccountOut])
+def social_accounts(request):
+    """Contas do Google/GitHub ligadas a quem está logado."""
+    return [
+        {'provider': a.provider, 'name': social.PROVIDERS[a.provider]['name'], 'email': a.email, 'created': a.created}
+        for a in request.user.social_accounts.order_by('provider')
+    ]
+
+
+@router.delete('/social/{provider}', response={204: None})
+def unlink_social(request, provider: str):
+    deleted, _ = request.user.social_accounts.filter(provider=provider).delete()
+    if not deleted:
+        raise Http404('Conta não vinculada.')
+    return Status(204, None)
