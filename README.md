@@ -224,6 +224,10 @@ hubflow project field list Loja / hubflow project field remove Loja Prioridade
 hubflow card create "Login" --project Loja --field Prioridade=Alta --field Pontos=3
 hubflow card fields 12 --project Loja [--field Prioridade=Baixa]
 
+hubflow automation add "QA aprovado" --project Loja --when entered:qa --then move:done
+hubflow automation list --project Loja / hubflow automation toggle 1 --project Loja / hubflow automation remove 1
+hubflow project sla Loja [--column qa --hours 48 | --column qa --clear]
+
 hubflow user list                                                     # só quem gerencia usuários
 hubflow user invite ana@hubflow.com --name Ana --role Desenvolvedor --client ACME
 hubflow user role ana@hubflow.com --set Gerente [--set Financeiro]
