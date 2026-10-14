@@ -4,7 +4,8 @@ from ninja import Router, Status
 from hubflow.projects.models import Project
 
 from .models import Card, Column
-from .schemas import BoardOut, CardIn, CardOut
+from .schemas import BoardOut, CardIn, CardOut, MoveIn
+from .services import move_card
 
 router = Router(tags=['boards'])
 
@@ -30,3 +31,9 @@ def board(request, project_id: int, archived: bool = False):
         'project': {'id': project.id, 'name': project.name, 'client_name': project.client.name},
         'columns': [{'key': key, 'label': label, 'cards': by_column[key]} for key, label in Column.choices],
     }
+
+
+@router.post('/cards/{card_id}/move', response=CardOut)
+def move(request, card_id: int, data: MoveIn):
+    card = get_object_or_404(Card, id=card_id)
+    return move_card(card, data.column, data.position, user=request.user)

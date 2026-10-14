@@ -1,3 +1,5 @@
+from typing import Literal
+
 from ninja import Schema
 from pydantic import field_validator
 
@@ -39,3 +41,8 @@ class BoardProjectOut(Schema):
 class BoardOut(Schema):
     project: BoardProjectOut
     columns: list[ColumnOut]
+
+
+class MoveIn(Schema):
+    column: Literal['backlog', 'sprint', 'doing', 'qa', 'done', 'archived']
+    position: int | None = None
