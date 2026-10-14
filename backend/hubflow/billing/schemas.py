@@ -1,11 +1,12 @@
 import re
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
 from typing import Literal
-from uuid import UUID
 
-from ninja import Schema
+from ninja import ModelSchema, Schema
 from pydantic import field_validator
+
+from .models import Payment
 
 
 class PaymentIn(Schema):
@@ -39,30 +40,25 @@ class PaymentIn(Schema):
         return value
 
 
-class PaymentOut(Schema):
-    id: int
-    uuid: UUID
+class PaymentOut(ModelSchema):
     sprint_id: int | None
     sprint_number: int | None
-    period_start: date | None
-    period_end: date | None
     scope: str
     project_id: int
     project_name: str
     client_id: int
     client_name: str
-    description: str
-    hourly_rate: Decimal
-    estimated_hours: Decimal | None
     estimated_value: Decimal | None
     spent_hours: Decimal
-    fixed_value: Decimal | None
     total_value: Decimal
-    invoice_number: str
-    issue_date: date | None
-    payment_date: date | None
     status: Literal['pending', 'paid']
-    created: datetime
+
+    class Meta:
+        model = Payment
+        fields = [
+            'id', 'uuid', 'period_start', 'period_end', 'description', 'hourly_rate', 'estimated_hours',
+            'fixed_value', 'invoice_number', 'issue_date', 'payment_date', 'created',
+        ]  # fmt: skip
 
     @staticmethod
     def resolve_sprint_number(payment):

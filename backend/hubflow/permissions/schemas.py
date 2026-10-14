@@ -1,7 +1,8 @@
-from datetime import datetime
 from uuid import UUID
 
-from ninja import Schema
+from ninja import ModelSchema, Schema
+
+from .models import PermissionChange
 
 
 class ClientBriefOut(Schema):
@@ -63,16 +64,16 @@ class CatalogOut(Schema):
     permissions: list[PermissionOut]
 
 
-class PermissionChangeOut(Schema):
-    id: int
-    uuid: UUID
-    created: datetime
+class PermissionChangeOut(ModelSchema):
     user: str
     changed_by: str | None
-    action: str
     action_label: str
     before: list
     after: list
+
+    class Meta:
+        model = PermissionChange
+        fields = ['id', 'uuid', 'created', 'action']
 
     @staticmethod
     def resolve_user(obj):

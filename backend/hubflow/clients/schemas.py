@@ -1,9 +1,9 @@
-from uuid import UUID
-
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from ninja import Schema
+from ninja import ModelSchema, Schema
 from pydantic import field_validator
+
+from .models import Client
 
 
 def emails_validos(cls, value):
@@ -23,9 +23,9 @@ class ClientIn(Schema):
     _emails = field_validator('emails')(emails_validos)
 
 
-class ClientOut(Schema):
-    id: int
-    uuid: UUID
-    name: str
+class ClientOut(ModelSchema):
     emails: list[str]
-    is_active: bool
+
+    class Meta:
+        model = Client
+        fields = ['id', 'uuid', 'name', 'emails', 'is_active']

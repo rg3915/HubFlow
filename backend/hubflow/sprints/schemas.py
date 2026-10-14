@@ -1,8 +1,9 @@
-from datetime import date, datetime
-from uuid import UUID
+from datetime import date
 
-from ninja import Schema
+from ninja import ModelSchema, Schema
 from pydantic import field_validator
+
+from .models import Milestone, Sprint
 
 
 class MilestoneIn(Schema):
@@ -17,13 +18,12 @@ class MilestoneIn(Schema):
         return value.strip()
 
 
-class MilestoneOut(Schema):
-    id: int
-    uuid: UUID
+class MilestoneOut(ModelSchema):
     project_id: int
-    title: str
-    external_number: int | None
-    is_open: bool
+
+    class Meta:
+        model = Milestone
+        fields = ['id', 'uuid', 'title', 'external_number', 'is_open']
 
 
 class SprintIn(Schema):
@@ -33,18 +33,14 @@ class SprintIn(Schema):
     end_date: date | None = None
 
 
-class SprintOut(Schema):
-    id: int
-    uuid: UUID
+class SprintOut(ModelSchema):
     project_id: int
-    number: int
-    name: str
     milestone: MilestoneOut | None
-    start_date: date | None
-    end_date: date | None
-    is_open: bool
-    closed_at: datetime | None
     cards_count: int = 0
+
+    class Meta:
+        model = Sprint
+        fields = ['id', 'uuid', 'number', 'name', 'start_date', 'end_date', 'is_open', 'closed_at']
 
     @staticmethod
     def resolve_cards_count(sprint):

@@ -1,12 +1,14 @@
 import re
 from datetime import date, datetime
 from typing import Any, Literal
-from uuid import UUID
 
-from ninja import Field, Schema
+from ninja import Field, ModelSchema, Schema
 from pydantic import field_validator
 
 from hubflow.accounts.schemas import UserOut
+from hubflow.projects.schemas import SprintBriefOut
+
+from .models import Attachment, Card, ChecklistItem, Comment, CustomField, Label, Notification
 
 
 class CardIn(Schema):
@@ -52,12 +54,12 @@ class LabelIn(Schema):
         return value.lower()
 
 
-class LabelOut(Schema):
-    id: int
-    uuid: UUID
+class LabelOut(ModelSchema):
     project_id: int
-    name: str
-    color: str
+
+    class Meta:
+        model = Label
+        fields = ['id', 'uuid', 'name', 'color']
 
 
 class CardLabelsIn(Schema):
@@ -76,13 +78,12 @@ class ChecklistItemIn(Schema):
         return value.strip()
 
 
-class ChecklistItemOut(Schema):
-    id: int
-    uuid: UUID
+class ChecklistItemOut(ModelSchema):
     card_id: int
-    text: str
-    done: bool
-    position: int
+
+    class Meta:
+        model = ChecklistItem
+        fields = ['id', 'uuid', 'text', 'done', 'position']
 
 
 class ChecklistOrderIn(Schema):
@@ -94,25 +95,18 @@ class ChecklistSummary(Schema):
     total: int
 
 
-class AttachmentOut(Schema):
-    id: int
-    uuid: UUID
+class AttachmentOut(ModelSchema):
     card_id: int
-    name: str
-    size: int
     url: str
     uploaded_by: UserOut
-    created: datetime
+
+    class Meta:
+        model = Attachment
+        fields = ['id', 'uuid', 'name', 'size', 'created']
 
     @staticmethod
     def resolve_url(attachment):
         return attachment.file.url
-
-
-class SprintBrief(Schema):
-    id: int
-    number: int
-    name: str
 
 
 class TimeSummary(Schema):
@@ -127,29 +121,25 @@ class ProgressOut(Schema):
     source: str | None
 
 
-class CardOut(Schema):
-    id: int
-    uuid: UUID
+class CardOut(ModelSchema):
     project_id: int
-    number: int
-    title: str
-    description: str
-    column: str
-    position: int
     labels: list[LabelOut]
-    due_date: date | None
     assignee: UserOut | None
     created_by: UserOut | None
     is_overdue: bool
     checklist: ChecklistSummary
     attachments_count: int
-    sprint: SprintBrief | None
+    sprint: SprintBriefOut | None
     custom_values: dict[str, Any]
-    estimate_hours: float | None
-    issue_number: int | None
-    issue_url: str
     time: TimeSummary
     progress: ProgressOut
+
+    class Meta:
+        model = Card
+        fields = [
+            'id', 'uuid', 'number', 'title', 'description', 'column', 'position', 'due_date', 'estimate_hours',
+            'issue_number', 'issue_url',
+        ]  # fmt: skip
 
     @staticmethod
     def spent_hours(card):
@@ -234,15 +224,14 @@ class CommentIn(Schema):
         return value.strip()
 
 
-class CommentOut(Schema):
-    id: int
-    uuid: UUID
+class CommentOut(ModelSchema):
     card_id: int
     author: UserOut
-    text: str
     mentions: list[UserOut]
-    created: datetime
-    modified: datetime
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'uuid', 'text', 'created', 'modified']
 
 
 class ActivityOut(Schema):
@@ -252,18 +241,17 @@ class ActivityOut(Schema):
     created: datetime
 
 
-class NotificationOut(Schema):
-    id: int
-    uuid: UUID
-    kind: str
-    text: str
+class NotificationOut(ModelSchema):
     read: bool
-    created: datetime
     actor_name: str | None
     card_id: int
     card_number: int
     card_title: str
     project_id: int
+
+    class Meta:
+        model = Notification
+        fields = ['id', 'uuid', 'kind', 'text', 'created']
 
     @staticmethod
     def resolve_read(obj):
@@ -298,15 +286,13 @@ class CustomFieldIn(Schema):
     required: bool = False
 
 
-class CustomFieldOut(Schema):
-    id: int
-    uuid: UUID
+class CustomFieldOut(ModelSchema):
     project_id: int
-    name: str
-    kind: str
     options: list[str]
-    required: bool
-    position: int
+
+    class Meta:
+        model = CustomField
+        fields = ['id', 'uuid', 'name', 'kind', 'options', 'required', 'position']
 
 
 class OrderIn(Schema):

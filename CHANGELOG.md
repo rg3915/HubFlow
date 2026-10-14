@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Alterado
+
+* Refactor: schemas de saída da API com ModelSchema (campos vindos do model; *_id, propriedades e calculados continuam declarados) e um só schema resumido de sprint; respostas iguais. #147
+
 ## [0.12.0] - 2026-10-14
 
 Campos personalizados por projeto (no card, no quadro, na API e na CLI), formulário público que cria card sem login e anexos no Cloudinary.

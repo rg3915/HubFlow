@@ -1,10 +1,12 @@
 from typing import Literal
-from uuid import UUID
 
-from ninja import Schema
+from ninja import ModelSchema, Schema
 from pydantic import field_validator
 
 from hubflow.clients.schemas import ClientOut, emails_validos
+from hubflow.sprints.models import Milestone, Sprint
+
+from .models import Project
 
 
 class ProjectIn(Schema):
@@ -23,25 +25,19 @@ class ProjectIn(Schema):
     _emails = field_validator('emails')(emails_validos)
 
 
-class ProjectOut(Schema):
-    id: int
-    uuid: UUID
+class ProjectOut(ModelSchema):
     client_id: int
     client_name: str
-    name: str
-    provider: str
-    owner: str
-    repo: str
     repository_url: str
-    description: str
     emails: list[str]
-    is_active: bool
-    notify_on_created: bool
-    notify_on_moved: bool
-    notify_on_done: bool
     has_token: bool
-    gitlab_project_id: int | None
-    create_issues: bool
+
+    class Meta:
+        model = Project
+        fields = [
+            'id', 'uuid', 'name', 'provider', 'owner', 'repo', 'description', 'emails', 'is_active',
+            'notify_on_created', 'notify_on_moved', 'notify_on_done', 'gitlab_project_id', 'create_issues',
+        ]  # fmt: skip
 
     @staticmethod
     def resolve_client_name(obj):
@@ -66,15 +62,16 @@ class ProjectFullIn(Schema):
     _emails = field_validator('emails', 'client_emails')(emails_validos)
 
 
-class SprintBriefOut(Schema):
-    id: int
-    number: int
-    name: str
+class SprintBriefOut(ModelSchema):
+    class Meta:
+        model = Sprint
+        fields = ['id', 'number', 'name']
 
 
-class MilestoneBriefOut(Schema):
-    id: int
-    title: str
+class MilestoneBriefOut(ModelSchema):
+    class Meta:
+        model = Milestone
+        fields = ['id', 'title']
 
 
 class ProjectFullOut(Schema):

@@ -1,6 +1,8 @@
 from uuid import UUID
 
-from ninja import Schema
+from ninja import ModelSchema, Schema
+
+from .models import User
 
 
 class LoginIn(Schema):
@@ -12,13 +14,13 @@ class TokenOut(Schema):
     token: str
 
 
-class UserOut(Schema):
-    id: int
-    uuid: UUID
-    email: str
-    name: str
+class UserOut(ModelSchema):
     first_name: str
     avatar_url: str | None
+
+    class Meta:
+        model = User
+        fields = ['id', 'uuid', 'email', 'name']
 
     @staticmethod
     def resolve_avatar_url(user):
