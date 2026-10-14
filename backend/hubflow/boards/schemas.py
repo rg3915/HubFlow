@@ -248,3 +248,42 @@ class ActivityOut(Schema):
     user: UserOut | None
     data: dict
     created: datetime
+
+
+class NotificationOut(Schema):
+    id: int
+    uuid: UUID
+    kind: str
+    text: str
+    read: bool
+    created: datetime
+    actor_name: str | None
+    card_id: int
+    card_number: int
+    card_title: str
+    project_id: int
+
+    @staticmethod
+    def resolve_read(obj):
+        return obj.read_at is not None
+
+    @staticmethod
+    def resolve_actor_name(obj):
+        return (obj.actor.name or obj.actor.email) if obj.actor else None
+
+    @staticmethod
+    def resolve_card_number(obj):
+        return obj.card.number
+
+    @staticmethod
+    def resolve_card_title(obj):
+        return obj.card.title
+
+    @staticmethod
+    def resolve_project_id(obj):
+        return obj.card.project_id
+
+
+class NotificationsOut(Schema):
+    unread: int
+    items: list[NotificationOut]

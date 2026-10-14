@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.db.models import F
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from ninja import File, Router, Status
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
@@ -20,7 +22,7 @@ from hubflow.timetracking.services import project_median_estimate
 
 from .activity import card_activity, record_card_changes, record_labels
 from .mentions import notify_mentions
-from .models import Attachment, Card, ChecklistItem, Column, Comment, Label
+from .models import Attachment, Card, ChecklistItem, Column, Comment, Label, Notification
 from .schemas import (
     ActivityOut,
     AttachmentOut,
@@ -37,6 +39,7 @@ from .schemas import (
     LabelIn,
     LabelOut,
     MoveIn,
+    NotificationsOut,
 )
 from .services import (
     card_queryset,
@@ -323,3 +326,30 @@ def delete_attachment(request, attachment_id: int):
 @router.get('/cards/{card_id}/activity', response=list[ActivityOut])
 def activity(request, card_id: int):
     return card_activity(get_object_or_404(Card, id=card_id))
+
+
+def notifications_payload(user):
+    """Não lidas primeiro, depois as mais recentes (até 50), e o total de não lidas para o sino."""
+    notes = Notification.objects.filter(user=user).select_related('actor', 'card')
+    items = notes.order_by(F('read_at').asc(nulls_first=True), '-created', '-id')[:50]
+    return {'unread': notes.filter(read_at__isnull=True).count(), 'items': list(items)}
+
+
+@router.get('/notifications', response=NotificationsOut)
+def list_notifications(request):
+    return notifications_payload(request.user)
+
+
+@router.post('/notifications/read-all', response=NotificationsOut)
+def read_all_notifications(request):
+    Notification.objects.filter(user=request.user, read_at__isnull=True).update(read_at=timezone.now())
+    return notifications_payload(request.user)
+
+
+@router.post('/notifications/{notification_id}/read', response=NotificationsOut)
+def read_notification(request, notification_id: int):
+    note = get_object_or_404(Notification, id=notification_id, user=request.user)
+    if note.read_at is None:
+        note.read_at = timezone.now()
+        note.save(update_fields=['read_at', 'modified'])
+    return notifications_payload(request.user)

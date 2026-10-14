@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 
-from .notifications import card_link
+from .notifications import actor_name, card_link, card_owners, notify_in_app
 
 MENTION = re.compile(r'@([\w.+-]+@[\w.-]+\.\w+|[\w.-]+)')
 
@@ -19,11 +19,15 @@ def find_mentioned(text, author):
 
 
 def notify_mentions(comment):
-    """Guarda as menções e avisa cada mencionado por e-mail."""
+    """Guarda as menções, avisa cada mencionado por e-mail e no sino, e os donos do card no sino."""
     mentioned = find_mentioned(comment.text, comment.author)
     comment.mentions.set(mentioned)
     card = comment.card
-    author = comment.author.name or comment.author.email
+    author = actor_name(comment.author)
+    title = f'#{card.number} {card.title}'
+    notified = notify_in_app(mentioned, 'mention', card, f'{author} mencionou você em {title}', comment.author)
+    owners = [u for u in card_owners(card) if u and u.id not in notified]
+    notify_in_app(owners, 'comment', card, f'{author} comentou em {title}', comment.author)
     for user in mentioned:
         where = f'{card.project.client.name} / {card.project.name}'
         body = (

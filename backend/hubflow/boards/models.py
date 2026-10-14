@@ -166,3 +166,27 @@ class CardEvent(UuidModel, TimeStampedModel):
 
     def __str__(self):
         return f'{self.card} {self.kind}'
+
+
+class Notification(UuidModel, TimeStampedModel):
+    """Aviso no app (sino): menção, comentário em card seu ou de que é responsável, card seu movido."""
+
+    KINDS = {'mention': 'Menção', 'comment': 'Comentário', 'moved': 'Card movido'}
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
+    )
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='notifications')
+    kind = models.CharField('tipo', max_length=20, choices=KINDS)
+    text = models.CharField('texto', max_length=300)
+    read_at = models.DateTimeField('lida em', null=True, blank=True)
+
+    class Meta:
+        ordering = ('-created', '-id')
+        indexes = [models.Index(fields=['user', 'read_at'])]
+        verbose_name = 'notificação'
+        verbose_name_plural = 'notificações'
+
+    def __str__(self):
+        return f'{self.get_kind_display()} para {self.user}'

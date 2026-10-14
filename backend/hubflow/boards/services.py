@@ -10,7 +10,7 @@ from hubflow.sprints.models import Sprint
 
 from .activity import record
 from .models import Card, CardMove, Column
-from .notifications import notify
+from .notifications import actor_name, card_owners, notify, notify_in_app
 
 logger = logging.getLogger(__name__)
 CLOSED_COLUMNS = (Column.DONE, Column.ARCHIVED)
@@ -119,6 +119,9 @@ def move_card(card, column, position=None, user=None, sync=True):
     if sync:
         sync_issue_state(card, from_column, column)
     broadcast.card_moved(card, from_column, column, user)
+    if column != from_column:
+        text = f'{actor_name(user)} moveu #{card.number} {card.title} para {Column(column).label}'
+        notify_in_app(card_owners(card), 'moved', card, text, user)
     if column == Column.DONE:
         notify('done', card)
     elif column not in (from_column, Column.ARCHIVED):

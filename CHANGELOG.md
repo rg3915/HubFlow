@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Adicionado
+
+* Notificações no app: menção, comentário em card seu ou de que é responsável e card seu movido por outra pessoa (sem duplicar, sem avisar quem fez); GET /api/notifications (não lidas primeiro + total), POST /api/notifications/{id}/read e /read-all. #114
+
 ### Alterado
 
 * Refactor: UuidModel (uuid7, campo `uuid` único além do id) em todos os models e só TimeStampedModel (created/modified) no lugar de CreatedModel; User.date_joined vira created; a API expõe o uuid. #134
