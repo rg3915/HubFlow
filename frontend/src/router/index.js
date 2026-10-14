@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import AutomationsView from '../views/AutomationsView.vue'
 import ChangePasswordView from '../views/ChangePasswordView.vue'
 import ClientFormView from '../views/ClientFormView.vue'
 import ClientsView from '../views/ClientsView.vue'
@@ -32,6 +33,7 @@ const routes = [
   { path: '/projects/:id/sprints', name: 'project-sprints', component: SprintsView, meta: { title: 'Sprints' } },
   { path: '/projects/:id/integration', name: 'project-integration', component: IntegrationView, meta: { title: 'Integração', perm: 'projects.change_project' } },
   { path: '/projects/:id/fields', name: 'project-fields', component: FieldsView, meta: { title: 'Campos', perm: 'projects.change_project' } },
+  { path: '/projects/:id/automations', name: 'project-automations', component: AutomationsView, meta: { title: 'Automações', perm: 'projects.change_project' } },
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto', perm: 'projects.change_project' } },
   { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos', payments: true } },

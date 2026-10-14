@@ -14,6 +14,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * SLA por coluna: horas máximas por coluna do projeto (GET/PUT /api/projects/{id}/sla); o card guarda quando entrou na coluna e informa o SLA (prazo e se estourou) no quadro e na API. #151
 * Verificação periódica (comando check_sla e serviço scheduler no compose, a cada 15 min): SLA estourado dispara o gatilho das automações uma vez por card/coluna e entra no histórico; prazo vencido avisa o responsável no sino uma vez por prazo. #152
 * CLI: hubflow automation list/add/toggle/remove (--when created|entered:COLUNA|sla[:COLUNA], --then move:COLUNA|assign:EMAIL|label:NOME|notify) e hubflow project sla. #153
+* Tela de automações do projeto (Quadro › Automações): lista com ligar/desligar e excluir, criação no formato "Quando … → …"; histórico do card mostra automações e SLA estourado. #154
 
 ### Alterado
 

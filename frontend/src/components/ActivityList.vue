@@ -15,6 +15,8 @@ function describe(item) {
     case 'assignee': return d.assignee ? `definiu ${d.assignee} como responsável` : 'tirou o responsável'
     case 'due_date': return d.due_date ? `definiu o prazo para ${new Date(d.due_date + 'T00:00').toLocaleDateString('pt-BR')}` : 'tirou o prazo'
     case 'fields': return Object.entries(d.changes).map(([name, [before, after]]) => `${name}: ${fieldText(before)} → ${fieldText(after)}`).join('; ')
+    case 'automation': return `automação “${d.name}”: ${d.description.split('→')[1]?.trim() || d.description}`
+    case 'sla_breached': return `SLA de ${columns[d.column]} estourado (${d.hours}h)`
     case 'labels': return d.labels.length ? `etiquetas: ${d.labels.join(', ')}` : 'tirou as etiquetas'
     default: return item.kind
   }
