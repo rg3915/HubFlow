@@ -14,6 +14,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Busca global na barra superior (Ctrl+K ou /), resultados agrupados com navegação por teclado; abre o card pela busca. #111
 * Permissões: permissões padrão do Django (view/add/change/delete) + use_cli e view_own_payments, papéis padrão (Administrador, Gerente, Desenvolvedor, Financeiro, Cliente, Leitura) e vínculo usuário↔cliente. #118
 * API de usuários, papéis e permissões (só quem gerencia usuários): listar, papéis, permissões por pessoa, clientes, ativar/desativar; /api/auth/me devolve papéis e permissões efetivas. #119
+* Permissões em clientes e projetos: sem clients.view_client só vê os clientes de que é membro; criar/editar/excluir exige as permissões padrão (403 com a permissão nomeada). #120
 
 ## [0.9.0] - 2026-10-14
 

@@ -5,6 +5,7 @@ from ninja.errors import HttpError
 from ninja.files import UploadedFile
 
 from hubflow.accounts.schemas import DetailOut
+from hubflow.permissions.services import visible_projects
 from hubflow.projects.models import Project
 from hubflow.realtime import broadcast
 from hubflow.sprints.models import Sprint
@@ -64,7 +65,7 @@ def project_sprint_or_400(project_id, sprint_id):
 
 @router.get('/projects/{project_id}/board', response=BoardOut)
 def board(request, project_id: int, archived: bool = False, sprint: int | None = None):
-    project = get_object_or_404(Project.objects.select_related('client'), id=project_id)
+    project = get_object_or_404(visible_projects(request.user), id=project_id)
     cards = card_queryset().filter(project=project).order_by('position', 'id')
     if sprint is not None:
         cards = cards.filter(sprint_id=sprint)

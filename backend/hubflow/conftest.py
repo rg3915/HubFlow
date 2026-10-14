@@ -7,7 +7,11 @@ from hubflow.accounts.models import Token
 
 @pytest.fixture
 def user(db):
-    return get_user_model().objects.create_user(email='ana@example.com', password='segredo123', name='Ana')
+    from django.contrib.auth.models import Group
+
+    ana = get_user_model().objects.create_user(email='ana@example.com', password='segredo123', name='Ana')
+    ana.groups.add(Group.objects.get(name='Administrador'))  # todas as permissões do catálogo, sem ser superusuário
+    return ana
 
 
 @pytest.fixture

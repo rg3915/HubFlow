@@ -26,8 +26,10 @@ def dev(db):
     return dev
 
 
-def test_me_devolve_papeis_e_permissoes_efetivas(api, user):
-    user.groups.add(Group.objects.get(name='Gerente'))
+def test_me_devolve_papeis_e_permissoes_efetivas(db):
+    manager = User.objects.create_user(email='ger@hubflow.com', password='x')
+    manager.groups.add(Group.objects.get(name='Gerente'))
+    api = HttpClient(headers={'Authorization': f'Bearer {Token.objects.create(user=manager).key}'})
 
     data = api.get('/api/auth/me').json()
 
@@ -49,9 +51,11 @@ def test_lista_usuarios_com_papeis_permissoes_e_clientes(admin_api, dev):
     assert row['is_active'] is True
 
 
-def test_quem_nao_gerencia_usuarios_recebe_403(api, dev):
-    assert api.get('/api/users/manage').status_code == 403
-    assert api.put(f'/api/users/{dev.id}/roles', {'roles': ['Gerente']}, **JSON).status_code == 403
+def test_quem_nao_gerencia_usuarios_recebe_403(dev):
+    dev_api = HttpClient(headers={'Authorization': f'Bearer {Token.objects.create(user=dev).key}'})
+
+    assert dev_api.get('/api/users/manage').status_code == 403
+    assert dev_api.put(f'/api/users/{dev.id}/roles', {'roles': ['Gerente']}, **JSON).status_code == 403
 
 
 def test_atribui_papeis(admin_api, dev):

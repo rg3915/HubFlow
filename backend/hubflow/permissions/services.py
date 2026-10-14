@@ -58,3 +58,21 @@ def users_with_access():
         )
         .order_by('email')
     )
+
+
+def visible_clients(user):
+    """Com `clients.view_client` vê todos; sem, só os clientes de que é membro."""
+    from hubflow.clients.models import Client
+
+    if has_perm(user, 'clients.view_client'):
+        return Client.objects.all()
+    return Client.objects.filter(memberships__user=user)
+
+
+def visible_projects(user):
+    from hubflow.projects.models import Project
+
+    projects = Project.objects.select_related('client')
+    if has_perm(user, 'clients.view_client'):
+        return projects
+    return projects.filter(client__memberships__user=user)
