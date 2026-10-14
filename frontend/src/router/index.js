@@ -12,6 +12,7 @@ import LabelsView from '../views/LabelsView.vue'
 import LoginView from '../views/LoginView.vue'
 import PaymentsView from '../views/PaymentsView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import ReportsView from '../views/ReportsView.vue'
 import PublicFormView from '../views/PublicFormView.vue'
 import UsersView from '../views/UsersView.vue'
 import ProjectFormView from '../views/ProjectFormView.vue'
@@ -36,6 +37,7 @@ const routes = [
   { path: '/projects/:id/automations', name: 'project-automations', component: AutomationsView, meta: { title: 'Automações', perm: 'projects.change_project' } },
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto', perm: 'projects.change_project' } },
+  { path: '/reports', name: 'reports', component: ReportsView, meta: { title: 'Relatórios' } },
   { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos', payments: true } },
   { path: '/settings/users', name: 'users', component: UsersView, meta: { title: 'Usuários e permissões', perm: 'accounts.change_user' } },
   { path: '/settings/profile', name: 'profile', component: ProfileView, meta: { title: 'Perfil' } },

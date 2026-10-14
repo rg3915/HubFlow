@@ -111,6 +111,7 @@ REDIS_URL = config('REDIS_URL', default='redis://localhost:6379/0')
 # Presença no quadro: segundos sem heartbeat até a pessoa sumir da lista.
 PRESENCE_TTL_SECONDS = config('PRESENCE_TTL_SECONDS', default=30, cast=int)
 CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
+CORS_EXPOSE_HEADERS = ['Content-Disposition']  # nome do arquivo nos downloads (PDF dos relatórios)
 
 MAILERS = {
     'default': {

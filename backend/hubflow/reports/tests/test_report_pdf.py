@@ -33,3 +33,9 @@ def test_html_do_relatorio_tem_os_numeros(api, user, loja):
 
 def test_pdf_respeita_as_mesmas_validacoes(api):
     assert api.get('/api/reports/pdf', {'period': 'ano', 'date': '2026-10-01'}).status_code == 400
+
+
+def test_navegador_le_o_nome_do_arquivo(api, loja, settings):
+    response = api.get('/api/reports/pdf', PARAMS | {'client': loja.client_id}, headers={'Origin': settings.FRONTEND_URL})
+
+    assert response['Access-Control-Expose-Headers'] == 'Content-Disposition'
