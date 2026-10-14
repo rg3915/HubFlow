@@ -1,12 +1,14 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from ninja import Router, Status
 
 from hubflow.accounts.schemas import DetailOut
 from hubflow.boards.services import archive_project
 from hubflow.clients.models import Client
+from hubflow.sprints.models import Milestone, Sprint
 
 from .models import Project
-from .schemas import ProjectIn, ProjectOut
+from .schemas import ProjectFullIn, ProjectFullOut, ProjectIn, ProjectOut
 
 router = Router(tags=['projects'])
 
@@ -35,6 +37,33 @@ def create_project(request, data: ProjectIn):
     if message := conflict(data):
         return Status(400, {'detail': message})
     return Status(201, Project.objects.create(**data.dict()))
+
+
+@router.post('/full', response={201: ProjectFullOut, 400: DetailOut})
+def create_project_full(request, data: ProjectFullIn):
+    """Cliente (se não existir) + projeto + sprint 1 (+ milestone opcional) numa transação só."""
+    with transaction.atomic():
+        client = Client.objects.filter(name__iexact=data.client_name).first()
+        if client is None:
+            client = Client.objects.create(name=data.client_name, emails=data.client_emails)
+        project_data = ProjectIn(
+            client_id=client.id,
+            name=data.name,
+            provider=data.provider,
+            owner=data.owner,
+            repo=data.repo,
+            description=data.description,
+            emails=data.emails,
+        )
+        if message := conflict(project_data):
+            transaction.set_rollback(True)
+            return Status(400, {'detail': message})
+        project = Project.objects.create(**project_data.dict())
+        milestone = (
+            Milestone.objects.create(project=project, title=data.milestone_title) if data.milestone_title else None
+        )
+        sprint = Sprint.objects.create(project=project, milestone=milestone)
+    return Status(201, {'client': client, 'project': project, 'sprint': sprint, 'milestone': milestone})
 
 
 @router.get('/{project_id}', response=ProjectOut)

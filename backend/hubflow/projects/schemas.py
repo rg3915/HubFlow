@@ -3,7 +3,7 @@ from typing import Literal
 from ninja import Schema
 from pydantic import field_validator
 
-from hubflow.clients.schemas import emails_validos
+from hubflow.clients.schemas import ClientOut, emails_validos
 
 
 class ProjectIn(Schema):
@@ -41,3 +41,35 @@ class ProjectOut(Schema):
     @staticmethod
     def resolve_client_name(obj):
         return obj.client.name
+
+
+class ProjectFullIn(Schema):
+    client_name: str
+    client_emails: list[str] = []
+    name: str
+    provider: Literal['github', 'gitlab']
+    owner: str
+    repo: str
+    description: str = ''
+    emails: list[str] = []
+    milestone_title: str = ''
+
+    _emails = field_validator('emails', 'client_emails')(emails_validos)
+
+
+class SprintBriefOut(Schema):
+    id: int
+    number: int
+    name: str
+
+
+class MilestoneBriefOut(Schema):
+    id: int
+    title: str
+
+
+class ProjectFullOut(Schema):
+    client: ClientOut
+    project: ProjectOut
+    sprint: SprintBriefOut
+    milestone: MilestoneBriefOut | None

@@ -35,9 +35,27 @@ def create(
     provider: Provider = typer.Option(..., help='github ou gitlab.'),
     repo: str = typer.Option(..., help='Repositório no formato owner/repo.'),
     emails: str = typer.Option('', help='E-mails de notificação separados por vírgula.'),
+    full: bool = typer.Option(False, '--full', help='Cria também o cliente (se não existir) e a sprint 1.'),
+    milestone: str = typer.Option('', help='Com --full: título do milestone da sprint 1 (opcional).'),
 ):
     """Cria um projeto ligado a um repositório."""
     owner, repo_name = split_repo(repo)
+    if full:
+        body = {
+            'client_name': client,
+            'name': name,
+            'provider': provider.value,
+            'owner': owner,
+            'repo': repo_name,
+            'emails': parse_emails(emails),
+            'milestone_title': milestone,
+        }
+        created = request('POST', '/projects/full', json=body).json()
+        project, sprint = created['project'], created['sprint']
+        extra = f' e milestone {created["milestone"]["title"]}' if created['milestone'] else ''
+        where = f'{created["client"]["name"]} com a Sprint {sprint["number"]}{extra}'
+        typer.echo(f'Projeto #{project["id"]} {project["name"]} criado em {where}.')
+        return
     owner_client = find_client(client)
     body = {
         'client_id': owner_client['id'],
