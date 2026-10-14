@@ -51,6 +51,20 @@ def logout():
 
 
 @app.command()
+def backup(list_only: bool = typer.Option(False, '--list', help='Só lista os backups já gerados.')):
+    """Gera um backup .sql do banco no servidor (só superusuário)."""
+    if list_only:
+        backups = request('GET', '/backups').json()
+        if not backups:
+            typer.echo('Nenhum backup gerado. Gere um com: hubflow backup')
+        for item in backups:
+            typer.echo(f'{item["filename"]}  {item["size"]} bytes')
+        return
+    item = request('POST', '/backups').json()
+    typer.echo(f'Backup gerado: {item["filename"]} ({item["size"]} bytes)')
+
+
+@app.command()
 def timesheets(
     project: str = typer.Option('', help='Só este projeto (padrão: todos).'),
     limit: int = typer.Option(10, help='Quantas entradas mostrar.'),

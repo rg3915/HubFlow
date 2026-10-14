@@ -61,6 +61,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'hubflow.wsgi.application'
 
 DATABASES = {'default': config('DATABASE_URL', cast=dburl)}
+DATABASES['default']['TEST'] = {'NAME': config('TEST_DB_NAME', default='test_hubflow')}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
