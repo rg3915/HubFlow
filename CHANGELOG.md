@@ -40,3 +40,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API: iniciar card e histórico de movimentações. #30
 * API: editar, excluir e arquivar card. #31
 * CLI: card create e card list. #32
+* CLI: card move e card start. #33
