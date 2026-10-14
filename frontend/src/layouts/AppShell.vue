@@ -42,6 +42,9 @@ const sidebarOpen = ref(false)
         <RouterLink to="/clients" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
           Todos os clientes
         </RouterLink>
+        <RouterLink to="/projects" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
+          Todos os projetos
+        </RouterLink>
         <template v-if="clientsStore.tree.length">
           <div v-for="client in clientsStore.tree" :key="client.id" class="mb-3">
             <RouterLink

@@ -33,3 +33,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: client create e client list. #23
 * CLI: project create e project list. #24
 * Tela de clientes. #25
+* Tela de projetos. #26

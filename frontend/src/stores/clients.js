@@ -26,5 +26,13 @@ export const useClientsStore = defineStore('clients', {
       await this.load()
       return saved
     },
+    async saveProject(id, data) {
+      const token = useAuthStore().token
+      const saved = id
+        ? await api(`/projects/${id}`, { method: 'PUT', body: data, token })
+        : await api('/projects', { method: 'POST', body: data, token })
+      await this.load()
+      return saved
+    },
   },
 })
