@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Breadcrumb from '../components/Breadcrumb.vue'
+import GlobalSearch from '../components/GlobalSearch.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { useAuthStore } from '../stores/auth'
@@ -106,7 +107,8 @@ function toggleSidebar() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
         </button>
         <Breadcrumb />
-        <div class="ml-auto flex items-center gap-2">
+        <div class="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2">
+          <GlobalSearch class="hidden md:block" />
           <ThemeToggle />
           <UserMenu />
         </div>

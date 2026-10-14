@@ -19,6 +19,16 @@ watch(
   { immediate: true },
 )
 watch(projectId, (id) => board.connect(id), { immediate: true })
+// Chegou pela busca (?card=N): abre o painel do card assim que o quadro carregar.
+watch(
+  () => [board.columns.length, route.query.card],
+  () => {
+    const number = Number(route.query.card)
+    if (!number || !board.columns.length) return
+    const found = board.columns.flatMap((c) => c.cards).find((c) => c.number === number)
+    if (found) board.select(found)
+  },
+)
 onBeforeUnmount(() => board.disconnect())
 
 function filterSprint(event) {
