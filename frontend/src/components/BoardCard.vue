@@ -1,8 +1,27 @@
 <script setup>
+import { computed } from 'vue'
 import { useBoardStore } from '../stores/board'
 
-defineProps({ card: { type: Object, required: true } })
+const props = defineProps({ card: { type: Object, required: true } })
 const board = useBoardStore()
+
+const due = computed(() => {
+  if (!props.card.due_date) return null
+  const date = new Date(props.card.due_date + 'T00:00')
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')
+})
+
+const initials = computed(() => {
+  const who = props.card.assignee
+  if (!who) return null
+  const source = who.name || who.email
+  return source
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0].toUpperCase())
+    .join('')
+})
 </script>
 
 <template>
@@ -14,7 +33,33 @@ const board = useBoardStore()
     @click="board.select(card)"
     @keydown.enter="board.select(card)"
   >
+    <div v-if="card.labels?.length" class="mb-1.5 flex flex-wrap gap-1">
+      <span
+        v-for="label in card.labels"
+        :key="label.id"
+        class="rounded-full px-1.5 text-[11px] font-medium leading-4 text-white"
+        :style="{ background: label.color }"
+      >
+        {{ label.name }}
+      </span>
+    </div>
     <p class="leading-snug">{{ card.title }}</p>
-    <p class="mt-1 text-[13px] text-muted tabular-nums">#{{ card.number }}</p>
+    <div class="mt-1.5 flex items-center gap-2 text-[13px] text-muted tabular-nums">
+      <span>#{{ card.number }}</span>
+      <span v-if="due" :class="card.is_overdue ? 'rounded px-1 font-medium text-danger' : ''" :title="card.is_overdue ? 'Atrasado' : 'Prazo'">
+        {{ card.is_overdue ? '! ' : '' }}{{ due }}
+      </span>
+      <span v-if="card.checklist?.total" :title="`Checklist: ${card.checklist.done} de ${card.checklist.total}`">
+        ☑ {{ card.checklist.done }}/{{ card.checklist.total }}
+      </span>
+      <span v-if="card.attachments_count" :title="`${card.attachments_count} anexo(s)`">📎 {{ card.attachments_count }}</span>
+      <span
+        v-if="initials"
+        class="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-surface-2 text-[11px] font-medium text-text"
+        :title="card.assignee.name || card.assignee.email"
+      >
+        {{ initials }}
+      </span>
+    </div>
   </article>
 </template>

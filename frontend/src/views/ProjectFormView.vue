@@ -96,7 +96,7 @@ async function submit() {
         <legend class="px-1 font-medium">Avisos por e-mail</legend>
         <div>
           <label class="label" for="emails">Quem recebe</label>
-          <input id="emails" v-model="form.emails" class="field" type="text" placeholder="dev@empresa.com, gerente@empresa.com" />
+          <input id="emails" v-model="form.emails" class="field" type="text" placeholder="dev@hubflow.com, gerente@hubflow.com" />
           <p class="mt-1 text-muted">Opcional. Vazio = usa os e-mails do cliente.</p>
         </div>
         <div class="mt-3 space-y-1.5">

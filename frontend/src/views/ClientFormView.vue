@@ -48,7 +48,7 @@ async function submit() {
       </div>
       <div>
         <label class="label" for="emails">E-mails de notificação</label>
-        <input id="emails" v-model="emails" class="field" type="text" placeholder="ana@empresa.com, bruno@empresa.com" />
+        <input id="emails" v-model="emails" class="field" type="text" placeholder="ana@hubflow.com, bruno@hubflow.com" />
         <p class="mt-1 text-muted">Opcional. Separe vários e-mails por vírgula. Os projetos sem e-mails usam estes.</p>
       </div>
       <label v-if="id" class="flex items-center gap-2">

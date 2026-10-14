@@ -18,6 +18,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI: card comment, label, assign e due. #57
 * Painel do card: comentários, @menções, etiquetas, prazo e responsável. #58
 * Painel do card: checklist, anexos e atividade. #59
+* Quadro: etiquetas, prazo, responsável e progresso no card; tela de etiquetas do projeto. #60
 
 ## [0.2.0] - 2026-10-13
 

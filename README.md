@@ -92,7 +92,7 @@ Todas as rotas, exceto login e redefinição de senha, exigem o cabeçalho `Auth
 # login
 curl -X POST localhost:8000/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"email": "voce@exemplo.com", "password": "sua-senha"}'
+  -d '{"email": "voce@hubflow.com", "password": "sua-senha"}'
 # → {"token": "..."}
 
 # clientes e projetos
@@ -135,13 +135,13 @@ hubflow login                                   # pede e-mail e senha; guarda o 
 hubflow whoami
 hubflow logout
 
-hubflow client create "ACME" --emails ti@acme.com
+hubflow client create "ACME" --emails ti@hubflow.com
 hubflow client list
 
 hubflow project create "Loja" --client ACME --provider github --repo acme/loja
 hubflow project list [--client ACME]
 hubflow project notify Loja --off moved         # liga/desliga os avisos: created, moved, done
-hubflow project emails Loja --set dev@acme.com  # quem recebe; vazio = e-mails do cliente
+hubflow project emails Loja --set dev@hubflow.com  # quem recebe; vazio = e-mails do cliente
 
 hubflow card create "Corrigir login" --project Loja --description "Erro 500"
 hubflow card list --project Loja [--column doing]
