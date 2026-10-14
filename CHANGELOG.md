@@ -22,3 +22,4 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * CLI hubflow: pacote e comando login. #12
 * CLI: whoami e logout. #13
 * Layout base com tema claro e escuro. #14
+* Tela de login. #15
