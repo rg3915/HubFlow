@@ -22,6 +22,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Convite por e-mail: POST /api/users/invite (accounts.add_user) cria a pessoa sem senha, com papéis e clientes, e envia o link para definir a senha (mesmo fluxo da redefinição). #125
 * Registro de alterações de permissões: convite, papéis, permissões por pessoa, clientes vinculados e situação guardam quem fez, quando, o antes e o depois; GET /api/users/changes (filtro ?user=) e admin. #126
 * Frontend respeita as permissões de /api/auth/me: menu, rotas, botões de criar/editar/excluir (clientes, projetos, cards, sprints, etiquetas, pagamentos), arrastar só os cards que a pessoa pode mover, painel do card só leitura para quem não pode editar. #127
+* Tela de usuários e permissões (/settings/users): lista com papéis, clientes e situação; painel com papéis, clientes vinculados, CLI sim/não, pagamentos (todos / só os seus / nenhum), permissões por pessoa (travadas as que vêm do papel), ativar/desativar, histórico e convite por e-mail. #128
 
 ## [0.9.0] - 2026-10-14
 

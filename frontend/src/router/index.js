@@ -10,6 +10,7 @@ import LabelsView from '../views/LabelsView.vue'
 import LoginView from '../views/LoginView.vue'
 import PaymentsView from '../views/PaymentsView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import UsersView from '../views/UsersView.vue'
 import ProjectFormView from '../views/ProjectFormView.vue'
 import ProjectView from '../views/ProjectView.vue'
 import ProjectsView from '../views/ProjectsView.vue'
@@ -31,6 +32,7 @@ const routes = [
   { path: '/projects/:id/labels', name: 'project-labels', component: LabelsView, meta: { title: 'Etiquetas' } },
   { path: '/projects/:id/edit', name: 'project-edit', component: ProjectFormView, meta: { title: 'Editar projeto', perm: 'projects.change_project' } },
   { path: '/payments', name: 'payments', component: PaymentsView, meta: { title: 'Pagamentos', payments: true } },
+  { path: '/settings/users', name: 'users', component: UsersView, meta: { title: 'Usuários e permissões', perm: 'accounts.change_user' } },
   { path: '/settings/profile', name: 'profile', component: ProfileView, meta: { title: 'Perfil' } },
   { path: '/settings/password', name: 'change-password', component: ChangePasswordView, meta: { title: 'Trocar senha' } },
   { path: '/login', name: 'login', component: LoginView, meta: { ...auth, title: 'Entrar' } },

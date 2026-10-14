@@ -50,6 +50,9 @@ function toggleSidebar() {
         <RouterLink v-if="auth.seesPayments" to="/payments" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
           Pagamentos
         </RouterLink>
+        <RouterLink v-if="auth.can('accounts.change_user')" to="/settings/users" class="mb-2 block rounded-[var(--radius-control)] px-2 py-1 text-muted hover:bg-surface-2 hover:text-text" active-class="bg-surface-2 text-text">
+          Usuários
+        </RouterLink>
         <template v-if="clientsStore.tree.length">
           <div v-for="client in clientsStore.tree" :key="client.id" class="mb-3">
             <RouterLink
