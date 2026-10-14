@@ -1,0 +1,35 @@
+[project]
+name = "hubflow-backend"
+version = "0.1.0"
+description = "HubFlow: gestão de projetos e fluxos por cliente."
+requires-python = ">=3.14"
+dependencies = [
+    "django==6.1.2",
+    "django-ninja",
+    "django-cors-headers",
+    "psycopg[binary]",
+    "python-decouple",
+    "dj-database-url",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-django",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "hubflow.settings"
+python_files = ["test_*.py"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 119
+exclude = [".venv", "migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.format]
+quote-style = "single"
