@@ -11,8 +11,10 @@ def start_timer(card, user):
     """Abre o cronômetro do card (RN-70). RN-71: se o mesmo usuário parou há menos de 15 min no mesmo
     projeto, o novo começa onde o anterior terminou, sem buraco entre eles."""
     started_at = timezone.now()
+    # Só cronômetros já encerrados contam; lançamentos manuais têm horário fictício (09:00 do dia).
     last = (
-        TimeEntry.objects.filter(user=user, card__project_id=card.project_id, ended_at__isnull=False)
+        TimeEntry.objects.filter(user=user, card__project_id=card.project_id, is_manual=False)
+        .filter(ended_at__isnull=False, ended_at__lte=started_at)
         .order_by('-ended_at')
         .first()
     )

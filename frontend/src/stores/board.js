@@ -17,6 +17,7 @@ export const useBoardStore = defineStore('board', {
     activity: [],
     sprints: [],
     sprintId: null,
+    time: { entries: [], total_hours: 0, running: null },
   }),
   actions: {
     async load(projectId, { archived = false, sprintId = null } = {}) {
@@ -50,14 +51,36 @@ export const useBoardStore = defineStore('board', {
     async select(card) {
       this.selected = card
       this.comments = this.checklist = this.attachments = this.activity = []
+      this.time = { entries: [], total_hours: 0, running: null }
       if (!card) return
       const token = useAuthStore().token
-      ;[this.comments, this.checklist, this.attachments, this.activity] = await Promise.all([
+      ;[this.comments, this.checklist, this.attachments, this.activity, this.time] = await Promise.all([
         api(`/cards/${card.id}/comments`, { token }),
         api(`/cards/${card.id}/checklist`, { token }),
         api(`/cards/${card.id}/attachments`, { token }),
         api(`/cards/${card.id}/activity`, { token }),
+        api(`/cards/${card.id}/time`, { token }),
       ])
+    },
+    async refreshTime() {
+      this.time = await api(`/cards/${this.selected.id}/time`, { token: useAuthStore().token })
+      this.selected.time = { hours: this.time.total_hours, running: Boolean(this.time.running) }
+    },
+    async startTimer() {
+      await api(`/cards/${this.selected.id}/timer/start`, { method: 'POST', token: useAuthStore().token })
+      await this.refreshTime()
+    },
+    async stopTimer() {
+      await api(`/cards/${this.selected.id}/timer/stop`, { method: 'POST', token: useAuthStore().token })
+      await this.refreshTime()
+    },
+    async logHours(body) {
+      await api(`/cards/${this.selected.id}/time-entries`, { method: 'POST', body, token: useAuthStore().token })
+      await this.refreshTime()
+    },
+    async deleteTimeEntry(entry) {
+      await api(`/time-entries/${entry.id}`, { method: 'DELETE', token: useAuthStore().token })
+      await this.refreshTime()
     },
     async refreshActivity() {
       this.activity = await api(`/cards/${this.selected.id}/activity`, { token: useAuthStore().token })

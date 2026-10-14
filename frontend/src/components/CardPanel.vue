@@ -6,6 +6,7 @@ import AttachmentsBox from './AttachmentsBox.vue'
 import ChecklistBox from './ChecklistBox.vue'
 import CommentBox from './CommentBox.vue'
 import LabelPicker from './LabelPicker.vue'
+import TimeBox from './TimeBox.vue'
 
 const board = useBoardStore()
 const title = ref('')
@@ -100,6 +101,11 @@ async function remove() {
           <button type="button" class="btn btn-ghost ml-auto text-danger" @click="remove">Excluir</button>
         </div>
       </form>
+
+      <section class="border-b border-border p-4">
+        <h3 class="label">Tempo</h3>
+        <TimeBox />
+      </section>
 
       <section class="border-b border-border p-4">
         <h3 class="label">Etiquetas</h3>

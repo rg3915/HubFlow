@@ -98,3 +98,21 @@ def test_para_o_cronometro(card, ana):
 
 def test_parar_sem_cronometro_aberto_retorna_none(card):
     assert stop_timer(card) is None
+
+
+def test_lancamento_manual_nao_puxa_a_continuidade(card, ana):
+    # RN-71 vale só para cronômetros: um lançamento manual (09:00–09:30 de hoje) não é "parou há pouco".
+    TimeEntry.objects.manual(card=card, user=ana, hours=0.5, date=timezone.localdate())
+
+    entry = start_timer(card, ana)
+
+    assert abs((timezone.now() - entry.started_at).total_seconds()) < 5
+
+
+def test_entrada_que_termina_no_futuro_nao_puxa_a_continuidade(card, ana):
+    future_end = timezone.now() + timedelta(hours=2)
+    TimeEntry.objects.create(card=card, user=ana, started_at=future_end - timedelta(hours=1), ended_at=future_end)
+
+    entry = start_timer(card, ana)
+
+    assert abs((timezone.now() - entry.started_at).total_seconds()) < 5
