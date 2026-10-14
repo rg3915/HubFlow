@@ -13,6 +13,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * API: iniciar/parar cronômetro, tempo do card e resumo de horas no quadro. #73
 * Lançamento manual de horas; só o dono edita/apaga a própria entrada. #74
 * Estimativa em horas e progresso gasto × estimado (mediana do projeto como fallback). #75
+* Exportação xlsx do timesheet por projeto e período (entradas, por dia, por mês, por sprint). #78
 
 ## [0.4.0] - 2026-10-14
 

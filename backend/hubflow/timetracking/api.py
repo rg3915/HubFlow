@@ -1,11 +1,17 @@
+from datetime import date
+
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from ninja import Router, Status
+from django.utils.text import slugify
+from ninja import Query, Router, Status
 from ninja.errors import HttpError
 
 from hubflow.accounts.schemas import DetailOut
 from hubflow.boards.models import Card
+from hubflow.projects.models import Project
 
+from .exports import timesheet_workbook
 from .models import TimeEntry
 from .schemas import CardTimeOut, ManualEntryIn, TimeEntryOut
 from .services import start_timer, stop_timer
@@ -73,3 +79,22 @@ def delete_entry(request, entry_id: int):
         return Status(400, {'detail': 'Pare o cronômetro antes de apagar.'})
     entry.delete()
     return Status(204, None)
+
+
+XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+
+@router.get('/projects/{project_id}/timesheet.xlsx', response={400: DetailOut})
+def timesheet_xlsx(
+    request,
+    project_id: int,
+    from_date: date | None = Query(None, alias='from'),
+    to_date: date | None = Query(None, alias='to'),
+):
+    project = get_object_or_404(Project, id=project_id)
+    if from_date and to_date and to_date < from_date:
+        return Status(400, {'detail': 'O fim do período não pode ser antes do início.'})
+    content = timesheet_workbook(project, from_date, to_date)
+    response = HttpResponse(content, content_type=XLSX)
+    response['Content-Disposition'] = f'attachment; filename="timesheet-{slugify(project.name)}.xlsx"'
+    return response
