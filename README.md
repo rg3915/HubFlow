@@ -10,6 +10,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Clientes** com lista de e-mails de notificação.
 - **Projetos** ligados a um repositório (`github` ou `gitlab`, `owner/repo`), com e-mails próprios; sem e-mails, valem os do cliente.
 - **Quadro kanban** por projeto: cards numerados por projeto (#1, #2…), arrastar e soltar entre colunas, reordenação, histórico de movimentações, arquivamento.
+- **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
 - **CLI `hubflow`** para criar clientes, projetos e cards, mover cards e iniciar tarefas por linha de comando.
@@ -117,7 +118,12 @@ curl -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/jso
 | `POST /api/projects/{id}/cards` | Cria card no Backlog |
 | `GET/PUT/DELETE /api/cards/{id}` | Card |
 | `POST /api/cards/{id}/move`, `/start`, `/archive` | Move, inicia (Em desenvolvimento), arquiva |
-| `GET /api/cards/{id}/history` | Movimentações |
+| `GET /api/cards/{id}/history`, `/activity` | Movimentações e linha do tempo completa |
+| `GET/POST /api/cards/{id}/comments`, `PUT/DELETE /api/comments/{id}` | Comentários (com @menções) |
+| `GET/POST /api/projects/{id}/labels`, `PUT/DELETE /api/labels/{id}`, `PUT /api/cards/{id}/labels` | Etiquetas |
+| `GET/POST /api/cards/{id}/checklist`, `PUT/DELETE /api/checklist/{id}`, `PUT .../checklist/order` | Checklist |
+| `GET/POST /api/cards/{id}/attachments`, `DELETE /api/attachments/{id}` | Anexos |
+| `GET /api/users` | Usuários ativos (responsáveis e menções) |
 
 A documentação interativa fica em http://localhost:8000/api/docs.
 
@@ -147,6 +153,10 @@ hubflow card create "Corrigir login" --project Loja --description "Erro 500"
 hubflow card list --project Loja [--column doing]
 hubflow card move 3 --project Loja --to qa [--position 0]
 hubflow card start 3 --project Loja              # move para Em desenvolvimento
+hubflow card comment 3 --project Loja "Pronto para QA, @bruno@hubflow.com"
+hubflow card label 3 --project Loja --add bug --remove ui
+hubflow card assign 3 --project Loja --to bruno@hubflow.com   # ou --clear
+hubflow card due 3 --project Loja 2026-10-20                  # ou "nenhum"
 ```
 
 Variáveis de ambiente: `HUBFLOW_URL` (padrão `http://localhost:8000`) e `HUBFLOW_TOKEN` (sobrescreve o arquivo de configuração).

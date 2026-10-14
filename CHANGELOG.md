@@ -6,7 +6,13 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-13
+
+Colaboração no card: comentários com @menções, etiquetas, prazo e responsável, checklist, anexos e histórico de atividade, na API, na CLI e no quadro.
+
 ### Adicionado
+
+#### Colaboração no card
 
 * Comentários no card. #50
 * @menções em comentários e GET /api/users. #51
@@ -19,6 +25,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Painel do card: comentários, @menções, etiquetas, prazo e responsável. #58
 * Painel do card: checklist, anexos e atividade. #59
 * Quadro: etiquetas, prazo, responsável e progresso no card; tela de etiquetas do projeto. #60
+* CHANGELOG 0.3.0. #61
 
 ## [0.2.0] - 2026-10-13
 
@@ -88,6 +95,7 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/rg3915/HubFlow/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rg3915/HubFlow/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rg3915/HubFlow/releases/tag/v0.1.0
