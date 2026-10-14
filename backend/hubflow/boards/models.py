@@ -5,6 +5,7 @@ from django.db import models, transaction
 from django.db.models import Max
 
 from hubflow.projects.models import Project
+from hubflow.sprints.models import Sprint
 
 
 class Column(models.TextChoices):
@@ -39,6 +40,8 @@ class Card(models.Model):
     column = models.CharField('coluna', max_length=10, choices=Column.choices, default=Column.BACKLOG)
     position = models.PositiveIntegerField('posição', default=0)  # RN-33
     labels = models.ManyToManyField(Label, blank=True, related_name='cards', verbose_name='etiquetas')
+    # RN-61: todo card pertence a uma sprint (o serviço garante; o banco aceita nulo só para dados antigos).
+    sprint = models.ForeignKey(Sprint, null=True, blank=True, on_delete=models.PROTECT, related_name='cards')
     due_date = models.DateField('prazo', null=True, blank=True)
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,

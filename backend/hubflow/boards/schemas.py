@@ -13,6 +13,7 @@ class CardIn(Schema):
     description: str = ''
     due_date: date | None = None
     assignee_id: int | None = None
+    sprint_id: int | None = None
 
     @field_validator('title')
     @classmethod
@@ -95,6 +96,12 @@ class AttachmentOut(Schema):
         return attachment.file.url
 
 
+class SprintBrief(Schema):
+    id: int
+    number: int
+    name: str
+
+
 class CardOut(Schema):
     id: int
     project_id: int
@@ -109,6 +116,7 @@ class CardOut(Schema):
     is_overdue: bool
     checklist: ChecklistSummary
     attachments_count: int
+    sprint: SprintBrief | None
 
     @staticmethod
     def resolve_attachments_count(card):

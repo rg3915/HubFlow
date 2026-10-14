@@ -12,6 +12,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Breadcrumb no cabeçalho. #109
 * Model Sprint numerada por projeto (e Milestone opcional). #62
 * Milestone opcional: regras e API. #63
+* Card pertence a uma sprint (escolhida ou criada automaticamente). #64
 
 ## [0.3.0] - 2026-10-13
 

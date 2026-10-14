@@ -3,13 +3,23 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 
+from hubflow.sprints.models import Sprint
+
 from .activity import record
 from .models import Card, CardMove, Column
 from .notifications import notify
 
 
+def resolve_sprint(project, sprint=None):
+    """RN-61: sprint informada → usa; senão a última aberta; se não houver, cria a próxima."""
+    if sprint is not None:
+        return sprint
+    return Sprint.objects.latest_open(project) or Sprint.objects.create(project=project)
+
+
 def create_card(project, user=None, **data):
-    """Cria o card no Backlog (RN-31) e avisa os destinatários."""
+    """Cria o card no Backlog (RN-31), na sprint certa (RN-61), e avisa os destinatários."""
+    data['sprint'] = resolve_sprint(project, data.get('sprint'))
     card = Card.objects.create(project=project, created_by=user, **data)
     record(card, 'created', user)
     notify('created', card)

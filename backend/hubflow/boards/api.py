@@ -6,6 +6,7 @@ from ninja.files import UploadedFile
 
 from hubflow.accounts.schemas import DetailOut
 from hubflow.projects.models import Project
+from hubflow.sprints.models import Sprint
 
 from .activity import card_activity, record_card_changes, record_labels
 from .mentions import notify_mentions
@@ -32,17 +33,30 @@ from .services import card_queryset, create_card, delete_card, move_card, renumb
 router = Router(tags=['boards'])
 
 
-@router.post('/projects/{project_id}/cards', response={201: CardOut})
+@router.post('/projects/{project_id}/cards', response={201: CardOut, 400: DetailOut})
 def add_card(request, project_id: int, data: CardIn):
     project = get_object_or_404(Project, id=project_id)
-    fields = data.dict(exclude={'assignee_id'}) | {'assignee': resolve_assignee(data.assignee_id)}
-    return Status(201, create_card(project, user=request.user, **fields))
+    sprint = project_sprint_or_400(project.id, data.sprint_id)
+    if isinstance(sprint, Status):
+        return sprint
+    fields = data.dict(exclude={'assignee_id', 'sprint_id'}) | {'assignee': resolve_assignee(data.assignee_id)}
+    return Status(201, create_card(project, user=request.user, sprint=sprint, **fields))
+
+
+def project_sprint_or_400(project_id, sprint_id):
+    """Sprint do próprio projeto, None quando não informada, ou a resposta 400."""
+    if sprint_id is None:
+        return None
+    sprint = Sprint.objects.filter(id=sprint_id, project_id=project_id).first()
+    return sprint or Status(400, {'detail': 'Use uma sprint deste projeto.'})
 
 
 @router.get('/projects/{project_id}/board', response=BoardOut)
-def board(request, project_id: int, archived: bool = False):
+def board(request, project_id: int, archived: bool = False, sprint: int | None = None):
     project = get_object_or_404(Project.objects.select_related('client'), id=project_id)
     cards = card_queryset().filter(project=project).order_by('position', 'id')
+    if sprint is not None:
+        cards = cards.filter(sprint_id=sprint)
     if not archived:  # RN-37
         cards = cards.exclude(column=Column.ARCHIVED)
     # Uma consulta só; o agrupamento por coluna é feito em memória.
@@ -78,13 +92,18 @@ def get_card(request, card_id: int):
     return get_object_or_404(card_queryset(), id=card_id)
 
 
-@router.put('/cards/{card_id}', response=CardOut)
+@router.put('/cards/{card_id}', response={200: CardOut, 400: DetailOut})
 def update_card(request, card_id: int, data: CardIn):
     card = get_object_or_404(Card, id=card_id)
     before = {'assignee_id': card.assignee_id, 'due_date': card.due_date}
     card.title, card.description, card.due_date = data.title, data.description, data.due_date
     card.assignee = resolve_assignee(data.assignee_id)
-    card.save(update_fields=['title', 'description', 'due_date', 'assignee', 'modified'])
+    if data.sprint_id is not None:
+        sprint = project_sprint_or_400(card.project_id, data.sprint_id)
+        if isinstance(sprint, Status):
+            return sprint
+        card.sprint = sprint
+    card.save(update_fields=['title', 'description', 'due_date', 'assignee', 'sprint', 'modified'])
     record_card_changes(card, request.user, before)
     return card
 
