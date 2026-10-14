@@ -269,6 +269,8 @@ uv run task lint
 
 `uv run task --list` mostra todos.
 
+No macOS, o PDF dos relatórios (WeasyPrint) precisa do pango: `brew install pango`. O `task test` já aponta para as bibliotecas do Homebrew; rodando `pytest` direto, exporte `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib`.
+
 ## Documentação
 
 - [docs/especificacao.md](docs/especificacao.md): conceitos, entregáveis, endpoints e CLI.

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>{{ title }}</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; @bottom-right { content: "página " counter(page) " de " counter(pages); font-size: 8pt; color: #78716c; } }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10pt; color: #1c1917; }
+  header { border-bottom: 2px solid #245e7d; padding-bottom: 8px; margin-bottom: 16px; }
+  header p { margin: 0; color: #78716c; }
+  h1 { font-size: 18pt; margin: 2px 0; }
+  h2 { font-size: 11pt; margin: 18px 0 6px; color: #245e7d; }
+  .kpis { display: flex; gap: 8px; }
+  .kpi { flex: 1; border: 1px solid #e7e5e4; border-radius: 6px; padding: 8px 10px; }
+  .kpi span { display: block; color: #78716c; font-size: 8.5pt; }
+  .kpi strong { font-size: 15pt; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; color: #78716c; font-weight: normal; font-size: 8.5pt; border-bottom: 1px solid #e7e5e4; padding: 4px 0; }
+  td { border-bottom: 1px solid #f5f5f4; padding: 4px 0; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .empty { color: #78716c; }
+  footer { margin-top: 24px; color: #a8a29e; font-size: 8pt; }
+</style>
+</head>
+<body>
+<header>
+  <p>HubFlow · {{ report.period.label }} de {{ report.period.start|date:"d/m/Y" }} a {{ report.period.end|date:"d/m/Y" }}</p>
+  <h1>{{ scope_name }}</h1>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><span>Horas registradas</span><strong>{{ report.hours.total }}h</strong></div>
+  <div class="kpi"><span>Cards criados</span><strong>{{ report.cards.created }}</strong></div>
+  <div class="kpi"><span>Cards concluídos</span><strong>{{ report.cards.done }}</strong></div>
+  <div class="kpi"><span>Dias até concluir (média)</span><strong>{{ report.cards.avg_days_to_done|default_if_none:"—" }}</strong></div>
+  <div class="kpi"><span>SLAs estourados</span><strong>{{ report.sla_breached }}</strong></div>
+</div>
+
+<h2>Horas por pessoa</h2>
+{% if report.hours.by_user %}
+<table>
+  <tr><th>Pessoa</th><th class="num">Horas</th></tr>
+  {% for row in report.hours.by_user %}<tr><td>{{ row.name }}</td><td class="num">{{ row.hours }}h</td></tr>{% endfor %}
+</table>
+{% else %}<p class="empty">Nenhuma hora registrada no período.</p>{% endif %}
+
+<h2>Cards com mais horas</h2>
+{% if report.hours.by_card %}
+<table>
+  <tr><th>Projeto</th><th>Card</th><th class="num">Horas</th></tr>
+  {% for row in report.hours.by_card %}<tr><td>{{ row.project }}</td><td>#{{ row.number }} {{ row.title }}</td><td class="num">{{ row.hours }}h</td></tr>{% endfor %}
+</table>
+{% else %}<p class="empty">Nenhum card com horas no período.</p>{% endif %}
+
+{% if report.billing %}
+<h2>Faturamento</h2>
+<table>
+  <tr><th>Recebido</th><th>Pendente</th></tr>
+  <tr><td>R$ {{ report.billing.received }}</td><td>R$ {{ report.billing.pending }}</td></tr>
+</table>
+{% endif %}
+
+<footer>Gerado em {{ generated|date:"d/m/Y H:i" }}.</footer>
+</body>
+</html>

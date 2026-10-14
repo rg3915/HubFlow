@@ -1,11 +1,13 @@
 from datetime import date
 
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from ninja import Router
 from ninja.errors import HttpError
 
 from hubflow.permissions.services import has_perm, visible_clients, visible_payments, visible_projects
 
+from .pdf import file_name, render_report_pdf
 from .schemas import ReportOut
 from .services import PERIODS, build_report, period_bounds
 
@@ -56,3 +58,19 @@ def get_report(
     end: date | None = None,
 ):
     return report_for(request.user, client, project, period, date, start, end)
+
+
+@router.get('/pdf')
+def get_report_pdf(
+    request,
+    client: int | None = None,
+    project: int | None = None,
+    period: str | None = None,
+    date: date | None = None,
+    start: date | None = None,
+    end: date | None = None,
+):
+    report = report_for(request.user, client, project, period, date, start, end)
+    response = HttpResponse(render_report_pdf(report), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file_name(report)}"'
+    return response
