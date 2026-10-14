@@ -68,8 +68,19 @@ Numeradas para serem citadas em issues, testes e commits (ex.: `RN-07`).
 
 ## Faturamento (entregável 14)
 
-- **RN-80** Pagamento pertence a uma sprint. Tempo gasto = soma das entradas de tempo dos cards da sprint.
+- **RN-80** Pagamento pertence a um projeto; a sprint é opcional. Tempo gasto = entradas da sprint ou, sem sprint, as do projeto dentro do período (mês).
 - **RN-81** Status `pendente` por padrão; "pagar" marca `pago` com a data de hoje; "copiar" duplica como pendente.
+
+## Permissões (entregável 17)
+
+- **RN-90** Usam-se as permissões padrão do Django (`view/add/change/delete`); só existem duas específicas: `permissions.use_cli` e `permissions.view_own_payments`. Superusuário tem todas.
+- **RN-91** Papéis padrão (grupos): Administrador, Gerente, Desenvolvedor, Financeiro, Cliente e Leitura. Permissões por pessoa somam às do papel.
+- **RN-92** Sem `clients.view_client`, a pessoa só vê os clientes de que é membro e os projetos, cards, sprints e etiquetas deles; o resto responde 404.
+- **RN-93** Sem `boards.change_card`/`delete_card`, a pessoa só edita, move, exclui e arquiva os próprios cards (criado por ela ou com ela de responsável). Anexos seguem a regra do card; apagar comentário de outro exige `boards.delete_comment`.
+- **RN-94** Pagamentos: `billing.view_payment` vê todos, `view_own_payments` só os dos seus clientes, sem nenhuma das duas não vê; criar, editar/pagar/copiar e excluir exigem `add/change/delete_payment`.
+- **RN-95** O login pela CLI (`X-HubFlow-Client: cli`) exige `use_cli`; o token da CLI deixa de valer se a permissão for retirada.
+- **RN-96** O convite cria a pessoa sem senha e manda o link para defini-la (mesmo fluxo da redefinição, RN-04).
+- **RN-97** Toda mudança de papel, permissão por pessoa, vínculo, situação ou convite fica registrada com quem fez, quando, o antes e o depois.
 
 ## Versionamento
 

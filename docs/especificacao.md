@@ -32,7 +32,7 @@ Cada entregável é um milestone no GitHub. A versão do CHANGELOG avança a cad
 | 7 | Campos personalizados e formulários | 1.x | |
 | 8 | Automações e SLA | 1.x | |
 | 10 | Relatórios e métricas (PDF por período, envio por e-mail) | 1.x | a definir |
-| 17 | Permissões (papéis, permissões por pessoa, clientes vinculados, CLI, pagamentos, tela de gestão) | 1.x | |
+| 17 | Permissões (papéis, permissões por pessoa, clientes vinculados, CLI, pagamentos, tela de gestão) | 0.10.0 | concluído |
 | 11 | Polimento: busca global, notificações no app, backup .sql, S3, taskipy | 1.x | |
 | 16 | Mobile (2.5): layout responsivo | 2.5 | extra no final |
 

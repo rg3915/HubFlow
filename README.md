@@ -19,6 +19,7 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 - **Faturamento**: pagamentos por sprint ou por mês (valor/hora × horas registradas ou valor fechado), NF, emissão, pagamento, pendente/pago, resumo por cliente e por mês com gráficos.
 - **Colaboração no card**: comentários com @menções (aviso por e-mail), etiquetas por projeto, prazo e responsável, checklist, anexos e histórico de atividade.
 - **Notificações por e-mail** para uma ou mais pessoas, configuráveis por cliente e por projeto (card criado, movido, concluído).
+- **Permissões**: papéis padrão (Administrador, Gerente, Desenvolvedor, Financeiro, Cliente, Leitura) com as permissões do Django, permissões extras por pessoa, vínculo pessoa ↔ cliente (quem não vê todos só enxerga os seus), uso da CLI e visibilidade de pagamentos controlados, convite por e-mail, histórico das alterações e tela de gestão de usuários.
 - **API REST** (Django Ninja) com autenticação por token, documentada em `/api/docs`.
 - **CLI `hubflow`** para criar clientes, projetos e cards, mover cards e iniciar tarefas por linha de comando.
 - **Tema claro e escuro**.

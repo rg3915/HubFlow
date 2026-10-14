@@ -6,12 +6,14 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-14
+
+Permissões: papéis padrão, permissões por pessoa, escopo por cliente, uso da CLI, visibilidade de pagamentos, convite por e-mail, histórico e tela de gestão de usuários. Também busca global e backup .sql.
+
 ### Adicionado
 
-* Backup .sql do banco (comando backup_db, POST/GET /api/backups para superusuários, hubflow backup). #103
-* API de busca global: GET /api/search?q= em cards, projetos, clientes, usuários e etiquetas. #110
-* CLI: hubflow search. #112
-* Busca global na barra superior (Ctrl+K ou /), resultados agrupados com navegação por teclado; abre o card pela busca. #111
+#### Permissões
+
 * Permissões: permissões padrão do Django (view/add/change/delete) + use_cli e view_own_payments, papéis padrão (Administrador, Gerente, Desenvolvedor, Financeiro, Cliente, Leitura) e vínculo usuário↔cliente. #118
 * API de usuários, papéis e permissões (só quem gerencia usuários): listar, papéis, permissões por pessoa, clientes, ativar/desativar; /api/auth/me devolve papéis e permissões efetivas. #119
 * Permissões em clientes e projetos: sem clients.view_client só vê os clientes de que é membro; criar/editar/excluir exige as permissões padrão (403 com a permissão nomeada). #120
@@ -24,6 +26,18 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Frontend respeita as permissões de /api/auth/me: menu, rotas, botões de criar/editar/excluir (clientes, projetos, cards, sprints, etiquetas, pagamentos), arrastar só os cards que a pessoa pode mover, painel do card só leitura para quem não pode editar. #127
 * Tela de usuários e permissões (/settings/users): lista com papéis, clientes e situação; painel com papéis, clientes vinculados, CLI sim/não, pagamentos (todos / só os seus / nenhum), permissões por pessoa (travadas as que vêm do papel), ativar/desativar, histórico e convite por e-mail. #128
 * CLI: hubflow user list, invite, role e grant (--revoke). #129
+* CHANGELOG 0.10.0 e documentação de papéis e permissões (README e regras RN-90 a RN-97). #130
+
+#### Polimento
+
+* Backup .sql do banco (comando backup_db, POST/GET /api/backups para superusuários, hubflow backup). #103
+* API de busca global: GET /api/search?q= em cards, projetos, clientes, usuários e etiquetas. #110
+* CLI: hubflow search. #112
+* Busca global na barra superior (Ctrl+K ou /), resultados agrupados com navegação por teclado; abre o card pela busca. #111
+
+### Alterado
+
+* Regra RN-80 atualizada: pagamento por projeto, sprint opcional (#131).
 
 ## [0.9.0] - 2026-10-14
 
@@ -230,7 +244,8 @@ Primeira versão utilizável: base, login por e-mail, clientes, projetos e quadr
 * README completo. #37
 * CHANGELOG 0.1.0. #38
 
-[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/rg3915/HubFlow/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/rg3915/HubFlow/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/rg3915/HubFlow/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/rg3915/HubFlow/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/rg3915/HubFlow/compare/v0.6.0...v0.7.0
