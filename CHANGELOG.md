@@ -11,6 +11,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * README: o clone vai para a pasta `hubflow` (`git clone … hubflow`).
 * README: seção Telas com screenshots (`docs/screenshots/`).
 
+### Adicionado
+
+* Script que grava as respostas da API para a demo sem backend. #170
+
 ## [1.0.1] - 2026-10-14
 
 Configuração toda pelo settings.py com python-decouple.
