@@ -1,4 +1,5 @@
 export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+export const DEMO = import.meta.env.VITE_DEMO === '1' // build da demo sem backend (GitHub Pages)
 
 // Arquivos (anexos, avatares): caminho relativo no disco local da API ou URL completa no S3.
 export const mediaUrl = (url) => (!url ? null : /^https?:\/\//.test(url) ? url : BASE_URL + url)
@@ -12,6 +13,7 @@ export class ApiError extends Error {
 
 export async function api(path, { method = 'GET', body, token, form } = {}) {
   // Demo sem backend (GitHub Pages): o módulo só entra no build com VITE_DEMO=1.
+  // a condição literal (e não a constante DEMO) deixa o build normal sem o módulo nem os dados da demo
   if (import.meta.env.VITE_DEMO === '1') return (await import('./demo/api.js')).demoApi(path, { method, body, token })
   const headers = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'

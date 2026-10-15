@@ -6,13 +6,9 @@ import { ApiError } from '../api'
 import bob from './dados/bob.json'
 import lia from './dados/lia.json'
 import regis from './dados/regis.json'
+import { PESSOAS } from './pessoas'
 
 const GRAVADOS = { regis, bob, lia }
-export const PESSOAS = {
-  regis: { email: 'regis@hubflow.com', name: 'Regis Santos', papel: 'administrador' },
-  bob: { email: 'bob@hubflow.com', name: 'Bob Silva', papel: 'desenvolvedor no ACME' },
-  lia: { email: 'leitura@hubflow.com', name: 'Lia Leitura', papel: 'só leitura no ACME' },
-}
 const INDISPONIVEL = 'Indisponível na demo: aqui nada vai para um servidor. Rode o HubFlow na sua máquina para usar tudo.'
 const IGNORADOS = ['date', 'start', 'end']  // o relatório gravado vale para qualquer dia
 

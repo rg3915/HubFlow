@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { BASE_URL, api } from '../api'
+import { BASE_URL, api, DEMO } from '../api'
 
 // Tempo restante do SLA do card: "SLA 5h", "SLA 2d" ou estourado.
 export function slaText(sla, now = Date.now()) {
@@ -74,6 +74,7 @@ export const useBoardStore = defineStore('board', {
     // Assina os eventos do projeto (SSE). Quem mudou foi outra pessoa ou a CLI: aplica no quadro sem recarregar.
     connect(projectId) {
       this.disconnect()
+      if (DEMO) return // sem servidor, sem tempo real: o indicador mostra "demo"
       const token = useAuthStore().token
       const source = new EventSource(`${BASE_URL}/api/projects/${projectId}/events?token=${token}`)
       source.onopen = () => (this.live = true)

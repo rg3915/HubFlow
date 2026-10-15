@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { BASE_URL, api } from '../api'
+import { BASE_URL, DEMO, api } from '../api'
+import { PESSOAS } from '../demo/pessoas'
 import { useAuthStore } from '../stores/auth'
 
 const auth = useAuthStore()
@@ -14,6 +15,13 @@ const error = ref('')
 const loading = ref(false)
 const providers = ref([]) // só os configurados no backend
 onMounted(async () => (providers.value = await api('/auth/social/providers').catch(() => [])))
+
+// Demo: entrar com um clique como uma das pessoas de exemplo (a senha não importa).
+function entrarComo(pessoa) {
+  email.value = pessoa.email
+  password.value = 'demo'
+  return submit()
+}
 
 async function submit() {
   error.value = ''
@@ -33,6 +41,13 @@ async function submit() {
   <section class="panel p-6 sm:p-8">
     <h1 class="text-[28px] font-semibold leading-tight">Entrar</h1>
     <p class="mt-1 text-muted">Use o e-mail da sua conta.</p>
+
+    <div v-if="DEMO" class="mt-5 space-y-2 rounded-[var(--radius-control)] border border-border p-3">
+      <p class="text-[13px] text-muted">Demonstração com dados de exemplo. Entre como:</p>
+      <button v-for="pessoa in PESSOAS" :key="pessoa.email" type="button" class="btn h-10 w-full justify-between" @click="entrarComo(pessoa)">
+        <span>{{ pessoa.name }}</span><span class="text-[13px] text-muted">{{ pessoa.papel }}</span>
+      </button>
+    </div>
 
     <form class="mt-6 space-y-4" novalidate @submit.prevent="submit">
       <div>

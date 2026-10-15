@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { mediaUrl } from '../api'
+import { mediaUrl, DEMO } from '../api'
 import BoardColumn from '../components/BoardColumn.vue'
 import CardPanel from '../components/CardPanel.vue'
 import { useAuthStore } from '../stores/auth'
@@ -69,7 +69,7 @@ const visibleColumns = computed(() =>
       </span>
       <span class="flex items-center gap-1 text-[13px] text-muted" :class="{ 'ml-auto': !board.viewers.length }" :title="board.live ? 'Atualiza sozinho quando alguém mexer no quadro' : 'Reconectando…'">
         <span class="inline-block h-2 w-2 rounded-full" :class="board.live ? 'bg-[#2e6b4f]' : 'bg-stone-400'"></span>
-        {{ board.live ? 'ao vivo' : 'offline' }}
+        {{ board.live ? 'ao vivo' : DEMO ? 'demo' : 'offline' }}
       </span>
       <label class="flex items-center gap-2 text-muted">
         <input v-model="showArchived" type="checkbox" class="h-4 w-4 accent-[var(--accent)]" />
