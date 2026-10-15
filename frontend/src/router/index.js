@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import AutomationsView from '../views/AutomationsView.vue'
 import ChangePasswordView from '../views/ChangePasswordView.vue'
@@ -63,7 +63,9 @@ const routes = [
 ]
 
 // Página nova abre no topo; voltar/avançar restaura a rolagem.
-const router = createRouter({ history: createWebHistory(), routes, scrollBehavior: (to, from, saved) => saved || { top: 0 } })
+// Na demo do GitHub Pages as rotas vão no hash (#/projects/1): o Pages não devolve o index.html para outros caminhos.
+const history = import.meta.env.VITE_DEMO === '1' ? createWebHashHistory() : createWebHistory()
+const router = createRouter({ history, routes, scrollBehavior: (to, from, saved) => saved || { top: 0 } })
 
 // Rotas privadas exigem token; quem já está logado não volta para o login.
 router.beforeEach(async (to) => {
