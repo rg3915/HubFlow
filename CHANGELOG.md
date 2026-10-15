@@ -9,6 +9,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Alterado
 
 * README: o clone vai para a pasta `hubflow` (`git clone … hubflow`).
+* README: seção Telas com screenshots (`docs/screenshots/`).
 
 ## [1.0.1] - 2026-10-14
 

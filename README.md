@@ -31,6 +31,15 @@ Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **
 
 O que vem a seguir está em [docs/especificacao.md](docs/especificacao.md) (notificações por e-mail, colaboração no card, sincronização GitHub/GitLab, tempo real, campos personalizados, automações, controle de tempo, relatórios).
 
+## Telas
+
+| | |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) Dashboard | ![Quadro](docs/screenshots/quadro.png) Quadro kanban em tempo real |
+| ![Painel do card](docs/screenshots/card.png) Painel do card | ![Automações](docs/screenshots/automacoes.png) Automações e SLA |
+| ![Relatórios](docs/screenshots/relatorios.png) Relatórios | ![Usuários e permissões](docs/screenshots/usuarios.png) Usuários e permissões |
+| ![Integração](docs/screenshots/integracao.png) Integração GitHub/GitLab | <img src="docs/screenshots/celular.png" alt="Quadro no celular" width="220"> Quadro no celular |
+
 ## Stack
 
 | Camada | Tecnologia |
