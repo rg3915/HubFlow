@@ -14,6 +14,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 ### Adicionado
 
 * Script que grava as respostas da API para a demo sem backend. #170
+* Modo demo (`VITE_DEMO=1`): `api()` responde com as respostas gravadas; mover/criar card, comentar e lançar tempo ficam em memória. #171
 
 ## [1.0.1] - 2026-10-14
 

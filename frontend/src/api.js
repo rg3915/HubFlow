@@ -11,6 +11,8 @@ export class ApiError extends Error {
 }
 
 export async function api(path, { method = 'GET', body, token, form } = {}) {
+  // Demo sem backend (GitHub Pages): o módulo só entra no build com VITE_DEMO=1.
+  if (import.meta.env.VITE_DEMO === '1') return (await import('./demo/api.js')).demoApi(path, { method, body, token })
   const headers = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   if (token) headers.Authorization = `Bearer ${token}`
