@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Unreleased]
 
+### Alterado
+
+* README: o clone vai para a pasta `hubflow` (`git clone … hubflow`).
+
 ## [1.0.1] - 2026-10-14
 
 Configuração toda pelo settings.py com python-decouple.

@@ -46,8 +46,8 @@ O que vem a seguir está em [docs/especificacao.md](docs/especificacao.md) (noti
 Pré-requisitos: Docker e Docker Compose.
 
 ```bash
-git clone https://github.com/rg3915/HubFlow.git
-cd HubFlow
+git clone https://github.com/rg3915/HubFlow.git hubflow
+cd hubflow
 cp .env.example .env
 docker compose up --build
 ```
