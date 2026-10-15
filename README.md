@@ -4,6 +4,15 @@ Gestão de projetos e fluxos de trabalho para quem desenvolve software para vár
 
 Cada **cliente** é dono dos seus **projetos**; cada projeto corresponde a um **repositório** no GitHub ou no GitLab; o trabalho de cada projeto anda num **quadro kanban** com colunas fixas: Backlog → Sprint → Em desenvolvimento → QA → Concluído → Arquivadas. Tudo o que a interface faz também pode ser feito pela **API** e pela **CLI**.
 
+## Demo
+
+**[Abrir a demo → rg3915.github.io/HubFlow](https://rg3915.github.io/HubFlow/)**
+
+É o frontend de verdade com uma API simulada, sem backend: entre com um clique como **Regis** (administrador), **Bob** (desenvolvedor no ACME) ou **Lia** (só leitura) e veja como as telas e os botões mudam conforme o papel. Os dados são de exemplo, gravados da API real com `frontend/scripts/gravar-demo.mjs`.
+
+- **Funciona:** navegar por todas as telas, mover e criar cards, comentar, iniciar/parar o cronômetro e lançar horas. As mudanças ficam só no seu navegador (botão "Restaurar os dados" na faixa do topo).
+- **Não funciona na demo:** tempo real entre abas, e-mails, PDF, integração com GitHub/GitLab, uploads e as demais telas de cadastro. Para isso, [rode o HubFlow na sua máquina](#instalação).
+
 ## O que a aplicação faz
 
 - **Login por e-mail** (sem username), com "esqueci minha senha" por e-mail e troca de senha, ou **com Google e GitHub** para contas já cadastradas.

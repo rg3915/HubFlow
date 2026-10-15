@@ -17,6 +17,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Modo demo (`VITE_DEMO=1`): `api()` responde com as respostas gravadas; mover/criar card, comentar e lançar tempo ficam em memória. #171
 * Login da demo com um clique (Regis, Bob ou Lia), faixa de demonstração com "Restaurar os dados" e quadro sem tempo real (indicador "demo"). #172
 * Demo publicada no GitHub Pages pelo GitHub Actions (rotas com hash, base `/HubFlow/`). #173
+* README: seção Demo com o link, o que funciona e o que não funciona nela. #174
 
 ## [1.0.1] - 2026-10-14
 
