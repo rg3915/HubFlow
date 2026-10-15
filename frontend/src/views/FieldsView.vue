@@ -90,9 +90,9 @@ const move = (index, step) =>
 </script>
 
 <template>
-  <div class="max-w-3xl">
+  <div class="max-w-[96rem]">
     <p v-if="project" class="mb-1 text-muted">{{ project.client_name }} / {{ project.name }}</p>
-    <p class="mb-4 text-[13px] text-muted">Campos extras de todos os cards deste projeto. Os obrigatórios precisam ser preenchidos ao criar o card.</p>
+    <p class="mb-4 text-[0.93rem] text-muted">Campos extras de todos os cards deste projeto. Os obrigatórios precisam ser preenchidos ao criar o card.</p>
 
     <section class="panel divide-y divide-border">
       <div v-for="(field, index) in fields" :key="field.id" class="flex flex-wrap items-center gap-2 p-3">
@@ -148,7 +148,7 @@ const move = (index, step) =>
       <div class="flex items-center gap-3">
         <div>
           <h2 class="font-medium">Formulário público</h2>
-          <p class="text-[13px] text-muted">Quem tiver o link abre um card no Backlog sem precisar de conta, com título, descrição e estes campos.</p>
+          <p class="text-[0.93rem] text-muted">Quem tiver o link abre um card no Backlog sem precisar de conta, com título, descrição e estes campos.</p>
         </div>
         <label class="ml-auto flex shrink-0 items-center gap-2 text-sm">
           <input type="checkbox" class="h-4 w-4 accent-[var(--accent)]" :checked="publicForm.enabled" @change="setForm($event.target.checked)" />

@@ -56,7 +56,7 @@ function again() {
 
   <form v-else-if="form" class="panel space-y-4 p-6" @submit.prevent="submit">
     <div>
-      <p class="text-[13px] text-muted">{{ form.client_name }}</p>
+      <p class="text-[0.93rem] text-muted">{{ form.client_name }}</p>
       <h1 class="text-xl font-semibold">{{ form.project_name }}</h1>
     </div>
     <div>

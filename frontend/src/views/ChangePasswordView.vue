@@ -37,7 +37,7 @@ async function submit() {
 </script>
 
 <template>
-  <section class="panel max-w-md p-6">
+  <section class="panel max-w-[56rem] p-6">
     <form class="space-y-4" novalidate @submit.prevent="submit">
       <input type="email" autocomplete="username" :value="auth.user?.email" hidden />
       <div>

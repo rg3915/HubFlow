@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
 
     <div v-if="open && results" class="panel absolute left-0 right-0 z-40 mt-1 max-h-96 overflow-y-auto p-1 shadow-sm" role="listbox">
       <template v-for="(item, index) in items" :key="item.key">
-        <p v-if="index === 0 || items[index - 1].group !== item.group" class="px-2 pb-0.5 pt-2 text-[11px] font-medium text-muted">{{ item.group }}</p>
+        <p v-if="index === 0 || items[index - 1].group !== item.group" class="px-2 pb-0.5 pt-2 text-[0.79rem] font-medium text-muted">{{ item.group }}</p>
         <button
           type="button"
           role="option"
@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
         >
           <span v-if="item.color" class="h-2.5 w-2.5 shrink-0 rounded-full" :style="{ background: item.color }"></span>
           <span class="truncate">{{ item.label }}</span>
-          <span class="ml-auto shrink-0 text-[13px] text-muted">{{ item.hint }}</span>
+          <span class="ml-auto shrink-0 text-[0.93rem] text-muted">{{ item.hint }}</span>
         </button>
       </template>
       <p v-if="!items.length" class="px-2 py-2 text-sm text-muted">Nada encontrado para “{{ query }}”.</p>

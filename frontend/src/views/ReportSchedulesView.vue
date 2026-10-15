@@ -60,8 +60,8 @@ async function remove(item) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl">
-    <p class="mb-4 text-[13px] text-muted">
+  <div class="mx-auto max-w-[96rem]">
+    <p class="mb-4 text-[0.93rem] text-muted">
       O relatório em PDF sai por e-mail quando cada período termina (verificação a cada 15 minutos), com o que você pode ver. Sem e-mails, vão para os do projeto ou do cliente.
     </p>
 
@@ -70,7 +70,7 @@ async function remove(item) {
         <input type="checkbox" class="h-4 w-4 accent-[var(--accent)]" :checked="item.is_active" :aria-label="`Ligar relatório de ${item.scope}`" @change="toggle(item)" />
         <div class="min-w-0 flex-1" :class="{ 'opacity-60': !item.is_active }">
           <p class="font-medium">{{ item.scope }} · {{ FREQUENCY[item.frequency] }}</p>
-          <p class="truncate text-[13px] text-muted">
+          <p class="truncate text-[0.93rem] text-muted">
             {{ item.emails.join(', ') || 'e-mails do projeto/cliente' }} · coberto até {{ br(item.last_period_end) }}
           </p>
         </div>

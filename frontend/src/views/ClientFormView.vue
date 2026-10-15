@@ -40,7 +40,7 @@ async function submit() {
 </script>
 
 <template>
-  <section class="panel max-w-lg p-6">
+  <section class="panel max-w-[64rem] p-6">
     <form class="space-y-4" novalidate @submit.prevent="submit">
       <div>
         <label class="label" for="name">Nome</label>

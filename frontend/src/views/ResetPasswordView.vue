@@ -33,13 +33,13 @@ async function submit() {
 <template>
   <section class="panel p-6 sm:p-8">
     <template v-if="done">
-      <h1 class="text-[28px] font-semibold leading-tight">Senha redefinida</h1>
+      <h1 class="text-[2rem] font-semibold leading-tight">Senha redefinida</h1>
       <p class="mt-2 text-muted">Sua nova senha já vale. Entre para continuar.</p>
       <RouterLink to="/login" class="btn btn-primary mt-6 h-10 w-full justify-center text-base">Entrar</RouterLink>
     </template>
 
     <template v-else>
-      <h1 class="text-[28px] font-semibold leading-tight">Nova senha</h1>
+      <h1 class="text-[2rem] font-semibold leading-tight">Nova senha</h1>
       <p class="mt-1 text-muted">Escolha uma senha com pelo menos 8 caracteres.</p>
 
       <form class="mt-6 space-y-4" novalidate @submit.prevent="submit">

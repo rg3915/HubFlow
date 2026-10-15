@@ -32,21 +32,21 @@ const ticks = computed(() => [0, 0.5, 1].map((t) => ({ y: y(max.value * t), valu
     <svg :viewBox="`0 0 ${W} ${H}`" class="w-full" role="img" aria-label="Recebido e pendente por período">
       <g v-for="tick in ticks" :key="tick.y">
         <line :x1="pad.left" :x2="W - pad.right" :y1="tick.y" :y2="tick.y" stroke="var(--border)" stroke-width="1" />
-        <text :x="pad.left - 6" :y="tick.y + 4" text-anchor="end" class="fill-[var(--muted)] text-[10px]">{{ money(tick.value, true) }}</text>
+        <text :x="pad.left - 6" :y="tick.y + 4" text-anchor="end" class="fill-[var(--muted)] text-[0.72rem]">{{ money(tick.value, true) }}</text>
       </g>
       <g v-for="(row, i) in rows" :key="row.label" @mouseenter="hover = i" @mouseleave="hover = null">
         <rect :x="pad.left + groupW * i" :y="pad.top" :width="groupW" :height="inner.h" fill="transparent" />
         <rect :x="x(i, 0)" :y="y(row.received)" :width="barW" :height="pad.top + inner.h - y(row.received)" rx="3" fill="var(--chart-1)" />
         <rect :x="x(i, 1)" :y="y(row.pending)" :width="barW" :height="pad.top + inner.h - y(row.pending)" rx="3" fill="var(--chart-2)" />
-        <text :x="pad.left + groupW * i + groupW / 2" :y="H - 8" text-anchor="middle" class="fill-[var(--muted)] text-[11px]">{{ row.label }}</text>
+        <text :x="pad.left + groupW * i + groupW / 2" :y="H - 8" text-anchor="middle" class="fill-[var(--muted)] text-[0.79rem]">{{ row.label }}</text>
       </g>
     </svg>
-    <div v-if="hover !== null" class="panel pointer-events-none absolute left-1/2 top-2 -translate-x-1/2 px-3 py-2 text-[13px] shadow-sm">
+    <div v-if="hover !== null" class="panel pointer-events-none absolute left-1/2 top-2 -translate-x-1/2 px-3 py-2 text-[0.93rem] shadow-sm">
       <p class="font-medium">{{ rows[hover].label }}</p>
       <p><span class="mr-1 inline-block h-2 w-2 rounded-sm" style="background: var(--chart-1)"></span>Recebido {{ money(rows[hover].received) }}</p>
       <p><span class="mr-1 inline-block h-2 w-2 rounded-sm" style="background: var(--chart-2)"></span>Pendente {{ money(rows[hover].pending) }}</p>
     </div>
-    <p class="mt-1 flex gap-4 text-[13px] text-muted">
+    <p class="mt-1 flex gap-4 text-[0.93rem] text-muted">
       <span><span class="mr-1 inline-block h-2 w-2 rounded-sm" style="background: var(--chart-1)"></span>Recebido</span>
       <span><span class="mr-1 inline-block h-2 w-2 rounded-sm" style="background: var(--chart-2)"></span>Pendente</span>
     </p>

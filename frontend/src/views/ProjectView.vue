@@ -63,11 +63,11 @@ const visibleColumns = computed(() =>
       <span v-if="board.viewers.length" class="ml-auto flex items-center -space-x-1" :title="`Vendo agora: ${board.viewers.map((v) => v.first_name).join(', ')}`">
         <template v-for="viewer in board.viewers.slice(0, 5)" :key="viewer.id">
           <img v-if="viewer.avatar_url" :src="mediaUrl(viewer.avatar_url)" :alt="viewer.first_name" class="h-6 w-6 rounded-full border-2 border-surface object-cover" />
-          <span v-else class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface bg-surface-2 text-[10px] font-medium">{{ viewer.first_name.slice(0, 2) }}</span>
+          <span v-else class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface bg-surface-2 text-[0.72rem] font-medium">{{ viewer.first_name.slice(0, 2) }}</span>
         </template>
-        <span v-if="board.viewers.length > 5" class="pl-2 text-[13px] text-muted">+{{ board.viewers.length - 5 }}</span>
+        <span v-if="board.viewers.length > 5" class="pl-2 text-[0.93rem] text-muted">+{{ board.viewers.length - 5 }}</span>
       </span>
-      <span class="flex items-center gap-1 text-[13px] text-muted" :class="{ 'ml-auto': !board.viewers.length }" :title="board.live ? 'Atualiza sozinho quando alguém mexer no quadro' : 'Reconectando…'">
+      <span class="flex items-center gap-1 text-[0.93rem] text-muted" :class="{ 'ml-auto': !board.viewers.length }" :title="board.live ? 'Atualiza sozinho quando alguém mexer no quadro' : 'Reconectando…'">
         <span class="inline-block h-2 w-2 rounded-full" :class="board.live ? 'bg-[#2e6b4f]' : 'bg-stone-400'"></span>
         {{ board.live ? 'ao vivo' : DEMO ? 'demo' : 'offline' }}
       </span>

@@ -53,7 +53,7 @@ function cancel() {
       <label class="label" :for="`quick-field-${field.id}`">{{ field.name }}<span class="text-danger"> *</span></label>
       <FieldInput v-model="values[field.id]" :field="field" :id="`quick-field-${field.id}`" />
     </div>
-    <p v-if="error" class="mt-1 text-[13px] text-danger" role="alert">{{ error }}</p>
+    <p v-if="error" class="mt-1 text-[0.93rem] text-danger" role="alert">{{ error }}</p>
     <div class="mt-2 flex gap-2">
       <button type="submit" class="btn btn-primary h-8">Adicionar</button>
       <button type="button" class="btn btn-ghost h-8" @click="cancel">Cancelar</button>

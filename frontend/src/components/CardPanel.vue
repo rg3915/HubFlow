@@ -103,7 +103,7 @@ async function remove() {
         <option v-for="(text, key) in labels" :key="key" :value="key">{{ text }}</option>
       </select>
       <span v-else class="text-muted">· {{ labels[board.selected.column] }}</span>
-      <span v-if="board.selected.is_overdue" class="rounded-full bg-danger/10 px-2 text-[13px] text-danger">Atrasado</span>
+      <span v-if="board.selected.is_overdue" class="rounded-full bg-danger/10 px-2 text-[0.93rem] text-danger">Atrasado</span>
       <button type="button" class="btn btn-ghost ml-auto hidden h-8 w-8 justify-center px-0 md:inline-flex" aria-label="Fechar" @click="board.select(null)">×</button>
     </header>
 
@@ -141,13 +141,13 @@ async function remove() {
             <FieldInput v-model="values[field.id]" :field="field" :id="`card-field-${field.id}`" />
           </div>
         </div>
-        <p v-if="board.selected.progress?.estimate_hours" class="-mt-2 text-[13px] text-muted">
+        <p v-if="board.selected.progress?.estimate_hours" class="-mt-2 text-[0.93rem] text-muted">
           {{ board.selected.progress.spent_hours }}h de {{ board.selected.progress.estimate_hours }}h
           ({{ board.selected.progress.percent }}%<span v-if="board.selected.progress.source === 'median'">, estimativa pela mediana do projeto</span>)
         </p>
 
         </fieldset>
-        <p v-if="!auth.canEditCard(board.selected)" class="text-[13px] text-muted">Só quem criou, o responsável ou quem pode editar qualquer card altera este card.</p>
+        <p v-if="!auth.canEditCard(board.selected)" class="text-[0.93rem] text-muted">Só quem criou, o responsável ou quem pode editar qualquer card altera este card.</p>
         <p v-if="error" class="rounded-[var(--radius-control)] border border-danger/40 px-3 py-2 text-danger" role="alert">{{ error }}</p>
         <p v-else-if="saved" class="text-muted" role="status">Salvo.</p>
 

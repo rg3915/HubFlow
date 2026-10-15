@@ -10,7 +10,7 @@ onMounted(() => store.load())
 </script>
 
 <template>
-  <div class="mx-auto max-w-5xl">
+  <div class="mx-auto max-w-[128rem]">
     <div class="mb-4 flex items-center justify-between">
       <p class="text-muted">{{ store.clients.length }} cliente{{ store.clients.length === 1 ? '' : 's' }}</p>
       <RouterLink v-if="auth.can('clients.add_client')" to="/clients/new" class="btn btn-primary">Novo cliente</RouterLink>

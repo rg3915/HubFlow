@@ -51,7 +51,7 @@ async function remove(label) {
 </script>
 
 <template>
-  <div class="max-w-lg">
+  <div class="max-w-[64rem]">
     <p v-if="project" class="mb-4 text-muted">{{ project.client_name }} / {{ project.name }}</p>
 
     <section class="panel divide-y divide-border">

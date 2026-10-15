@@ -50,11 +50,11 @@ function when(iso) {
       <li v-for="comment in board.comments" :key="comment.id" class="text-sm">
         <p class="flex items-baseline gap-2">
           <span class="font-medium">{{ comment.author.name || comment.author.email }}</span>
-          <span class="text-[13px] text-muted">{{ when(comment.created) }}</span>
+          <span class="text-[0.93rem] text-muted">{{ when(comment.created) }}</span>
           <button
             v-if="comment.author.id === auth.user?.id || auth.can('boards.delete_comment')"
             type="button"
-            class="ml-auto text-[13px] text-muted hover:text-danger"
+            class="ml-auto text-[0.93rem] text-muted hover:text-danger"
             @click="board.deleteComment(comment)"
           >
             Excluir
@@ -83,10 +83,10 @@ function when(iso) {
           </button>
         </li>
       </ul>
-      <p v-if="error" class="mt-1 text-[13px] text-danger" role="alert">{{ error }}</p>
+      <p v-if="error" class="mt-1 text-[0.93rem] text-danger" role="alert">{{ error }}</p>
       <div class="mt-2 flex items-center gap-3">
         <button type="submit" class="btn h-8">Comentar</button>
-        <span class="text-[13px] text-muted">Ctrl+Enter envia</span>
+        <span class="text-[0.93rem] text-muted">Ctrl+Enter envia</span>
       </div>
     </form>
   </div>

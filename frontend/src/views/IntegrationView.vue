@@ -83,7 +83,7 @@ function generateSecret() {
 </script>
 
 <template>
-  <div v-if="settings && project" class="max-w-2xl space-y-4">
+  <div v-if="settings && project" class="max-w-[84rem] space-y-4">
     <section class="panel p-4">
       <h2 class="font-medium">Repositório</h2>
       <p class="mt-1 text-muted">
@@ -98,7 +98,7 @@ function generateSecret() {
             <input id="repo-token" v-model="form.token" class="field" type="password" autocomplete="off" :placeholder="settings.has_token ? 'Token configurado (deixe vazio para manter)' : settings.provider === 'github' ? 'ghp_…' : 'glpat-…'" />
             <button v-if="settings.has_token" type="button" class="btn" @click="clearToken">Remover</button>
           </div>
-          <p class="mt-1 text-[13px] text-muted">
+          <p class="mt-1 text-[0.93rem] text-muted">
             {{ settings.provider === 'github' ? 'Token pessoal com permissão de issues no repositório.' : 'Token com escopo api no projeto.' }} O token nunca é exibido depois de salvo.
           </p>
         </div>
@@ -116,7 +116,7 @@ function generateSecret() {
             <input id="webhook-secret" v-model="form.webhook_secret" class="field" type="text" autocomplete="off" :placeholder="settings.has_webhook_secret ? 'Segredo configurado (deixe vazio para manter)' : 'Gere um segredo e cole no repositório'" />
             <button type="button" class="btn" @click="generateSecret">Gerar</button>
           </div>
-          <p class="mt-1 text-[13px] text-muted">
+          <p class="mt-1 text-[0.93rem] text-muted">
             Configure no repositório um webhook de push e pull request para <code class="break-all rounded bg-surface-2 px-1">{{ webhookUrl }}</code> com este segredo.
             Commits e PRs com "close #N" concluem o card.
           </p>

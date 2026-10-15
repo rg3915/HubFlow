@@ -36,7 +36,7 @@ const fills = ['var(--surface-2)', 'color-mix(in oklab, var(--accent) 30%, var(-
         @mouseleave="hover = null"
       />
     </svg>
-    <p class="mt-1 text-[13px] text-muted">
+    <p class="mt-1 text-[0.93rem] text-muted">
       <template v-if="hover">{{ hover.label }}: {{ hover.hours }}h</template>
       <template v-else>Menos <span v-for="(fill, i) in fills" :key="i" class="mx-0.5 inline-block h-2.5 w-2.5 rounded-sm align-middle" :style="{ background: fill }"></span> mais</template>
     </p>

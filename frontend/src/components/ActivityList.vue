@@ -30,7 +30,7 @@ function when(iso) {
 <template>
   <ol class="space-y-2 text-sm">
     <li v-for="(item, index) in board.activity" :key="index" class="flex gap-2">
-      <span class="w-28 shrink-0 text-[13px] text-muted tabular-nums">{{ when(item.created) }}</span>
+      <span class="w-28 shrink-0 text-[0.93rem] text-muted tabular-nums">{{ when(item.created) }}</span>
       <span><span class="font-medium">{{ item.user?.name || item.user?.email || 'Sistema' }}</span> {{ describe(item) }}</span>
     </li>
     <li v-if="!board.activity.length" class="text-muted">Sem atividade registrada.</li>

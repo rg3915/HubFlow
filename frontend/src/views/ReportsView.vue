@@ -91,7 +91,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-5xl space-y-4">
+  <div class="mx-auto max-w-[128rem] space-y-4">
     <section class="panel flex flex-wrap items-end gap-3 p-4">
       <div>
         <label class="label" for="r-client">Cliente</label>
@@ -139,11 +139,11 @@ onMounted(async () => {
         · {{ report.period.label }} de {{ br(report.period.start) }} a {{ br(report.period.end) }}
       </p>
       <div class="grid grid-cols-2 gap-3 md:grid-cols-5">
-        <div class="panel p-3"><p class="text-[13px] text-muted">Horas registradas</p><p class="text-xl font-semibold tabular-nums">{{ report.hours.total }}h</p></div>
-        <div class="panel p-3"><p class="text-[13px] text-muted">Cards criados</p><p class="text-xl font-semibold tabular-nums">{{ report.cards.created }}</p></div>
-        <div class="panel p-3"><p class="text-[13px] text-muted">Cards concluídos</p><p class="text-xl font-semibold tabular-nums">{{ report.cards.done }}</p></div>
-        <div class="panel p-3"><p class="text-[13px] text-muted">Dias até concluir</p><p class="text-xl font-semibold tabular-nums">{{ report.cards.avg_days_to_done ?? '—' }}</p></div>
-        <div class="panel p-3"><p class="text-[13px] text-muted">SLAs estourados</p><p class="text-xl font-semibold tabular-nums" :class="{ 'text-danger': report.sla_breached }">{{ report.sla_breached }}</p></div>
+        <div class="panel p-3"><p class="text-[0.93rem] text-muted">Horas registradas</p><p class="text-xl font-semibold tabular-nums">{{ report.hours.total }}h</p></div>
+        <div class="panel p-3"><p class="text-[0.93rem] text-muted">Cards criados</p><p class="text-xl font-semibold tabular-nums">{{ report.cards.created }}</p></div>
+        <div class="panel p-3"><p class="text-[0.93rem] text-muted">Cards concluídos</p><p class="text-xl font-semibold tabular-nums">{{ report.cards.done }}</p></div>
+        <div class="panel p-3"><p class="text-[0.93rem] text-muted">Dias até concluir</p><p class="text-xl font-semibold tabular-nums">{{ report.cards.avg_days_to_done ?? '—' }}</p></div>
+        <div class="panel p-3"><p class="text-[0.93rem] text-muted">SLAs estourados</p><p class="text-xl font-semibold tabular-nums" :class="{ 'text-danger': report.sla_breached }">{{ report.sla_breached }}</p></div>
       </div>
 
       <div class="grid gap-4 md:grid-cols-2">
@@ -171,8 +171,8 @@ onMounted(async () => {
       </div>
 
       <section v-if="report.billing" class="panel flex gap-8 p-4">
-        <div><p class="text-[13px] text-muted">Recebido no período</p><p class="text-lg font-semibold tabular-nums">{{ money(report.billing.received) }}</p></div>
-        <div><p class="text-[13px] text-muted">Pendente no período</p><p class="text-lg font-semibold tabular-nums">{{ money(report.billing.pending) }}</p></div>
+        <div><p class="text-[0.93rem] text-muted">Recebido no período</p><p class="text-lg font-semibold tabular-nums">{{ money(report.billing.received) }}</p></div>
+        <div><p class="text-[0.93rem] text-muted">Pendente no período</p><p class="text-lg font-semibold tabular-nums">{{ money(report.billing.pending) }}</p></div>
       </section>
 
       <form class="panel flex flex-wrap items-end gap-3 p-4" @submit.prevent="send">

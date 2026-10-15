@@ -50,7 +50,7 @@
 @layer base {
   html {
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 17px; /* base de tudo: espaçamentos e larguras do Tailwind são em rem e crescem junto */
     line-height: 1.5;
     color-scheme: light;
   }

@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="16" rx="2" /><path d="M8 9h8M8 13h5" />
       </svg>
-      <span v-if="cards.length" class="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-surface-2 px-1 text-[10px] font-medium leading-4 text-text tabular-nums">{{ cards.length }}</span>
+      <span v-if="cards.length" class="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-surface-2 px-1 text-[0.72rem] font-medium leading-4 text-text tabular-nums">{{ cards.length }}</span>
     </button>
 
     <button
@@ -83,13 +83,13 @@ onBeforeUnmount(() => {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
       </svg>
-      <span v-if="notes.unread" class="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent px-1 text-[10px] font-medium leading-4 text-white tabular-nums">{{ notes.unread }}</span>
+      <span v-if="notes.unread" class="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent px-1 text-[0.72rem] font-medium leading-4 text-white tabular-nums">{{ notes.unread }}</span>
     </button>
 
     <div v-if="open === 'notes'" class="panel fixed inset-x-2 top-12 z-30 shadow-sm md:absolute md:inset-x-auto md:right-0 md:top-9 md:w-[22rem]">
       <header class="flex items-center border-b border-border px-3 py-2">
         <h2 class="font-medium">Notificações</h2>
-        <button v-if="notes.unread" type="button" class="ml-auto text-[13px] text-accent hover:underline" @click="readAll">Marcar todas como lidas</button>
+        <button v-if="notes.unread" type="button" class="ml-auto text-[0.93rem] text-accent hover:underline" @click="readAll">Marcar todas como lidas</button>
       </header>
       <ul class="max-h-96 overflow-y-auto">
         <li v-for="note in notes.items" :key="note.id">
@@ -97,7 +97,7 @@ onBeforeUnmount(() => {
             <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full" :class="note.read ? 'bg-transparent' : 'bg-accent'" aria-hidden="true"></span>
             <span class="min-w-0">
               <span class="block text-sm" :class="{ 'text-muted': note.read }">{{ note.text }}</span>
-              <span class="block text-[13px] text-muted">{{ when(note.created) }}</span>
+              <span class="block text-[0.93rem] text-muted">{{ when(note.created) }}</span>
             </span>
           </button>
         </li>
@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
         <li v-for="card in cards" :key="card.id">
           <button type="button" class="block w-full px-3 py-2 text-left hover:bg-surface-2" @click="open = null; goToCard(card.project_id, card.number)">
             <span class="block truncate text-sm">#{{ card.number }} {{ card.title }}</span>
-            <span class="block text-[13px] text-muted">
+            <span class="block text-[0.93rem] text-muted">
               {{ card.client_name }} / {{ card.project_name }}
               <span v-if="card.due_date" :class="{ 'text-danger': card.is_overdue }"> · {{ card.is_overdue ? 'venceu' : 'prazo' }} {{ due(card.due_date) }}</span>
             </span>

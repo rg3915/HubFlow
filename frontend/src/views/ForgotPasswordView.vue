@@ -24,7 +24,7 @@ async function submit() {
 <template>
   <section class="panel p-6 sm:p-8">
     <template v-if="sent">
-      <h1 class="text-[28px] font-semibold leading-tight">Verifique seu e-mail</h1>
+      <h1 class="text-[2rem] font-semibold leading-tight">Verifique seu e-mail</h1>
       <p class="mt-2 text-muted">
         Se <strong class="text-text">{{ email }}</strong> estiver cadastrado, você vai receber um link para escolher uma
         nova senha. O link vale por 24 horas.
@@ -33,7 +33,7 @@ async function submit() {
     </template>
 
     <template v-else>
-      <h1 class="text-[28px] font-semibold leading-tight">Esqueci minha senha</h1>
+      <h1 class="text-[2rem] font-semibold leading-tight">Esqueci minha senha</h1>
       <p class="mt-1 text-muted">Informe o e-mail da sua conta e enviamos um link para redefinir a senha.</p>
 
       <form class="mt-6 space-y-4" novalidate @submit.prevent="submit">

@@ -37,15 +37,15 @@ const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
       <span
         v-for="label in card.labels"
         :key="label.id"
-        class="rounded-full px-1.5 text-[11px] font-medium leading-4 text-white"
+        class="rounded-full px-1.5 text-[0.79rem] font-medium leading-4 text-white"
         :style="{ background: label.color }"
       >
         {{ label.name }}
       </span>
     </div>
     <p class="leading-snug">{{ card.title }}</p>
-    <p v-if="card.description" class="mt-0.5 line-clamp-2 text-[13px] text-muted">{{ card.description }}</p>
-    <p v-if="shownFields.length" class="mt-1 flex flex-wrap gap-x-2 text-[13px] text-muted">
+    <p v-if="card.description" class="mt-0.5 line-clamp-2 text-[0.93rem] text-muted">{{ card.description }}</p>
+    <p v-if="shownFields.length" class="mt-1 flex flex-wrap gap-x-2 text-[0.93rem] text-muted">
       <span v-for="field in shownFields" :key="field.id">{{ field.name }}: <span class="text-text">{{ fieldText(card.custom_values[field.id]) }}</span></span>
     </p>
     <div
@@ -59,7 +59,7 @@ const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
     >
       <div class="h-full rounded-full" :class="progress.percent > 100 ? 'bg-danger' : 'bg-accent'" :style="{ width: barWidth }"></div>
     </div>
-    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted tabular-nums">
+    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.93rem] text-muted tabular-nums">
       <span>#{{ card.number }}</span>
       <span
         v-if="card.sla"
@@ -81,12 +81,12 @@ const ownerAvatar = computed(() => mediaUrl(owner.value?.avatar_url))
         v-if="ownerAvatar"
         :src="ownerAvatar"
         alt=""
-        class="ml-auto h-[22px] w-[22px] rounded-full object-cover"
+        class="ml-auto h-[1.57rem] w-[1.57rem] rounded-full object-cover"
         :title="owner.name || owner.email"
       />
       <span
         v-else-if="owner"
-        class="ml-auto inline-flex h-[22px] max-w-24 items-center rounded-full bg-surface-2 px-2 text-[11px] font-medium leading-none text-text"
+        class="ml-auto inline-flex h-[1.57rem] max-w-24 items-center rounded-full bg-surface-2 px-2 text-[0.79rem] font-medium leading-none text-text"
         :title="owner.name || owner.email"
       >
         <span class="truncate">{{ owner.first_name }}</span>

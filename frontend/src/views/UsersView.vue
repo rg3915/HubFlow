@@ -85,7 +85,7 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="mx-auto flex max-w-6xl flex-col gap-4 lg:flex-row lg:items-start">
+  <div class="mx-auto flex max-w-[144rem] flex-col gap-4 lg:flex-row lg:items-start">
     <section class="min-w-0 flex-1">
       <div class="mb-4 flex items-center justify-between">
         <p class="text-muted">{{ users.length }} pessoa{{ users.length === 1 ? '' : 's' }}</p>
@@ -113,7 +113,7 @@ onMounted(load)
             <input v-model="invite.client_ids" type="checkbox" :value="client.id" class="h-4 w-4 accent-[var(--accent)]" /> {{ client.name }}
           </label>
         </fieldset>
-        <p class="text-[13px] text-muted sm:col-span-2">A pessoa recebe um e-mail com o link para definir a senha.</p>
+        <p class="text-[0.93rem] text-muted sm:col-span-2">A pessoa recebe um e-mail com o link para definir a senha.</p>
         <div class="sm:col-span-2"><button type="submit" class="btn btn-primary">Enviar convite</button></div>
       </form>
 
@@ -140,7 +140,7 @@ onMounted(load)
             <td class="border-b border-border px-4 py-2.5">
               <button type="button" class="text-left" @click.stop="select(user)">
                 <span class="block font-medium">{{ user.name || user.email }}</span>
-                <span class="block text-[13px] text-muted">{{ user.email }}</span>
+                <span class="block text-[0.93rem] text-muted">{{ user.email }}</span>
               </button>
             </td>
             <td class="border-b border-border px-4 py-2.5">{{ user.is_superuser ? 'Superusuário' : user.roles.join(', ') || '—' }}</td>
@@ -155,13 +155,13 @@ onMounted(load)
       <header class="flex items-center gap-2 p-4">
         <div class="min-w-0">
           <h2 class="truncate font-semibold">{{ selected.name || selected.email }}</h2>
-          <p class="truncate text-[13px] text-muted">{{ selected.email }}</p>
+          <p class="truncate text-[0.93rem] text-muted">{{ selected.email }}</p>
         </div>
         <button type="button" class="btn btn-ghost ml-auto h-8 w-8 justify-center px-0" aria-label="Fechar" @click="selectedId = null">×</button>
       </header>
 
       <p v-if="error" class="px-4 py-2 text-danger" role="alert">{{ error }}</p>
-      <p v-if="selected.is_superuser" class="px-4 py-2 text-[13px] text-muted">Superusuário: tem todas as permissões.</p>
+      <p v-if="selected.is_superuser" class="px-4 py-2 text-[0.93rem] text-muted">Superusuário: tem todas as permissões.</p>
 
       <fieldset class="p-4">
         <legend class="label px-0 pt-4">Papéis</legend>
@@ -177,7 +177,7 @@ onMounted(load)
           <input type="checkbox" class="h-4 w-4 accent-[var(--accent)]" :checked="selected.clients.some((c) => c.id === client.id)" @change="setClients(client.id)" />
           {{ client.name }}
         </label>
-        <p class="mt-1 text-[13px] text-muted">Sem "Ver todos os clientes", a pessoa só enxerga estes.</p>
+        <p class="mt-1 text-[0.93rem] text-muted">Sem "Ver todos os clientes", a pessoa só enxerga estes.</p>
       </fieldset>
 
       <div class="space-y-3 p-4">
@@ -189,7 +189,7 @@ onMounted(load)
             :disabled="fromRole('permissions.use_cli')"
             @change="togglePerm('permissions.use_cli')"
           />
-          Usar a CLI <span v-if="fromRole('permissions.use_cli')" class="text-[13px] text-muted">(vem do papel)</span>
+          Usar a CLI <span v-if="fromRole('permissions.use_cli')" class="text-[0.93rem] text-muted">(vem do papel)</span>
         </label>
         <div>
           <p class="label">Pagamentos</p>
@@ -211,7 +211,7 @@ onMounted(load)
 
       <details class="p-4">
         <summary class="cursor-pointer text-sm font-medium">Permissões por pessoa</summary>
-        <p class="mt-2 text-[13px] text-muted">As marcadas e travadas vêm do papel; as outras valem só para esta pessoa.</p>
+        <p class="mt-2 text-[0.93rem] text-muted">As marcadas e travadas vêm do papel; as outras valem só para esta pessoa.</p>
         <ul class="mt-2 space-y-1">
           <li v-for="perm in catalog.permissions" :key="perm.code">
             <label class="flex items-center gap-2 text-sm" :title="perm.code">
@@ -248,7 +248,7 @@ onMounted(load)
             <p>
               <span class="font-medium">{{ change.action_label }}</span>: {{ show(change.before) }} → {{ show(change.after) }}
             </p>
-            <p class="text-[13px] text-muted">{{ change.changed_by || 'sistema' }} · {{ when(change.created) }}</p>
+            <p class="text-[0.93rem] text-muted">{{ change.changed_by || 'sistema' }} · {{ when(change.created) }}</p>
           </li>
           <li v-if="!changes.length" class="text-sm text-muted">Nenhuma alteração registrada.</li>
         </ul>

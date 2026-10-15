@@ -51,7 +51,7 @@ function period(sprint) {
 </script>
 
 <template>
-  <div class="max-w-3xl">
+  <div class="max-w-[96rem]">
     <table v-stack class="stack-table panel w-full border-separate border-spacing-0 overflow-hidden">
       <thead>
         <tr class="text-left text-muted">
@@ -68,7 +68,7 @@ function period(sprint) {
             <RouterLink :to="`/projects/${projectId}?sprint=${sprint.id}`" class="font-medium hover:underline">
               Sprint {{ sprint.number }}<span v-if="sprint.name" class="font-normal text-muted"> · {{ sprint.name }}</span>
             </RouterLink>
-            <span v-if="sprint.milestone" class="ml-2 text-[13px] text-muted">{{ sprint.milestone.title }}</span>
+            <span v-if="sprint.milestone" class="ml-2 text-[0.93rem] text-muted">{{ sprint.milestone.title }}</span>
           </td>
           <td class="border-b border-border px-4 py-2.5 text-muted">{{ period(sprint) }}</td>
           <td class="border-b border-border px-4 py-2.5 tabular-nums">{{ sprint.cards_count }}</td>

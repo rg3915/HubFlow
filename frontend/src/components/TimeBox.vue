@@ -63,7 +63,7 @@ async function log() {
       <p class="text-xl font-semibold tabular-nums" :class="board.time.running ? 'text-accent' : ''">
         {{ board.time.running ? clock(runningSeconds) : hours(board.time.total_hours) }}
       </p>
-      <p v-if="board.time.running" class="text-[13px] text-muted">rodando · total {{ hours(board.time.total_hours) }}</p>
+      <p v-if="board.time.running" class="text-[0.93rem] text-muted">rodando · total {{ hours(board.time.total_hours) }}</p>
       <button v-if="board.time.running" type="button" class="btn ml-auto h-8" @click="act(board.stopTimer)">Parar</button>
       <button v-else type="button" class="btn btn-primary ml-auto h-8" @click="act(board.startTimer)">Iniciar cronômetro</button>
     </div>
@@ -73,11 +73,11 @@ async function log() {
         <span class="text-muted tabular-nums">{{ when(entry) }}</span>
         <span class="tabular-nums">{{ entry.is_running ? 'rodando' : hours(entry.hours) }}</span>
         <span v-if="entry.note" class="truncate text-muted">{{ entry.note }}</span>
-        <span class="ml-auto text-[13px] text-muted">{{ entry.user.name || entry.user.email }}</span>
+        <span class="ml-auto text-[0.93rem] text-muted">{{ entry.user.name || entry.user.email }}</span>
         <button
           v-if="entry.user.id === auth.user?.id && !entry.is_running"
           type="button"
-          class="text-[13px] text-muted hover:text-danger"
+          class="text-[0.93rem] text-muted hover:text-danger"
           aria-label="Excluir entrada"
           @click="act(() => board.deleteTimeEntry(entry))"
         >
@@ -89,19 +89,19 @@ async function log() {
 
     <form class="mt-3 flex flex-wrap items-end gap-2" @submit.prevent="log">
       <div class="w-20">
-        <label class="label text-[13px]" for="log-hours">Horas</label>
+        <label class="label text-[0.93rem]" for="log-hours">Horas</label>
         <input id="log-hours" v-model="form.hours" class="field h-8 text-sm" type="number" min="0.25" step="0.25" required />
       </div>
       <div>
-        <label class="label text-[13px]" for="log-date">Data</label>
+        <label class="label text-[0.93rem]" for="log-date">Data</label>
         <input id="log-date" v-model="form.date" class="field h-8 text-sm" type="date" required />
       </div>
       <div class="min-w-32 flex-1">
-        <label class="label text-[13px]" for="log-note">Nota</label>
+        <label class="label text-[0.93rem]" for="log-note">Nota</label>
         <input id="log-note" v-model="form.note" class="field h-8 text-sm" type="text" placeholder="opcional" />
       </div>
       <button type="submit" class="btn h-8">Lançar horas</button>
     </form>
-    <p v-if="error" class="mt-1 text-[13px] text-danger" role="alert">{{ error }}</p>
+    <p v-if="error" class="mt-1 text-[0.93rem] text-danger" role="alert">{{ error }}</p>
   </div>
 </template>

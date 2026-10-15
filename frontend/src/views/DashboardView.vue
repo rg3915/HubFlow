@@ -60,7 +60,7 @@ function describe(item) {
 </script>
 
 <template>
-  <div v-if="overview" class="mx-auto max-w-6xl space-y-4">
+  <div v-if="overview" class="mx-auto max-w-[144rem] space-y-4">
     <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
       <div class="panel p-4"><p class="text-muted">Clientes ativos</p><p class="text-2xl font-semibold tabular-nums">{{ overview.totals.clients }}</p></div>
       <div class="panel p-4"><p class="text-muted">Projetos ativos</p><p class="text-2xl font-semibold tabular-nums">{{ overview.totals.projects }}</p></div>
@@ -73,7 +73,7 @@ function describe(item) {
         <h2 class="mb-2 font-medium">Cards por etapa</h2>
         <ol class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
           <li v-for="col in overview.by_column" :key="col.key" class="rounded-[var(--radius-control)] bg-surface-2 px-3 py-2">
-            <p class="text-[13px] text-muted">{{ col.label }}</p>
+            <p class="text-[0.93rem] text-muted">{{ col.label }}</p>
             <p class="text-xl font-semibold tabular-nums">{{ col.count }}</p>
           </li>
         </ol>
@@ -98,8 +98,8 @@ function describe(item) {
             <RouterLink :to="`/projects/${card.project_id}`" class="truncate hover:underline">
               <span class="text-muted">{{ card.client_name }} / {{ card.project_name }}</span> · #{{ card.number }} {{ card.title }}
             </RouterLink>
-            <span v-if="card.time.running" class="ml-auto text-[13px] text-accent">⏱ rodando</span>
-            <span v-else-if="card.time.hours" class="ml-auto text-[13px] text-muted">{{ card.time.hours }}h</span>
+            <span v-if="card.time.running" class="ml-auto text-[0.93rem] text-accent">⏱ rodando</span>
+            <span v-else-if="card.time.hours" class="ml-auto text-[0.93rem] text-muted">{{ card.time.hours }}h</span>
           </li>
           <li v-if="!overview.in_progress.length" class="py-2 text-sm text-muted">Nada em desenvolvimento.</li>
         </ul>
@@ -111,7 +111,7 @@ function describe(item) {
           <li v-for="timer in overview.running_timers" :key="timer.id" class="flex items-center gap-2 py-2 text-sm">
             <span class="font-medium tabular-nums text-accent">{{ elapsed(timer.started_at) }}</span>
             <RouterLink :to="`/projects/${timer.project_id}`" class="truncate hover:underline">{{ timer.project_name }} · #{{ timer.card_number }} {{ timer.card_title }}</RouterLink>
-            <span class="ml-auto text-[13px] text-muted">{{ timer.mine ? 'você' : timer.user.name || timer.user.email }}</span>
+            <span class="ml-auto text-[0.93rem] text-muted">{{ timer.mine ? 'você' : timer.user.name || timer.user.email }}</span>
           </li>
           <li v-if="!overview.running_timers.length" class="py-2 text-sm text-muted">Nenhum cronômetro aberto.</li>
         </ul>
@@ -123,7 +123,7 @@ function describe(item) {
           <li v-for="card in deadlines.overdue" :key="card.id" class="flex items-center gap-2 py-2">
             <span class="rounded px-1 font-medium text-danger tabular-nums">{{ date(card.due_date) }}</span>
             <RouterLink :to="`/projects/${card.project_id}`" class="truncate hover:underline">{{ card.project_name }} · #{{ card.number }} {{ card.title }}</RouterLink>
-            <span class="ml-auto text-[13px] text-danger">atrasado</span>
+            <span class="ml-auto text-[0.93rem] text-danger">atrasado</span>
           </li>
           <li v-for="card in deadlines.upcoming" :key="card.id" class="flex items-center gap-2 py-2">
             <span class="text-muted tabular-nums">{{ date(card.due_date) }}</span>
@@ -137,7 +137,7 @@ function describe(item) {
         <h2 class="mb-2 font-medium">Atividade recente</h2>
         <ol class="space-y-2 text-sm">
           <li v-for="(item, index) in activity" :key="index" class="flex gap-2">
-            <span class="w-24 shrink-0 text-[13px] text-muted tabular-nums">{{ when(item.created) }}</span>
+            <span class="w-24 shrink-0 text-[0.93rem] text-muted tabular-nums">{{ when(item.created) }}</span>
             <span class="min-w-0">
               <span class="font-medium">{{ item.user?.name || item.user?.email || 'Sistema' }}</span>
               {{ describe(item) }}

@@ -19,6 +19,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 * Demo publicada no GitHub Pages pelo GitHub Actions (rotas com hash, base `/HubFlow/`). #173
 * README: seção Demo com o link, o que funciona e o que não funciona nela. #174
 
+### Alterado (legibilidade)
+
+* Fonte maior (base de 14px para 17px, tamanhos fixos em px viram rem) e o contêiner principal de cada tela com o dobro da largura. #175
+
 ## [1.0.1] - 2026-10-14
 
 Configuração toda pelo settings.py com python-decouple.

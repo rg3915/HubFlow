@@ -52,10 +52,10 @@ function remove() {
 </script>
 
 <template>
-  <section class="panel max-w-md p-6">
+  <section class="panel max-w-[56rem] p-6">
     <div class="flex items-center gap-4">
       <img v-if="avatarUrl" :src="avatarUrl" alt="" class="h-16 w-16 rounded-full object-cover" />
-      <span v-else class="flex h-16 w-16 items-center justify-center rounded-full bg-surface-2 text-[13px] font-medium" aria-hidden="true">
+      <span v-else class="flex h-16 w-16 items-center justify-center rounded-full bg-surface-2 text-[0.93rem] font-medium" aria-hidden="true">
         {{ auth.user?.first_name }}
       </span>
       <div class="min-w-0">
@@ -71,23 +71,23 @@ function remove() {
       </button>
       <button v-if="avatarUrl" class="btn btn-ghost" type="button" :disabled="loading" @click="remove">Remover</button>
     </div>
-    <p class="mt-2 text-[13px] text-muted">PNG, JPG ou WebP de até 2 MB.</p>
+    <p class="mt-2 text-[0.93rem] text-muted">PNG, JPG ou WebP de até 2 MB.</p>
 
     <p v-if="error" class="mt-4 rounded-[var(--radius-control)] border border-danger/40 px-3 py-2 text-danger" role="alert">{{ error }}</p>
   </section>
 
-  <section v-if="providers.length || linked.length" class="panel mt-4 max-w-md p-6">
+  <section v-if="providers.length || linked.length" class="panel mt-4 max-w-[56rem] p-6">
     <h2 class="font-medium">Contas conectadas</h2>
-    <p class="mt-1 text-[13px] text-muted">Entre com Google ou GitHub usando o mesmo e-mail da sua conta no HubFlow.</p>
+    <p class="mt-1 text-[0.93rem] text-muted">Entre com Google ou GitHub usando o mesmo e-mail da sua conta no HubFlow.</p>
     <ul class="mt-3 divide-y divide-border">
       <li v-for="account in linked" :key="account.provider" class="flex items-center gap-2 py-2">
         <span class="font-medium">{{ account.name }}</span>
-        <span class="truncate text-[13px] text-muted">{{ account.email }}</span>
+        <span class="truncate text-[0.93rem] text-muted">{{ account.email }}</span>
         <button type="button" class="btn btn-ghost ml-auto h-8 text-danger" :disabled="loading" @click="unlink(account)">Desvincular</button>
       </li>
       <li v-for="provider in unlinked" :key="provider.id" class="flex items-center gap-2 py-2">
         <span class="font-medium">{{ provider.name }}</span>
-        <span class="text-[13px] text-muted">não conectado</span>
+        <span class="text-[0.93rem] text-muted">não conectado</span>
         <a :href="`${BASE_URL}/api/auth/social/${provider.id}/start`" class="btn ml-auto h-8">Conectar</a>
       </li>
     </ul>

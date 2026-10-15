@@ -23,7 +23,7 @@ function filter(event) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-5xl">
+  <div class="mx-auto max-w-[128rem]">
     <div class="mb-4 flex flex-wrap items-center gap-3">
       <label class="sr-only" for="client-filter">Filtrar por cliente</label>
       <select id="client-filter" class="field h-9 w-auto text-sm" :value="clientId || ''" @change="filter">

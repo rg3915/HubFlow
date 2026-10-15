@@ -41,7 +41,7 @@ async function create() {
         v-for="label in board.labels"
         :key="label.id"
         type="button"
-        class="rounded-full border px-2 py-0.5 text-[13px] leading-5"
+        class="rounded-full border px-2 py-0.5 text-[0.93rem] leading-5"
         :class="has(label) ? 'text-white' : 'border-border text-muted hover:text-text'"
         :style="has(label) ? { background: label.color, borderColor: label.color } : {}"
         :aria-pressed="has(label)"
@@ -49,7 +49,7 @@ async function create() {
       >
         {{ label.name }}
       </button>
-      <button v-if="auth.can('boards.add_label')" type="button" class="rounded-full border border-dashed border-border px-2 py-0.5 text-[13px] text-muted hover:text-text" @click="creating = !creating">
+      <button v-if="auth.can('boards.add_label')" type="button" class="rounded-full border border-dashed border-border px-2 py-0.5 text-[0.93rem] text-muted hover:text-text" @click="creating = !creating">
         + nova
       </button>
     </div>
@@ -58,6 +58,6 @@ async function create() {
       <input v-model="color" type="color" class="h-8 w-10 cursor-pointer rounded-[var(--radius-control)] border border-border bg-surface p-0.5" aria-label="Cor" />
       <button type="submit" class="btn btn-primary h-8">Criar</button>
     </form>
-    <p v-if="error" class="mt-1 text-[13px] text-danger" role="alert">{{ error }}</p>
+    <p v-if="error" class="mt-1 text-[0.93rem] text-danger" role="alert">{{ error }}</p>
   </div>
 </template>

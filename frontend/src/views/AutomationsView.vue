@@ -84,9 +84,9 @@ async function remove(rule) {
 </script>
 
 <template>
-  <div class="max-w-3xl">
+  <div class="max-w-[96rem]">
     <p v-if="project" class="mb-1 text-muted">{{ project.client_name }} / {{ project.name }}</p>
-    <p class="mb-4 text-[13px] text-muted">Regras que agem sozinhas nos cards deste projeto. Uma ação de automação não dispara outra.</p>
+    <p class="mb-4 text-[0.93rem] text-muted">Regras que agem sozinhas nos cards deste projeto. Uma ação de automação não dispara outra.</p>
 
     <section class="panel divide-y divide-border">
       <div v-for="rule in rules" :key="rule.id" class="flex items-center gap-3 p-3">
@@ -95,7 +95,7 @@ async function remove(rule) {
         </label>
         <div class="min-w-0 flex-1" :class="{ 'opacity-60': !rule.is_active }">
           <p class="font-medium">{{ rule.name }}</p>
-          <p class="text-[13px] text-muted">{{ rule.description }}</p>
+          <p class="text-[0.93rem] text-muted">{{ rule.description }}</p>
         </div>
         <button type="button" class="btn btn-ghost h-8 text-danger" @click="remove(rule)">Excluir</button>
       </div>
@@ -136,7 +136,7 @@ async function remove(rule) {
 
     <form class="panel mt-6 p-4" @submit.prevent="saveSla">
       <h2 class="font-medium">SLA por coluna</h2>
-      <p class="mb-3 text-[13px] text-muted">Tempo máximo, em horas, que um card pode ficar em cada coluna. Vazio = sem SLA. Ao estourar, o card fica marcado no quadro e as automações de "SLA estourar" rodam (verificação a cada 15 minutos).</p>
+      <p class="mb-3 text-[0.93rem] text-muted">Tempo máximo, em horas, que um card pode ficar em cada coluna. Vazio = sem SLA. Ao estourar, o card fica marcado no quadro e as automações de "SLA estourar" rodam (verificação a cada 15 minutos).</p>
       <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div v-for="(text, key) in COLUMNS" :key="key">
           <label class="label" :for="`sla-${key}`">{{ text }}</label>

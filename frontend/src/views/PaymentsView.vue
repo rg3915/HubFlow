@@ -123,7 +123,7 @@ function date(value) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl space-y-4">
+  <div class="mx-auto max-w-[144rem] space-y-4">
     <div class="flex flex-wrap items-center gap-2">
       <select v-model="filters.year" class="field h-9 w-auto text-sm" aria-label="Ano">
         <option value="">Todos os anos</option>
